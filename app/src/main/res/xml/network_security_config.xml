@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">api.example.com(to be adjusted)</domain>
+        <domain includeSubdomains="true">dummy.restapiexample.com</domain>
+        <domain includeSubdomains="true">de1.api.radio-browser.info</domain>
+
+    </domain-config>
+</network-security-config>
