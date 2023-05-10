@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
-import com.maestrovs.radiocar.MainViewModel
+import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.maestrovs.radiocar.data.entities.Station
 import com.maestrovs.radiocar.databinding.FragmentRadioBinding
 import com.maestrovs.radiocar.utils.Resource

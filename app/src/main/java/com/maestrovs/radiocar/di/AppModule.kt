@@ -12,6 +12,7 @@ import com.maestrovs.radiocar.common.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import retrofit2.Retrofit
@@ -54,4 +55,8 @@ object AppModule {
                           localDataSource: StationDao
     ) =
         StationRepository(remoteDataSource, localDataSource)
+
+
+
+
 }

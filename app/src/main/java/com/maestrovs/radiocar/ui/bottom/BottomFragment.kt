@@ -6,11 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
-import com.maestrovs.radiocar.MainViewModel
+import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.maestrovs.radiocar.databinding.FragmentBottomBinding
-import com.maestrovs.radiocar.databinding.FragmentControlBinding
-import com.maestrovs.radiocar.databinding.FragmentSecondBinding
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.

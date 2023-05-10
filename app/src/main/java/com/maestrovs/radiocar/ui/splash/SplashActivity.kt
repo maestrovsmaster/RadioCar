@@ -1,10 +1,10 @@
-package com.maestrovs.radiocar.ui
+package com.maestrovs.radiocar.ui.splash
 
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
-import com.maestrovs.radiocar.MainActivity
+import com.maestrovs.radiocar.ui.main.MainActivity
 import com.maestrovs.radiocar.R
 
 
