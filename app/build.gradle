@@ -99,22 +99,17 @@ dependencies {
     //Transform
     implementation "com.andkulikov:transitionseverywhere:2.1.0"
 
-    //Google auth
-    implementation 'com.google.android.gms:play-services-auth:20.4.1'
 
-    //Swipe refresh ui
+    //UI
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-
-    //
-    implementation 'com.facebook.shimmer:shimmer:0.5.0'
-
     implementation "com.airbnb.android:lottie-compose:6.0.0"
-
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
-
-
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
+
+
+
+    //Exoplayer
     implementation "androidx.media3:media3-exoplayer:1.0.1"
     implementation "androidx.media3:media3-exoplayer-dash:1.0.1"
     implementation "androidx.media3:media3-ui:1.0.1"
@@ -126,12 +121,13 @@ dependencies {
 
 
 
+    //Eventbus
     implementation 'org.greenrobot:eventbus:3.2.0'
 
 
-    //implementation 'com.github.smarteist:autoimageslider:1.4.0'
-    // implementation 'com.github.smarteist:autoimageslider:1.4.0-appcompat'
 
-    // implementation 'com.github.smarteist:autoimageslider:1.4.0'
+
+
+
 
 }

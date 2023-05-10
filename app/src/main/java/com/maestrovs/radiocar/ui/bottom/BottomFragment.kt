@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.exoplayer2.util.Log
 import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.maestrovs.radiocar.databinding.FragmentBottomBinding
+import com.maestrovs.radiocar.ui.components.PlayPauseView
+import com.maestrovs.radiocar.ui.radio.PlayState
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -40,12 +43,35 @@ class BottomFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        mainViewModel.selectedStation.observe(viewLifecycleOwner){station ->
-            station?.let {
-                binding.tvStation.text = station.name
-            }?: kotlin.run {
-                binding.tvStation.text = "------"
+        mainViewModel.selectedStation.observe(viewLifecycleOwner){selectedStation ->
+
+
+
+
+            var text = " --- "
+            var playPause = PlayPauseView.STATE_PAUSE;
+
+            selectedStation?.let { stationEvent ->
+
+                when(stationEvent.playState){
+                    PlayState.Play ->  playPause = PlayPauseView.STATE_PLAY
+                    PlayState.Stop ->  playPause = PlayPauseView.STATE_PAUSE
+                }
+
+                if(stationEvent.station != null){
+                    text = stationEvent.station.name ?:" ??? "
+                }
+
             }
+
+            /*if(playPause == PlayPauseView.STATE_PAUSE){
+                Log.d("Station","@@@@@@@@@@@@@@@@@@@@@@@@   || STOP")
+            }else{
+
+            }*/
+
+            binding.tvStation.text = text
+            binding.playPause.setState(playPause)
 
         }
 

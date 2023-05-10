@@ -55,7 +55,7 @@ class RadioFragment : Fragment() {
         adapter = StationAdapter(object : StationAdapter.ItemListener{
             override fun onClickedCharacter(item: Station?) {
                 Log.d("Station","~~~~~~~~~~ Station Url \uD83C\uDFB5  ${item?.url}")
-                mainViewModel.setStation(item)
+                mainViewModel.switchStationState(item)
                 if(item != null) {
                     adapter.setSelectedStation(item)
                 }

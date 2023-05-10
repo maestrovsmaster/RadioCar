@@ -7,6 +7,7 @@ buildscript {
         mavenCentral()  // Maven Central repository
         jcenter()
 
+
         maven { url "https://jitpack.io" }
         maven { url "https://maven.localazy.com/repository/release/" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
@@ -34,7 +35,7 @@ plugins {
 
 allprojects {
     repositories {
-      //  maven { url 'https://jitpack.io' }
+//        maven { url 'https://jitpack.io' }
     }
 }
 

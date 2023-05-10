@@ -1,3 +1,5 @@
 package com.maestrovs.radiocar.service
 
-data class PlayUrlEvent(val url: String)
+import com.maestrovs.radiocar.ui.radio.PlayState
+
+data class PlayUrlEvent(val url: String?,val playState: PlayState)
