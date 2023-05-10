@@ -12,6 +12,7 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.maestrovs.radiocar.MainViewModel
+import com.maestrovs.radiocar.data.entities.Station
 import com.maestrovs.radiocar.databinding.FragmentRadioBinding
 import com.maestrovs.radiocar.utils.Resource
 
@@ -22,10 +23,13 @@ import com.maestrovs.radiocar.utils.Resource
 
 class RadioFragment : Fragment() {
 
+
+
     private var _binding: FragmentRadioBinding? = null
 
     private val mainViewModel by lazy {
         ViewModelProvider(requireActivity())[MainViewModel::class.java].apply {
+
         }
     }
 
@@ -48,7 +52,16 @@ class RadioFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = StationAdapter()
+        adapter = StationAdapter(object : StationAdapter.ItemListener{
+            override fun onClickedCharacter(item: Station?) {
+                Log.d("Station","~~~~~~~~~~ Station Url \uD83C\uDFB5  ${item?.url}")
+                mainViewModel.setStation(item)
+                if(item != null) {
+                    adapter.setSelectedStation(item)
+                }
+            }
+
+        })
         // binding.recycler.layoutManager = LinearLayoutManager(requireContext())
 
 
@@ -91,10 +104,14 @@ class RadioFragment : Fragment() {
             }
 
         })
+    }
 
 
+    fun onStationClick(theStation: Station) {
 
     }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()

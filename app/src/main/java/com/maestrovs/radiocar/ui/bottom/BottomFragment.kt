@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.maestrovs.radiocar.MainViewModel
 import com.maestrovs.radiocar.databinding.FragmentBottomBinding
 import com.maestrovs.radiocar.databinding.FragmentControlBinding
 import com.maestrovs.radiocar.databinding.FragmentSecondBinding
@@ -16,6 +18,12 @@ import com.maestrovs.radiocar.databinding.FragmentSecondBinding
 class BottomFragment : Fragment() {
 
     private var _binding: FragmentBottomBinding? = null
+
+    private val mainViewModel by lazy {
+        ViewModelProvider(requireActivity())[MainViewModel::class.java].apply {
+
+        }
+    }
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -34,6 +42,15 @@ class BottomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        mainViewModel.selectedStation.observe(viewLifecycleOwner){station ->
+            station?.let {
+                binding.tvStation.text = station.name
+            }?: kotlin.run {
+                binding.tvStation.text = "------"
+            }
+
+        }
 
     }
 

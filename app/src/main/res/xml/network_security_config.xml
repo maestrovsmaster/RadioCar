@@ -4,6 +4,12 @@
         <domain includeSubdomains="true">api.example.com(to be adjusted)</domain>
         <domain includeSubdomains="true">dummy.restapiexample.com</domain>
         <domain includeSubdomains="true">de1.api.radio-browser.info</domain>
+        <domain includeSubdomains="true">stream.laut.fm</domain>
 
+        <domain includeSubdomains="true">*</domain>
     </domain-config>
+    <base-config cleartextTrafficPermitted="true"/>
+
+
+
 </network-security-config>
