@@ -10,5 +10,8 @@
     <color name="dark_blue_60">#99042485</color>
 
     <color name="pink">#E91EB6</color>
+    <color name="pink_gray">#7D70A1</color>
+
+    <color name="transparent">#00000000</color>
 
 </resources>

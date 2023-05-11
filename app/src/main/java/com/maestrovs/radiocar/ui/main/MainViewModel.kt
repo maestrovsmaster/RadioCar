@@ -70,13 +70,21 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
                 stationEvent = StationEvent(newStation, PlayState.Play)
             }
         }else{
-            if(newStation == null){
-                stationEvent = StationEvent(null, PlayState.Stop)
+            stationEvent = if(newStation == null){
+                StationEvent(null, PlayState.Stop)
             }else{
+                Log.d("Station","switchStationState 2>>>>")
                 if(newStation.stationuuid == currentStation!!.stationuuid){
-                    stationEvent = StationEvent(currentStation, PlayState.Stop)
+                    Log.d("Station","switchStationState 3>>>>  ${_selectedStation.value!!.playState}")
+                    val newState = if(_selectedStation.value!!.playState == PlayState.Play){
+                        PlayState.Stop
+                    }else{
+                        PlayState.Play
+                    }
+                    Log.d("Station","switchStationState 3.1>>>>  ${newState}")
+                    StationEvent(currentStation, newState)
                 }else{
-                    stationEvent = StationEvent(newStation, PlayState.Play)
+                    StationEvent(newStation, PlayState.Play)
                 }
             }
         }

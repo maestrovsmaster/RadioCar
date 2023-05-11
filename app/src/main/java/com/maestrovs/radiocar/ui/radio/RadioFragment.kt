@@ -56,9 +56,9 @@ class RadioFragment : Fragment() {
             override fun onClickedCharacter(item: Station?) {
                 Log.d("Station","~~~~~~~~~~ Station Url \uD83C\uDFB5  ${item?.url}")
                 mainViewModel.switchStationState(item)
-                if(item != null) {
-                    adapter.setSelectedStation(item)
-                }
+                    // if(item != null) {
+                   // adapter.setSelectedStation(item)
+               // }
             }
 
         })
@@ -72,7 +72,10 @@ class RadioFragment : Fragment() {
 
         binding.recycler.adapter = adapter
 
+        mainViewModel.selectedStation.observe(viewLifecycleOwner){stationEvent ->
+            adapter.setStationEvent(stationEvent)
 
+        }
 
 
         mainViewModel.getData().observe(viewLifecycleOwner, Observer {
@@ -107,9 +110,6 @@ class RadioFragment : Fragment() {
     }
 
 
-    fun onStationClick(theStation: Station) {
-
-    }
 
 
 

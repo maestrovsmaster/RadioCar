@@ -20,7 +20,7 @@ import java.security.AccessController.getContext
 class StationAdapter(val onItem: ItemListener): RecyclerView.Adapter<StationAdapter.StationViewHolder>(){
 
 
-    private var selectedStation: Station? = null;
+    private var stationEvent: StationEvent? = null;
     interface ItemListener {
         fun onClickedCharacter(item: Station?)
     }
@@ -42,8 +42,11 @@ class StationAdapter(val onItem: ItemListener): RecyclerView.Adapter<StationAdap
     fun submitList(list: List<Station>) {differ.submitList(list)
     }
 
-    fun setSelectedStation(station: Station) {
-        this.selectedStation = station
+    /**
+     * Set station event about last selected Station
+     */
+    fun setStationEvent(stationEvent: StationEvent) {
+        this.stationEvent = stationEvent
         notifyDataSetChanged()
     }
 
@@ -74,23 +77,32 @@ class StationAdapter(val onItem: ItemListener): RecyclerView.Adapter<StationAdap
             //tvAge.text = "Age: ${item.employee_age}"
 
             root.setOnClickListener {
-                if(item != selectedStation) {
+
                     onItem.onClickedCharacter(item)
-                }else{
-                    onItem.onClickedCharacter(null)
-                }
+
             }
 
 
 
             var selected = false
-            selectedStation?.let {
-                if(it.stationuuid == item.stationuuid) {
-                    selected = true
+            var selectedColor = ContextCompat.getColor(context, R.color.transparent)
+
+            stationEvent?.let {event ->
+                event.station?.let {selectedStation ->
+                    if(selectedStation.stationuuid == item.stationuuid) {
+                        selected = true
+                        selectedColor = when(event.playState){
+                            PlayState.Play -> ContextCompat.getColor(context, R.color.pink)
+                            PlayState.Stop -> ContextCompat.getColor(context, R.color.pink_gray)
+                        }
+                    }
                 }
             }
+
+
+
             if(selected) {
-                root.setBackgroundColor(ContextCompat.getColor(context, R.color.pink))
+                root.setBackgroundColor(selectedColor)
             }else {
                 root.addRipple().apply {
                     background = with(TypedValue()) {
