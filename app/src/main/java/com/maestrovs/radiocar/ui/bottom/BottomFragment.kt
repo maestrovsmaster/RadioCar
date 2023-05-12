@@ -10,7 +10,8 @@ import com.google.android.exoplayer2.util.Log
 import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.maestrovs.radiocar.databinding.FragmentBottomBinding
 import com.maestrovs.radiocar.ui.components.PlayPauseView
-import com.maestrovs.radiocar.ui.radio.PlayState
+import com.maestrovs.radiocar.enums.PlayState
+import com.maestrovs.radiocar.ui.radio.StationEvent
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -42,40 +43,38 @@ class BottomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mainViewModel.selectedStation.observe(viewLifecycleOwner){
 
-        mainViewModel.selectedStation.observe(viewLifecycleOwner){selectedStation ->
+            updateUI(it)
+        }
 
+       binding.playPause.setOnClickListener {
+           mainViewModel.switchCurrentStationState()
+       }
 
+    }
 
+    private fun updateUI(selectedStation: StationEvent?){
+        var text = " "
+        var playPause = PlayPauseView.STATE_PAUSE;
 
-            var text = " --- "
-            var playPause = PlayPauseView.STATE_PAUSE;
+        selectedStation?.let { stationEvent ->
 
-            selectedStation?.let { stationEvent ->
-
-                when(stationEvent.playState){
-                    PlayState.Play ->  playPause = PlayPauseView.STATE_PLAY
-                    PlayState.Stop ->  playPause = PlayPauseView.STATE_PAUSE
-                }
-
-                if(stationEvent.station != null){
-                    text = stationEvent.station.name ?:" ??? "
-                }
-
+            playPause = when(stationEvent.playState){
+                PlayState.Play -> PlayPauseView.STATE_PLAY
+                PlayState.Stop -> PlayPauseView.STATE_PAUSE
             }
 
-            /*if(playPause == PlayPauseView.STATE_PAUSE){
-                Log.d("Station","@@@@@@@@@@@@@@@@@@@@@@@@   || STOP")
-            }else{
-
-            }*/
-
-            binding.tvStation.text = text
-            binding.playPause.setState(playPause)
+            if(stationEvent.station != null){
+                text = stationEvent.station.name ?:" ??? "
+            }
 
         }
 
+        binding.tvStation.text = text
+        binding.playPause.setState(playPause)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

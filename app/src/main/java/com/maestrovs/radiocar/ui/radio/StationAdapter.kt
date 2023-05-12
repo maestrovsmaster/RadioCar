@@ -1,5 +1,6 @@
 package com.maestrovs.radiocar.ui.radio
 
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +11,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.Station
+import com.maestrovs.radiocar.enums.PlayState
 import com.maestrovs.radiocar.extensions.addRipple
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_radio.view.animationView
+import kotlinx.android.synthetic.main.item_radio.view.ivCover
 import kotlinx.android.synthetic.main.item_radio.view.root
 import kotlinx.android.synthetic.main.item_radio.view.tvName
-import java.security.AccessController
-import java.security.AccessController.getContext
 
 
 class StationAdapter(val onItem: ItemListener): RecyclerView.Adapter<StationAdapter.StationViewHolder>(){
@@ -87,6 +90,8 @@ class StationAdapter(val onItem: ItemListener): RecyclerView.Adapter<StationAdap
             var selected = false
             var selectedColor = ContextCompat.getColor(context, R.color.transparent)
 
+            var drawPlayingAnim = false;
+
             stationEvent?.let {event ->
                 event.station?.let {selectedStation ->
                     if(selectedStation.stationuuid == item.stationuuid) {
@@ -94,6 +99,10 @@ class StationAdapter(val onItem: ItemListener): RecyclerView.Adapter<StationAdap
                         selectedColor = when(event.playState){
                             PlayState.Play -> ContextCompat.getColor(context, R.color.pink)
                             PlayState.Stop -> ContextCompat.getColor(context, R.color.pink_gray)
+                        }
+                        drawPlayingAnim = when(event.playState){
+                            PlayState.Play -> true
+                            PlayState.Stop -> false
                         }
                     }
                 }
@@ -116,6 +125,32 @@ class StationAdapter(val onItem: ItemListener): RecyclerView.Adapter<StationAdap
 
 
             tvName.text = "${item.name}"
+
+            animationView.visibility = if(drawPlayingAnim){View.VISIBLE}else{View.GONE}
+
+            var imgUrl: String? = null;
+
+            Log.d("Picasso","icon = ${item.favicon}")
+            item.favicon?.let {icon ->
+                if(!icon.isNullOrEmpty()){
+                    imgUrl = item.favicon
+                }
+            }
+            if(imgUrl != null) {
+
+                Picasso.get()
+                    .load(imgUrl)
+                    .resize(120, 120)
+                    .centerCrop()
+                    .into(ivCover)
+            }else{
+                Picasso.get()
+                    .load(R.drawable.bg_music)
+                    .resize(120, 120)
+                    .centerCrop()
+                    .into(ivCover)
+            }
+
         }
 
     }

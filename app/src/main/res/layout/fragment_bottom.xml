@@ -19,6 +19,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         app:srcCompat="@drawable/play_to_pause"
+        android:background="?attr/selectableItemBackground"
         />
 
 

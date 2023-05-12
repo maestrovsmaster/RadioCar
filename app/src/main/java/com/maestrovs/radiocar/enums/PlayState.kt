@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.ui.radio
+package com.maestrovs.radiocar.enums
 
 enum class PlayState {
 

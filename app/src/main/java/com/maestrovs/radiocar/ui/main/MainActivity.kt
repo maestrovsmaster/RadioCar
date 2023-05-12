@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
     private var audioPlayerService: AudioPlayerService? = null
     private var serviceBound = false
 
@@ -57,6 +56,7 @@ class MainActivity : AppCompatActivity() {
 
         audioPlayerService?.initializePlayer()
 
+
     }
 
 
@@ -70,13 +70,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        /* if (serviceBound) {
-             unbindService(serviceConnection)
-             serviceBound = false
-         }*/
+
     }
 
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+    }
 
 }
