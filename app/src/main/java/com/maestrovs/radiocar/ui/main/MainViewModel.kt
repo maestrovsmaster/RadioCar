@@ -1,11 +1,20 @@
 package com.maestrovs.radiocar.ui.main
 
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.liveData
 import com.maestrovs.radiocar.data.entities.Station
+import com.maestrovs.radiocar.data.remote.StationRemoteDataSource
+import com.maestrovs.radiocar.data.remote.StationRemotePagingSource
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.enums.PlayAction
 import com.maestrovs.radiocar.enums.PlayState
@@ -19,7 +28,9 @@ import org.greenrobot.eventbus.ThreadMode
 
 
 class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
-    private val mainRepository: StationRepository,
+  //  private val mainRepository: StationRepository,
+  //  private val stationRemotePagingSource: StationRemotePagingSource
+    private val stationRemoteDataSource: StationRemoteDataSource
 ) : ViewModel() {
 
 
@@ -61,8 +72,8 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     }
 
 
-    fun dismissLastPlayerUrlEvent(){
-        Handler().postDelayed({lastPlayUrlEvent = null},1000)
+    private fun dismissLastPlayerUrlEvent(){
+        Handler(Looper.getMainLooper()).postDelayed({lastPlayUrlEvent = null},1000)
     }
 
     fun switchCurrentStationState() {
@@ -125,9 +136,22 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     }
 
 
-    fun getData(): LiveData<Resource<List<Station>>> {
-        return mainRepository.getStations()
+    fun getData(): LiveData<PagingData<Station>> {
+        return stationRemoteDataSource.getStations()
     }
+
+
+
+
+  /*  val flow = Pager(
+        // Configure how data is loaded by passing additional properties to
+        // PagingConfig, such as prefetchDistance.
+        PagingConfig(pageSize = 20)
+    ) {
+        stationRemotePagingSource
+    }.liveData
+     .cachedIn(viewModelScope)
+*/
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -34,12 +34,12 @@ object AppModule {
     fun provideGson(): Gson = GsonBuilder().create()
 
     @Provides
-    fun provideCharacterService(retrofit: Retrofit): StationService = retrofit.create(
+    fun provideStationService(retrofit: Retrofit): StationService = retrofit.create(
         StationService::class.java)
 
-    @Singleton
+    /*@Singleton
     @Provides
-    fun provideCharacterRemoteDataSource(stationService: StationService) = StationRemoteDataSource(stationService)
+    fun provideStationRemoteDataSource(stationService: StationService) = StationRemoteDataSource(stationService)*/
 
     @Singleton
     @Provides
@@ -47,7 +47,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideCharacterDao(db: AppDatabase) = db.stationDao()
+    fun provideStationDao(db: AppDatabase) = db.stationDao()
 
     @Singleton
     @Provides

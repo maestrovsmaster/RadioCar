@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.PagingData
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
@@ -15,6 +17,12 @@ import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.maestrovs.radiocar.data.entities.Station
 import com.maestrovs.radiocar.databinding.FragmentRadioBinding
 import com.maestrovs.radiocar.utils.Resource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.suspendCoroutine
 
 
 /**
@@ -77,8 +85,31 @@ class RadioFragment : Fragment() {
 
         }
 
+       /* lifecycleScope.launchWhenStarted {
+            mainViewModel.flow.collect{
+                Log.d("Paging","Fragment getData11 $it")
+            }
+        }
+        lifecycleScope.launch(Dispatchers.IO) {
+            mainViewModel.flow.collectLatest { pagingData ->
+                Log.d("Paging","Fragment getData $pagingData")
+                adapter.submitData(pagingData)
+            }
+        }*/
 
-        mainViewModel.getData().observe(viewLifecycleOwner, Observer {
+            mainViewModel.getData().observe(viewLifecycleOwner) { pagingData ->
+                Log.d("Paging", "Fragment getData $pagingData")
+                viewLifecycleOwner.lifecycleScope.launch {
+                    adapter.submitData(pagingData)//submitData(pagingData)
+                }
+                //submitData(pagingData)
+            }
+
+
+
+
+
+       /* mainViewModel.getData().observe(viewLifecycleOwner, Observer {
 
             it.status?.let { status ->
                 when (status) {
@@ -106,7 +137,7 @@ class RadioFragment : Fragment() {
                 }
             }
 
-        })
+        })*/
     }
 
 

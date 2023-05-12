@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +21,25 @@ import kotlinx.android.synthetic.main.item_radio.view.root
 import kotlinx.android.synthetic.main.item_radio.view.tvName
 
 
-class StationAdapter(val onItem: ItemListener): RecyclerView.Adapter<StationAdapter.StationViewHolder>(){
+class StationAdapter(val onItem: ItemListener): //RecyclerView.Adapter<StationAdapter.StationViewHolder>()
+    PagingDataAdapter<Station, StationAdapter.StationViewHolder>(diffCallback)
+{
+
+    companion object{
+         val diffCallback = object : DiffUtil.ItemCallback<Station>(){
+            override fun areItemsTheSame(oldItem: Station, newItem: Station): Boolean {
+                return oldItem.stationuuid == newItem.stationuuid
+            }
+
+            override fun areContentsTheSame(oldItem: Station, newItem: Station): Boolean {
+                return oldItem.hashCode() == newItem.hashCode()
+            }
+        }
+    }
+
+    private val differ = AsyncListDiffer(this,diffCallback)
+
+
 
 
     private var stationEvent: StationEvent? = null;
@@ -30,17 +49,6 @@ class StationAdapter(val onItem: ItemListener): RecyclerView.Adapter<StationAdap
 
     inner class StationViewHolder(itemView:View):RecyclerView.ViewHolder(itemView)
 
-    private val diffCallback = object : DiffUtil.ItemCallback<Station>(){
-        override fun areItemsTheSame(oldItem: Station, newItem: Station): Boolean {
-            return oldItem.stationuuid == newItem.stationuuid
-        }
-
-        override fun areContentsTheSame(oldItem: Station, newItem: Station): Boolean {
-            return oldItem.hashCode() == newItem.hashCode()
-        }
-    }
-
-    private val differ = AsyncListDiffer(this,diffCallback)
 
     fun submitList(list: List<Station>) {differ.submitList(list)
     }

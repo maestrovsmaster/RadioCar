@@ -12,9 +12,9 @@ class StationRepository @Inject constructor(
 
 
 
-    fun getStations() = performGetOperation(
+    /*fun getStations() = performGetOperation(
         databaseQuery = { localDataSource.getAllStations() },
         networkCall = { remoteDataSource.getStations() },
         saveCallResult = { localDataSource.insertAll(it) }
-    )
+    )*/
 }
