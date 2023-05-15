@@ -7,13 +7,13 @@ import androidx.lifecycle.map
 import com.maestrovs.radiocar.utils.Resource.Status.*
 import kotlinx.coroutines.Dispatchers
 
-fun <T, A> performGetOperation(databaseQuery: () -> LiveData<T>,
-                               networkCall: suspend () -> Resource<A>,
-                               saveCallResult: suspend (A) -> Unit): LiveData<Resource<T>> =
+fun <T, A> performGetOperation(
+    databaseQuery: () -> LiveData<T>,
+    networkCall: suspend () -> Resource<A>,
+    saveCallResult: suspend (A) -> Unit
+): LiveData<Resource<T>> =
     liveData(Dispatchers.IO) {
-
-        Log.d("StationRequest","GET Stations..  ")
-
+        Log.d("RequestResult","emit...")
         emit(Resource.loading())
         val source = databaseQuery.invoke().map { Resource.success(it) }
         emitSource(source)
@@ -23,7 +23,23 @@ fun <T, A> performGetOperation(databaseQuery: () -> LiveData<T>,
             saveCallResult(responseStatus.data!!)
 
         } else if (responseStatus.status == ERROR) {
-            emit(Resource.error(responseStatus.message!!))
-            emitSource(source)
+           // emit(Resource.error(responseStatus.message!!))
+          //  emitSource(source)
         }
+    }
+
+
+fun <T> performLocalGetOperation(databaseQuery: () -> LiveData<T>): LiveData<Resource<T>> =
+    liveData(Dispatchers.IO) {
+        emit(Resource.loading())
+        val source = databaseQuery.invoke().map { Resource.success(it) }
+        emitSource(source)
+    }
+
+fun performLocalSetOperation(databaseQuery: () -> (Unit)): LiveData<Resource<Unit>> =
+    liveData(Dispatchers.IO) {
+        Log.d("Database",">>recentStations setRecent----")
+        emit(Resource.loading())
+        databaseQuery.invoke()
+        emit(Resource.success(Unit))
     }

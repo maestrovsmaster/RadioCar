@@ -40,5 +40,7 @@ data class Station(
     val tags: String,
     val url: String,
     val url_resolved: String,
-    val votes: Int
+    val votes: Int,
+
+
 )

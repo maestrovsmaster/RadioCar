@@ -9,6 +9,8 @@ import com.maestrovs.radiocar.data.repository.StationRepository
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.maestrovs.radiocar.common.Constants.BASE_URL
+import com.maestrovs.radiocar.data.local.FavoritesDao
+import com.maestrovs.radiocar.data.local.RecentDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,7 +27,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(gson: Gson) : Retrofit = Retrofit.Builder()
+    fun provideRetrofit(gson: Gson): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
@@ -35,15 +37,18 @@ object AppModule {
 
     @Provides
     fun provideStationService(retrofit: Retrofit): StationService = retrofit.create(
-        StationService::class.java)
-
-    /*@Singleton
-    @Provides
-    fun provideStationRemoteDataSource(stationService: StationService) = StationRemoteDataSource(stationService)*/
+        StationService::class.java
+    )
 
     @Singleton
     @Provides
-    fun provideDatabase(@ApplicationContext appContext: Context) = AppDatabase.getDatabase(appContext)
+    fun provideStationRemoteDataSource(stationService: StationService) =
+        StationRemoteDataSource(stationService)
+
+    @Singleton
+    @Provides
+    fun provideDatabase(@ApplicationContext appContext: Context) =
+        AppDatabase.getDatabase(appContext)
 
     @Singleton
     @Provides
@@ -51,12 +56,19 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideRepository(remoteDataSource: StationRemoteDataSource,
-                          localDataSource: StationDao
+    fun provideRecentDao(db: AppDatabase) = db.recentDao()
+
+    @Singleton
+    @Provides
+    fun provideFavoritesDao(db: AppDatabase) = db.favoritesDao()
+
+    @Singleton
+    @Provides
+    fun provideRepository(
+        remoteDataSource: StationRemoteDataSource,
+        localDataSource: StationDao, recentSource: RecentDao, favoritesSource: FavoritesDao
     ) =
-        StationRepository(remoteDataSource, localDataSource)
-
-
+        StationRepository(remoteDataSource, localDataSource, recentSource, favoritesSource)
 
 
 }

@@ -2,10 +2,12 @@ package com.maestrovs.radiocar.data.local
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.maestrovs.radiocar.data.entities.Station
+import com.maestrovs.radiocar.data.entities.tables.Recent
 
 @Dao
 interface StationDao {
@@ -14,13 +16,27 @@ interface StationDao {
     fun getAllStations() : LiveData<List<Station>>
 
     @Query("SELECT * FROM stations WHERE stationuuid = :stationuuid")
-    fun getStation(stationuuid: Int): LiveData<Station>
+    fun getStation(stationuuid: String): LiveData<Station>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(stations: List<Station>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(station: Station)
+
+    @Query("""
+    SELECT stations.* 
+    FROM stations 
+    INNER JOIN recent ON stations.stationuuid = recent.stationuuid
+""")
+    fun getRecentStations(): LiveData<List<Station>>
+
+    @Query("""
+    SELECT stations.* 
+    FROM stations 
+    INNER JOIN favorites ON stations.stationuuid = favorites.stationuuid
+""")
+    fun getFavoritesStations(): LiveData<List<Station>>
 
 
 }

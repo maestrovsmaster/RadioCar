@@ -3,18 +3,12 @@ package com.maestrovs.radiocar.ui.main
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.liveData
 import com.maestrovs.radiocar.data.entities.Station
-import com.maestrovs.radiocar.data.remote.StationRemoteDataSource
-import com.maestrovs.radiocar.data.remote.StationRemotePagingSource
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.enums.PlayAction
 import com.maestrovs.radiocar.enums.PlayState
@@ -22,15 +16,17 @@ import com.maestrovs.radiocar.events.PlayActionEvent
 import com.maestrovs.radiocar.events.PlayUrlEvent
 import com.maestrovs.radiocar.ui.radio.StationEvent
 import com.maestrovs.radiocar.utils.Resource
+import com.maestrovs.radiocar.utils.combineWith
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 
 class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
-  //  private val mainRepository: StationRepository,
-  //  private val stationRemotePagingSource: StationRemotePagingSource
-    private val stationRemoteDataSource: StationRemoteDataSource
+    private val mainRepository: StationRepository,
+    //  private val stationRemotePagingSource: StationRemotePagingSource
+    // private val stationRemoteDataSource: StationRemoteDataSource
 ) : ViewModel() {
 
 
@@ -53,15 +49,28 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
             stationEvent.station?.let { station ->
                 lastPlayUrlEvent = if (station.url != null) {
                     when (stationEvent.playState) {
-                        PlayState.Play -> PlayUrlEvent(station.url, station.name, "", station.favicon, PlayState.Play)
-                        PlayState.Stop -> PlayUrlEvent(station.url,station.name, "", station.favicon, PlayState.Stop)
+                        PlayState.Play -> PlayUrlEvent(
+                            station.url,
+                            station.name,
+                            "",
+                            station.favicon,
+                            PlayState.Play
+                        )
+
+                        PlayState.Stop -> PlayUrlEvent(
+                            station.url,
+                            station.name,
+                            "",
+                            station.favicon,
+                            PlayState.Stop
+                        )
                     }
                 } else {
-                    PlayUrlEvent(null,station.name, "", station.favicon, PlayState.Stop)
+                    PlayUrlEvent(null, station.name, "", station.favicon, PlayState.Stop)
                 }
 
             } ?: kotlin.run {
-                lastPlayUrlEvent = PlayUrlEvent(null, null, "", null,PlayState.Stop)
+                lastPlayUrlEvent = PlayUrlEvent(null, null, "", null, PlayState.Stop)
             }
 
 
@@ -72,8 +81,8 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     }
 
 
-    private fun dismissLastPlayerUrlEvent(){
-        Handler(Looper.getMainLooper()).postDelayed({lastPlayUrlEvent = null},1000)
+    private fun dismissLastPlayerUrlEvent() {
+        Handler(Looper.getMainLooper()).postDelayed({ lastPlayUrlEvent = null }, 1000)
     }
 
     fun switchCurrentStationState() {
@@ -84,6 +93,17 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
 
         changeCurrentStationState(newStation)
         setStationEvent()
+
+
+        newStation?.let { station ->
+            Log.d("Database",">>recentStations setRecent0")
+
+
+                setRecent(station.stationuuid, true)
+
+        }
+
+
     }
 
     private fun changeCurrentStationState(newStation: Station?) {
@@ -136,22 +156,21 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     }
 
 
-    fun getData(): LiveData<PagingData<Station>> {
+    /*fun getData(): LiveData<PagingData<Station>> {
         return stationRemoteDataSource.getStations()
     }
-
-
-
-
-  /*  val flow = Pager(
-        // Configure how data is loaded by passing additional properties to
-        // PagingConfig, such as prefetchDistance.
-        PagingConfig(pageSize = 20)
-    ) {
-        stationRemotePagingSource
-    }.liveData
-     .cachedIn(viewModelScope)
 */
+
+
+
+
+    fun setRecent(stationuuid: String, isRecent: Boolean) {
+        Log.d("Database",">>recentStations setRecent1")
+        viewModelScope.launch {
+            mainRepository.setRecent(stationuuid)
+        }
+
+    }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -176,10 +195,10 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     }
 
 
-override fun onCleared() {
-    EventBus.getDefault().unregister(this)
-    super.onCleared()
-}
+    override fun onCleared() {
+        EventBus.getDefault().unregister(this)
+        super.onCleared()
+    }
 
 
 }

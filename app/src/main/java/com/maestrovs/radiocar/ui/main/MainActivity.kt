@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.maestrovs.radiocar.databinding.ActivityMainBinding
 import com.maestrovs.radiocar.service.AudioPlayerService
+import com.maestrovs.radiocar.ui.radio.RadioViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,6 +41,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val mainViewModel: MainViewModel by viewModels()
+
+
+
 
     companion object {
         fun callingIntent(context: Context) = Intent(context, MainActivity::class.java)
