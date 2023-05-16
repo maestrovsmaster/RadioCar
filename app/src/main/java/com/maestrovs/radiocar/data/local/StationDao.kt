@@ -15,6 +15,16 @@ interface StationDao {
     @Query("SELECT * FROM stations")
     fun getAllStations() : LiveData<List<Station>>
 
+
+    //     SELECT Item.id, Item.name, (Favourite.id IS NOT NULL) as isFavorite
+    @Query("""
+        SELECT stations.*, (favorites.stationuuid IS NOT NULL) as isFavorite
+        FROM stations
+        LEFT JOIN favorites ON stations.stationuuid = favorites.stationuuid
+    """)
+    fun getAllStationsWithFavouriteStatus(): LiveData<List<Station>>
+
+
     @Query("SELECT * FROM stations WHERE stationuuid = :stationuuid")
     fun getStation(stationuuid: String): LiveData<Station>
 
@@ -25,18 +35,24 @@ interface StationDao {
     suspend fun insert(station: Station)
 
     @Query("""
-    SELECT stations.* 
+    SELECT stations.* , (favorites.stationuuid IS NOT NULL) as isFavorite
     FROM stations 
-    INNER JOIN recent ON stations.stationuuid = recent.stationuuid
+    INNER JOIN recent ON stations.stationuuid = recent.stationuuid LEFT JOIN favorites ON stations.stationuuid = favorites.stationuuid
 """)
     fun getRecentStations(): LiveData<List<Station>>
 
     @Query("""
-    SELECT stations.* 
+    SELECT stations.* , (favorites.stationuuid IS NOT NULL) as isFavorite
     FROM stations 
     INNER JOIN favorites ON stations.stationuuid = favorites.stationuuid
 """)
     fun getFavoritesStations(): LiveData<List<Station>>
+
+
+
+
+
+
 
 
 }

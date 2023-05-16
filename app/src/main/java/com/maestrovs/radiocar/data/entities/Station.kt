@@ -42,5 +42,5 @@ data class Station(
     val url_resolved: String,
     val votes: Int,
 
-
+    var isFavorite: Int? = null,
 )

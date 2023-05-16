@@ -14,43 +14,45 @@ import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.Station
 import com.maestrovs.radiocar.enums.PlayState
 import com.maestrovs.radiocar.extensions.addRipple
+import com.maestrovs.radiocar.extensions.setVisible
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_radio.view.animationView
+import kotlinx.android.synthetic.main.item_radio.view.btFavorite
 import kotlinx.android.synthetic.main.item_radio.view.ivCover
 import kotlinx.android.synthetic.main.item_radio.view.root
 import kotlinx.android.synthetic.main.item_radio.view.tvName
 
 
-class StationAdapter(val onItem: ItemListener): //RecyclerView.Adapter<StationAdapter.StationViewHolder>()
-    PagingDataAdapter<Station, StationAdapter.StationViewHolder>(diffCallback)
+class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAdapter.StationViewHolder>()
+   // PagingDataAdapter<Station, StationAdapter.StationViewHolder>(diffCallback)
 {
 
-    companion object{
-         val diffCallback = object : DiffUtil.ItemCallback<Station>(){
+    companion object {
+        val diffCallback = object : DiffUtil.ItemCallback<Station>() {
             override fun areItemsTheSame(oldItem: Station, newItem: Station): Boolean {
                 return oldItem.stationuuid == newItem.stationuuid
             }
 
             override fun areContentsTheSame(oldItem: Station, newItem: Station): Boolean {
-                return oldItem.hashCode() == newItem.hashCode()
+                return oldItem == newItem
             }
         }
     }
 
-    private val differ = AsyncListDiffer(this,diffCallback)
-
-
+    private val differ = AsyncListDiffer(this, diffCallback)
 
 
     private var stationEvent: StationEvent? = null;
+
     interface ItemListener {
         fun onClickedCharacter(item: Station?)
     }
 
-    inner class StationViewHolder(itemView:View):RecyclerView.ViewHolder(itemView)
+    inner class StationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
 
-    fun submitList(list: List<Station>) {differ.submitList(list)
+    fun submitList(list: List<Station>) {
+        differ.submitList(list)
     }
 
     /**
@@ -83,16 +85,24 @@ class StationAdapter(val onItem: ItemListener): //RecyclerView.Adapter<StationAd
         val item = differ.currentList[position]
 
         holder.itemView.apply {
-           // tvName.text = "${item.employee_name}"
+            // tvName.text = "${item.employee_name}"
             //tvSalary.text = "Salary: Rs.${item.employee_salary}"
             //tvAge.text = "Age: ${item.employee_age}"
 
+            var favoriteImgRes = R.drawable.ic_empty_24
+
             root.setOnClickListener {
 
-                    onItem.onClickedCharacter(item)
+                onItem.onClickedCharacter(item)
 
             }
 
+            item.isFavorite?.let {
+                if(it == 1) {
+                    favoriteImgRes = R.drawable.ic_favorite
+                }
+            }
+            btFavorite.setImageDrawable(ContextCompat.getDrawable(context, favoriteImgRes))
 
 
             var selected = false
@@ -100,15 +110,15 @@ class StationAdapter(val onItem: ItemListener): //RecyclerView.Adapter<StationAd
 
             var drawPlayingAnim = false;
 
-            stationEvent?.let {event ->
-                event.station?.let {selectedStation ->
-                    if(selectedStation.stationuuid == item.stationuuid) {
+            stationEvent?.let { event ->
+                event.station?.let { selectedStation ->
+                    if (selectedStation.stationuuid == item.stationuuid) {
                         selected = true
-                        selectedColor = when(event.playState){
+                        selectedColor = when (event.playState) {
                             PlayState.Play -> ContextCompat.getColor(context, R.color.pink)
                             PlayState.Stop -> ContextCompat.getColor(context, R.color.pink_gray)
                         }
-                        drawPlayingAnim = when(event.playState){
+                        drawPlayingAnim = when (event.playState) {
                             PlayState.Play -> true
                             PlayState.Stop -> false
                         }
@@ -118,9 +128,9 @@ class StationAdapter(val onItem: ItemListener): //RecyclerView.Adapter<StationAd
 
 
 
-            if(selected) {
+            if (selected) {
                 root.setBackgroundColor(selectedColor)
-            }else {
+            } else {
                 root.addRipple().apply {
                     background = with(TypedValue()) {
                         context.theme.resolveAttribute(
@@ -134,24 +144,24 @@ class StationAdapter(val onItem: ItemListener): //RecyclerView.Adapter<StationAd
 
             tvName.text = "${item.name}"
 
-            animationView.visibility = if(drawPlayingAnim){View.VISIBLE}else{View.GONE}
+            animationView.setVisible(drawPlayingAnim)
 
             var imgUrl: String? = null;
 
-            Log.d("Picasso","icon = ${item.favicon}")
-            item.favicon?.let {icon ->
-                if(!icon.isNullOrEmpty()){
+            Log.d("Picasso", "icon = ${item.favicon}")
+            item.favicon?.let { icon ->
+                if (!icon.isNullOrEmpty()) {
                     imgUrl = item.favicon
                 }
             }
-            if(imgUrl != null) {
+            if (imgUrl != null) {
 
                 Picasso.get()
                     .load(imgUrl)
                     .resize(120, 120)
                     .centerCrop()
                     .into(ivCover)
-            }else{
+            } else {
                 Picasso.get()
                     .load(R.drawable.bg_music)
                     .resize(120, 120)
@@ -162,7 +172,6 @@ class StationAdapter(val onItem: ItemListener): //RecyclerView.Adapter<StationAd
         }
 
     }
-
 
 
 }

@@ -16,6 +16,7 @@ import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.maestrovs.radiocar.data.entities.Station
 import com.maestrovs.radiocar.databinding.FragmentRadioBinding
+import com.maestrovs.radiocar.ui.components.WrapFlexboxLayoutManager
 import com.maestrovs.radiocar.utils.Resource
 import com.maestrovs.radiocar.utils.combineWith
 import dagger.hilt.EntryPoint
@@ -50,7 +51,6 @@ class RadioFragment : Fragment() {
     }
 
 
-
     private lateinit var adapter: StationAdapter
 
     // This property is only valid between onCreateView and
@@ -82,10 +82,12 @@ class RadioFragment : Fragment() {
         // binding.recycler.layoutManager = LinearLayoutManager(requireContext())
 
 
-        val layoutManager = FlexboxLayoutManager(context)
+        val layoutManager = WrapFlexboxLayoutManager(context)
         layoutManager.flexDirection = FlexDirection.ROW
         layoutManager.justifyContent = JustifyContent.FLEX_START
         binding.recycler.layoutManager = layoutManager
+        binding.recycler.itemAnimator = null
+
 
         binding.recycler.adapter = adapter
 
@@ -95,28 +97,33 @@ class RadioFragment : Fragment() {
         }
 
 
-        Log.d("RequestResult", ">>onViewCreated")
-        radioViewModel.stations.observe(viewLifecycleOwner){
-            Log.d("RequestResult", ">>success $it")
+        radioViewModel.stations.observe(viewLifecycleOwner) {
             it?.let {
-                Log.d("RequestResult", ">>success1")
-                if(currentListType == ListType.All) {
+                if (currentListType == ListType.All) {
                     processResources(it)
                 }
             }
 
         }
 
-        radioViewModel.recent.observe(viewLifecycleOwner){
-            Log.d("RequestResult", ">>success recent $it")
+        radioViewModel.recent.observe(viewLifecycleOwner) {
             it?.let {
-                Log.d("RequestResult", ">>success1 recent")
-                if(currentListType == ListType.Recent) {
+                if (currentListType == ListType.Recent) {
+                    processResources(it)
+                }
+            }
+        }
+
+
+        radioViewModel.favorites.observe(viewLifecycleOwner) {
+            it?.let {
+                if (currentListType == ListType.Favorites) {
                     processResources(it)
                 }
             }
 
         }
+
 
         radioViewModel.fetchRecent()
         updateButtons(ListType.Recent)
@@ -136,15 +143,14 @@ class RadioFragment : Fragment() {
         binding.btFavorite.setOnClickListener {
             currentListType = ListType.Favorites
             updateButtons(ListType.Favorites)
-          //  radioViewModel.fetchRecent()
+            radioViewModel.fetchFavorites()
         }
-            //
+        //
 
     }
 
 
-
-    fun updateButtons(listType:ListType){
+    fun updateButtons(listType: ListType) {
         val activeColor = ContextCompat.getColor(requireContext(), R.color.pink)
         val inactiveColor = ContextCompat.getColor(requireContext(), R.color.white_80)
 
@@ -152,7 +158,7 @@ class RadioFragment : Fragment() {
         var colorFavorites = inactiveColor
         var colorAll = inactiveColor
 
-        when(listType){
+        when (listType) {
             ListType.Recent -> colorRecent = activeColor
             ListType.Favorites -> colorFavorites = activeColor
             ListType.All -> colorAll = activeColor
@@ -164,35 +170,34 @@ class RadioFragment : Fragment() {
     }
 
 
-
     private fun processResources(response: Resource<List<Station>>) {
 
-            when (response.status) {
-                Resource.Status.SUCCESS -> {
-                    binding.progressBar.visibility = View.GONE
+        when (response.status) {
+            Resource.Status.SUCCESS -> {
+                binding.progressBar.visibility = View.GONE
 
-                    response.data.let { list ->
-                        if (list != null) {
-                            adapter.submitList(list)
-                            if(currentListType == ListType.Recent && list.isNullOrEmpty() && firstStart){
-                                currentListType = ListType.All
-                                firstStart = false
-                                radioViewModel.fetchStations()
-                                updateButtons(ListType.All)
-                            }
+                response.data.let { list ->
+                    if (list != null) {
+                        adapter.submitList(list)
+                        if (currentListType == ListType.Recent && list.isNullOrEmpty() && firstStart) {
+                            currentListType = ListType.All
+                            firstStart = false
+                            radioViewModel.fetchStations()
+                            updateButtons(ListType.All)
                         }
-
                     }
-                }
 
-                Resource.Status.ERROR -> {
-                    binding.progressBar.visibility = View.GONE
-                }
-
-                Resource.Status.LOADING -> {
-                    binding.progressBar.visibility = View.VISIBLE
                 }
             }
+
+            Resource.Status.ERROR -> {
+                binding.progressBar.visibility = View.GONE
+            }
+
+            Resource.Status.LOADING -> {
+                binding.progressBar.visibility = View.VISIBLE
+            }
+        }
 
     }
 
@@ -203,6 +208,6 @@ class RadioFragment : Fragment() {
     }
 }
 
-enum class ListType{
+enum class ListType {
     Recent, Favorites, All
 }

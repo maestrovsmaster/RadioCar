@@ -102,8 +102,6 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
                 setRecent(station.stationuuid, true)
 
         }
-
-
     }
 
     private fun changeCurrentStationState(newStation: Station?) {
@@ -114,11 +112,8 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
         }
         var stationEvent = StationEvent(null, PlayState.Stop)
 
-        Log.d("Station", "s@@@@@@@@@@@ currentStation= ${currentStation}")
         if (currentStation == null) {
-            Log.d("Station", "s@@@@@@@@@@@ currentStation1")
             if (newStation != null) {
-                Log.d("Station", "s@@@@@@@@@@@ currentStation2")
                 stationEvent = StationEvent(newStation, PlayState.Play)
             }
         } else {
@@ -137,7 +132,6 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
                 }
             }
         }
-        Log.d("Station", "s@@@@@@@@@@@ stationEvent = $stationEvent")
         _selectedStation.value = stationEvent
     }
 
@@ -156,12 +150,73 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     }
 
 
-    /*fun getData(): LiveData<PagingData<Station>> {
-        return stationRemoteDataSource.getStations()
+
+
+    fun switchFavorite(){
+        Log.d("SwitchFavorite","switchFavorite..")
+        _selectedStation.value?.let {
+            it.station?.let { station ->
+                Log.d("SwitchFavorite","station.. fv = ${station.isFavorite}")
+                var shouldBeFavorite = false
+                if(station.isFavorite != null){
+                    if(station.isFavorite==0){
+                        shouldBeFavorite = true
+                    }
+                }else{
+                    shouldBeFavorite = true
+                }
+
+                Log.d("SwitchFavorite","station.. shouldBeFavorite = ${shouldBeFavorite}")
+
+                refreshCurrentStationFavoriteStatus(station, shouldBeFavorite)
+
+                when(shouldBeFavorite){
+                    true -> addFavorite(station.stationuuid)
+                    false -> deleteFavorite(station.stationuuid, )
+                }
+            }
+        }
+        Log.d("SwitchFavorite","\n\n")
     }
-*/
 
 
+    private fun refreshCurrentStationFavoriteStatus(station: Station, isFavorite: Boolean) {
+        var newStation = station
+        var newStationEvent: StationEvent? = null
+        _selectedStation.value?.let { currentEvent ->
+
+            newStationEvent =currentEvent
+
+            currentEvent.station?.let {
+                newStation = it
+
+                if(isFavorite){
+                    newStation.isFavorite = 1
+                }else{
+                    newStation.isFavorite = null
+                }
+            }
+
+            newStationEvent = StationEvent(newStation, currentEvent.playState)
+        }
+        _selectedStation.value = newStationEvent
+    }
+
+
+
+    fun addFavorite(stationuuid: String) {
+        Log.d("Database",">>recentStations setRecent1")
+        viewModelScope.launch {
+            mainRepository.setFavorite(stationuuid)
+        }
+    }
+
+    fun deleteFavorite(stationuuid: String) {
+        Log.d("Database",">>recentStations setRecent1")
+        viewModelScope.launch {
+            mainRepository.deleteFavorite(stationuuid)
+        }
+    }
 
 
     fun setRecent(stationuuid: String, isRecent: Boolean) {
@@ -169,7 +224,6 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
         viewModelScope.launch {
             mainRepository.setRecent(stationuuid)
         }
-
     }
 
 

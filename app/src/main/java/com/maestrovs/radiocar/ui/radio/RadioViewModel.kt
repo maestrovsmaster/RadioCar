@@ -46,6 +46,20 @@ class RadioViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     fun fetchRecent() {
         _fetchRecentTrigger.value = Unit
     }
+
+
+
+
+    private val _fetchFavoritesTrigger = MutableLiveData<Unit>()
+    val favorites: LiveData<Resource<List<Station>>> = _fetchFavoritesTrigger.switchMap {
+        mainRepository.getFavoritesStations()
+    }
+
+    fun fetchFavorites() {
+        _fetchFavoritesTrigger.value = Unit
+    }
+
+
     //---
 
 /*

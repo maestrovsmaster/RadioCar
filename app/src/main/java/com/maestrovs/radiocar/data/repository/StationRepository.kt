@@ -24,7 +24,8 @@ class StationRepository @Inject constructor(
 
 
     fun getStations() = performGetOperation(
-        databaseQuery = { localDataSource.getAllStations() },
+        databaseQuery = { localDataSource.getAllStationsWithFavouriteStatus() //getAllStations() //getAllStationsWithFavouriteStatus()/
+                        },
         networkCall = { remoteDataSource.getStations() },
         saveCallResult = { localDataSource.insertAll(it) }
     )
