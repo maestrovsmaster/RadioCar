@@ -14,8 +14,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivCover"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_marginStart="8dp"
         android:scaleType="centerCrop"
         android:visibility="visible"
@@ -24,6 +24,23 @@
         app:layout_constraintTop_toTopOf="parent"
 
         tools:src="@drawable/bg_music" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animationView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+        app:layout_constraintStart_toStartOf="@+id/ivCover"
+        app:layout_constraintTop_toTopOf="@+id/ivCover"
+        app:layout_constraintEnd_toEndOf="@+id/ivCover"
+        app:lottie_fileName="anim_music.json"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        android:elevation="2dp"
+        android:layout_margin="8dp"
+        />
 
 
     <com.maestrovs.radiocar.ui.components.PlayPauseView
@@ -36,6 +53,21 @@
         app:layout_constraintStart_toEndOf="@id/ivCover"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/play_to_pause" />
+
+    <ProgressBar
+        android:id="@+id/loadProgress"
+        android:layout_width="66dp"
+        android:layout_height="66dp"
+        app:layout_constraintTop_toTopOf="@id/playPause"
+        app:layout_constraintBottom_toBottomOf="@id/playPause"
+        app:layout_constraintStart_toStartOf="@id/playPause"
+        app:layout_constraintEnd_toEndOf="@id/playPause"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        android:indeterminate="true"
+        android:indeterminateTintMode="src_atop"
+        android:indeterminateTint="@color/white"
+        />
 
 
     <TextView
@@ -50,6 +82,8 @@
         app:layout_constraintStart_toEndOf="@id/playPause"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="asd asd asd" />
+
+
 
     <ImageView
         android:id="@+id/btFavorite"

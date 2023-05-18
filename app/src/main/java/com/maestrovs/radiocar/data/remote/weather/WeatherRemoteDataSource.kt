@@ -2,7 +2,6 @@ package com.maestrovs.radiocar.data.remote.weather
 
 import com.maestrovs.radiocar.BuildConfig
 import com.maestrovs.radiocar.data.remote.base.BaseDataSource
-import com.maestrovs.radiocar.utils.getApiKeyFromLocalProperties
 import retrofit2.Response
 import javax.inject.Inject
 

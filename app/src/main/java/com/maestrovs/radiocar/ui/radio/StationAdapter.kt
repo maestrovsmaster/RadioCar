@@ -15,7 +15,6 @@ import com.maestrovs.radiocar.enums.radio.PlayState
 import com.maestrovs.radiocar.extensions.addRipple
 import com.maestrovs.radiocar.extensions.setVisible
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_radio.view.animationView
 import kotlinx.android.synthetic.main.item_radio.view.btFavorite
 import kotlinx.android.synthetic.main.item_radio.view.ivCover
 import kotlinx.android.synthetic.main.item_radio.view.root
@@ -143,7 +142,7 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
 
             tvName.text = "${item.name}"
 
-            animationView.setVisible(drawPlayingAnim)
+           // animationView.setVisible(drawPlayingAnim)
 
             var imgUrl: String? = null;
 
@@ -157,7 +156,7 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
 
                 Picasso.get()
                     .load(imgUrl)
-                    .resize(120, 120)
+                    .fit()
                     .centerCrop()
                     .into(ivCover)
             } else {

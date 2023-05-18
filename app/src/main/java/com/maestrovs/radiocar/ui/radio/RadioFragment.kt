@@ -47,6 +47,7 @@ class RadioFragment : Fragment() {
 
 
     private lateinit var adapter: StationAdapter
+    private lateinit var layoutManager : WrapFlexboxLayoutManager
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -77,11 +78,16 @@ class RadioFragment : Fragment() {
         // binding.recycler.layoutManager = LinearLayoutManager(requireContext())
 
 
-        val layoutManager = WrapFlexboxLayoutManager(context)
+        layoutManager = WrapFlexboxLayoutManager(context)
         layoutManager.flexDirection = FlexDirection.ROW
         layoutManager.justifyContent = JustifyContent.FLEX_START
         binding.recycler.layoutManager = layoutManager
         binding.recycler.itemAnimator = null
+
+        binding.recycler.setHasFixedSize(true);
+        binding.recycler.setItemViewCacheSize(20);
+        binding.recycler.setDrawingCacheEnabled(true);
+        binding.recycler.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
 
         binding.recycler.adapter = adapter
@@ -125,18 +131,21 @@ class RadioFragment : Fragment() {
 
         binding.btAll.setOnClickListener {
             currentListType = ListType.All
+            layoutManager.justifyContent = JustifyContent.SPACE_AROUND
             updateButtons(ListType.All)
             radioViewModel.fetchStations()
         }
 
         binding.btRecent.setOnClickListener {
             currentListType = ListType.Recent
+            layoutManager.justifyContent = JustifyContent.FLEX_START
             updateButtons(ListType.Recent)
             radioViewModel.fetchRecent()
         }
 
         binding.btFavorite.setOnClickListener {
             currentListType = ListType.Favorites
+            layoutManager.justifyContent = JustifyContent.FLEX_START
             updateButtons(ListType.Favorites)
             radioViewModel.fetchFavorites()
         }
@@ -177,6 +186,7 @@ class RadioFragment : Fragment() {
                         if (currentListType == ListType.Recent  && firstStart) {
                             if(list.isNullOrEmpty()) {
                                 currentListType = ListType.All
+                                layoutManager.justifyContent = JustifyContent.FLEX_START
                                 firstStart = false
                                 radioViewModel.fetchStations()
                                 updateButtons(ListType.All)

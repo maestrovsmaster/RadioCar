@@ -1,6 +1,8 @@
 package com.maestrovs.radiocar.ui.bottom
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +26,8 @@ class BottomFragment : Fragment() {
     private var _binding: FragmentBottomBinding? = null
 
     private var lastStationEvent: StationEvent? = null
+
+    private val delayLoadAnimation = 850L
 
     private val mainViewModel by lazy {
         ViewModelProvider(requireActivity())[MainViewModel::class.java].apply {
@@ -71,11 +75,13 @@ class BottomFragment : Fragment() {
 
         var favoriteImgRes = R.drawable.ic_empty_24
 
-        var contentVisible = false
+        var isPlaying = false
 
         var shouldUpdatePlayButton = true
 
         var welcomeVisiblity = false
+
+        var drawPlayingAnim = false
 
         selectedStation?.let { stationEvent ->
 
@@ -102,7 +108,7 @@ class BottomFragment : Fragment() {
                     }
                 }
 
-                contentVisible = true
+                isPlaying = true
                 favoriteImgRes = R.drawable.ic_favorite_stroke_48
                 station.isFavorite?.let {
                     if (it == 1) {
@@ -121,6 +127,11 @@ class BottomFragment : Fragment() {
 
                 }
 
+                drawPlayingAnim = when (stationEvent.playState) {
+                    PlayState.Play -> true
+                    PlayState.Stop -> false
+                }
+
             }
             lastStationEvent = stationEvent
 
@@ -132,8 +143,9 @@ class BottomFragment : Fragment() {
         if(shouldUpdatePlayButton) {
             binding.playPause.setState(playPause)
         }
-        binding.playPause.setVisible(contentVisible)
+        binding.playPause.setVisible(isPlaying)
 
+       // binding.animationView.setVisible(drawPlayingAnim)
 
         binding.btFavorite.setImageDrawable(
             ContextCompat.getDrawable(
@@ -143,7 +155,7 @@ class BottomFragment : Fragment() {
         )
 
 
-        binding.ivCover.setVisible(contentVisible)
+
 
         if (imgUrl != null) {
 
@@ -158,6 +170,33 @@ class BottomFragment : Fragment() {
                 .resize(120, 120)
                 .centerCrop()
                 .into(binding.ivCover)
+        }
+
+        showLoad(drawPlayingAnim)
+
+        showPlayAnim(drawPlayingAnim)
+    }
+
+
+
+    private fun showPlayAnim(drawPlayingAnim: Boolean){
+        if(!drawPlayingAnim) {
+            binding.animationView.setVisible(drawPlayingAnim)
+        }else{
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.animationView.setVisible(true)
+            },delayLoadAnimation)
+        }
+    }
+
+    private fun showLoad(isPlaying: Boolean){
+        if(!isPlaying) {
+            binding.loadProgress.setVisible(false)
+        }else {
+            binding.loadProgress.setVisible(true)
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.loadProgress.setVisible(false)
+            }, delayLoadAnimation)
         }
     }
 

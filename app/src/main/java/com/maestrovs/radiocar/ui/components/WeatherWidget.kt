@@ -1,7 +1,6 @@
 package com.maestrovs.radiocar.ui.components
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -9,14 +8,9 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
-import com.maestrovs.radiocar.databinding.ComponentWeatherBinding
-import com.maestrovs.radiocar.databinding.FragmentRadioBinding
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_radio.view.ivCover
 
 
 open class WeatherWidget : FrameLayout {
