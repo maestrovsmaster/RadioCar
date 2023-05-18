@@ -7,17 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.exoplayer2.util.Log
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.data.entities.Station
 import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.maestrovs.radiocar.databinding.FragmentBottomBinding
 import com.maestrovs.radiocar.ui.components.PlayPauseView
-import com.maestrovs.radiocar.enums.PlayState
+import com.maestrovs.radiocar.enums.radio.PlayState
 import com.maestrovs.radiocar.extensions.setVisible
 import com.maestrovs.radiocar.ui.radio.StationEvent
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_radio.view.ivCover
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -78,18 +75,24 @@ class BottomFragment : Fragment() {
 
         var shouldUpdatePlayButton = true
 
+        var welcomeVisiblity = false
+
         selectedStation?.let { stationEvent ->
+
+
 
             playPause = when (stationEvent.playState) {
                 PlayState.Play -> PlayPauseView.STATE_PLAY
                 PlayState.Stop -> PlayPauseView.STATE_PAUSE
             }
 
+            if(stationEvent.station == null){
+                welcomeVisiblity = true
+            }
+
             stationEvent.station?.let { station ->
 
 
-
-                Log.d("SwitchFavorite", "++++++++++++++++++=station isFavorite = ${station.isFavorite}")
 
                 text = station.name ?: " ??? "
 
@@ -122,6 +125,8 @@ class BottomFragment : Fragment() {
             lastStationEvent = stationEvent
 
         }
+
+        binding.lnWelcome.setVisible(welcomeVisiblity)
 
         binding.tvStation.text = text
         if(shouldUpdatePlayButton) {

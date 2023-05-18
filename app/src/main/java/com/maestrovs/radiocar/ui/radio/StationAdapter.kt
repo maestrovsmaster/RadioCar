@@ -6,13 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.data.entities.Station
-import com.maestrovs.radiocar.enums.PlayState
+import com.maestrovs.radiocar.data.entities.radio.Station
+import com.maestrovs.radiocar.enums.radio.PlayState
 import com.maestrovs.radiocar.extensions.addRipple
 import com.maestrovs.radiocar.extensions.setVisible
 import com.squareup.picasso.Picasso

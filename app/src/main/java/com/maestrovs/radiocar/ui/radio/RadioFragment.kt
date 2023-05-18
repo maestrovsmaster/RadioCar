@@ -7,20 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.ui.main.MainViewModel
-import com.maestrovs.radiocar.data.entities.Station
+import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.databinding.FragmentRadioBinding
 import com.maestrovs.radiocar.ui.components.WrapFlexboxLayoutManager
 import com.maestrovs.radiocar.utils.Resource
-import com.maestrovs.radiocar.utils.combineWith
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -179,11 +174,15 @@ class RadioFragment : Fragment() {
                 response.data.let { list ->
                     if (list != null) {
                         adapter.submitList(list)
-                        if (currentListType == ListType.Recent && list.isNullOrEmpty() && firstStart) {
-                            currentListType = ListType.All
-                            firstStart = false
-                            radioViewModel.fetchStations()
-                            updateButtons(ListType.All)
+                        if (currentListType == ListType.Recent  && firstStart) {
+                            if(list.isNullOrEmpty()) {
+                                currentListType = ListType.All
+                                firstStart = false
+                                radioViewModel.fetchStations()
+                                updateButtons(ListType.All)
+                            }else if(list.isNotEmpty()){
+                                mainViewModel.setIfNeedInitStation(list[0])
+                            }
                         }
                     }
 

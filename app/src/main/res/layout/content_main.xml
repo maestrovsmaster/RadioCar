@@ -10,7 +10,7 @@
 
 
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_content_control"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
@@ -24,7 +24,15 @@
         app:layout_constraintHeight_percent="0.25"
         app:navGraph="@navigation/nav_control" />
 
-    <fragment
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        app:layout_constraintTop_toBottomOf="@id/nav_host_fragment_content_control"
+        android:background="@color/gray"/>
+
+
+
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_content_main"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
@@ -37,8 +45,16 @@
         app:navGraph="@navigation/nav_graph" />
 
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintTop_toBottomOf="@id/nav_host_fragment_content_main"
+        android:background="@color/gray"
+        android:elevation="1dp"
+        />
 
-    <fragment
+
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_content_bottom"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
@@ -46,6 +62,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="2dp"
         app:defaultNavHost="false"
         app:layout_constraintEnd_toStartOf="@id/nav_host_fragment_content_main"
         app:navGraph="@navigation/nav_bottom" />

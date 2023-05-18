@@ -9,8 +9,15 @@
     <color name="dark_blue">#042485</color>
     <color name="dark_blue_60">#99042485</color>
 
-    <color name="pink">#E91EB6</color>
+    <color name="blue_cold">#05DCE3</color>
+
+
+    <color name="gray">#C4C6C7</color>
     <color name="pink_gray">#7D70A1</color>
+    <color name="pink">#E91EB6</color>
+    <color name="green">#B6E91E</color>
+    <color name="teal">#1EE984</color>
+    <color name="red">#E9391E</color>
 
     <color name="transparent">#00000000</color>
 

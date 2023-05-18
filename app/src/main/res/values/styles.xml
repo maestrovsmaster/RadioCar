@@ -15,4 +15,18 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
+    <style name="SelectableTealItemTheme">
+        <item name="colorControlHighlight">@color/teal</item>
+    </style>
+
+    <style name="SelectableTealItemBackground">
+        <item name="android:theme">@style/SelectableTealItemTheme</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+
+    <style name="RippleColorTheme" parent="Widget.AppCompat.ActionButton">
+        <item name="colorControlHighlight">@color/red</item>
+    </style>
+
 </resources>

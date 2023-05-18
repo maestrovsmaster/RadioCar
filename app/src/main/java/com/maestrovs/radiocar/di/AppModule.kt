@@ -1,42 +1,65 @@
 package com.maestrovs.radiocar.di
 
 import android.content.Context
-import com.maestrovs.radiocar.data.local.AppDatabase
-import com.maestrovs.radiocar.data.local.StationDao
-import com.maestrovs.radiocar.data.remote.StationRemoteDataSource
-import com.maestrovs.radiocar.data.remote.StationService
-import com.maestrovs.radiocar.data.repository.StationRepository
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.maestrovs.radiocar.common.Constants.BASE_URL
-import com.maestrovs.radiocar.data.local.FavoritesDao
-import com.maestrovs.radiocar.data.local.RecentDao
+import com.maestrovs.radiocar.common.Constants.BASE_RADIO_URL
+import com.maestrovs.radiocar.common.Constants.BASE_WEATHER_URL
+import com.maestrovs.radiocar.data.local.radio.AppDatabase
+import com.maestrovs.radiocar.data.local.radio.FavoritesDao
+import com.maestrovs.radiocar.data.local.radio.RecentDao
+import com.maestrovs.radiocar.data.local.radio.StationDao
+import com.maestrovs.radiocar.data.remote.radio.StationRemoteDataSource
+import com.maestrovs.radiocar.data.remote.radio.StationService
+import com.maestrovs.radiocar.data.remote.weather.WeatherRemoteDataSource
+import com.maestrovs.radiocar.data.remote.weather.WeatherService
+import com.maestrovs.radiocar.data.repository.StationRepository
+import com.maestrovs.radiocar.data.repository.WeatherRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
+
 
 @Module
 @InstallIn(ApplicationComponent::class)
 object AppModule {
 
-    @Singleton
-    @Provides
-    fun provideRetrofit(gson: Gson): Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .build()
+    //Common
 
     @Provides
     fun provideGson(): Gson = GsonBuilder().create()
 
+
+
+    //Radio
+
+    @Singleton
     @Provides
-    fun provideStationService(retrofit: Retrofit): StationService = retrofit.create(
+    @Named("radio")
+    fun provideRadioRetrofit(gson: Gson): Retrofit {
+
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        val client: OkHttpClient = OkHttpClient.Builder().addInterceptor(interceptor).build()
+
+
+        return Retrofit.Builder()
+            .baseUrl(BASE_RADIO_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+    }
+
+    @Provides
+    fun provideStationService(@Named("radio") retrofit: Retrofit): StationService = retrofit.create(
         StationService::class.java
     )
 
@@ -64,11 +87,46 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideRepository(
+    fun provideRadioRepository(
         remoteDataSource: StationRemoteDataSource,
         localDataSource: StationDao, recentSource: RecentDao, favoritesSource: FavoritesDao
     ) =
         StationRepository(remoteDataSource, localDataSource, recentSource, favoritesSource)
 
+
+
+    //Weather
+
+    @Singleton
+    @Provides
+    @Named("weather")
+    fun provideWeatherRetrofit(gson: Gson): Retrofit {
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        val client: OkHttpClient = OkHttpClient.Builder().addInterceptor(interceptor).build()
+
+        return Retrofit.Builder()
+            .baseUrl(BASE_WEATHER_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    fun provideWeatherService(@Named("weather") retrofit: Retrofit): WeatherService = retrofit.create(
+        WeatherService::class.java
+    )
+
+    @Singleton
+    @Provides
+    fun provideWeatherRemoteDataSource(weatherService: WeatherService) =
+        WeatherRemoteDataSource(weatherService)
+
+    @Singleton
+    @Provides
+    fun provideWeatherRepository(
+        remoteDataSource: WeatherRemoteDataSource,
+    ) =
+        WeatherRepository(remoteDataSource)
 
 }

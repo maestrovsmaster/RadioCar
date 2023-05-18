@@ -10,7 +10,7 @@
 
 
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_content_control"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
@@ -19,11 +19,11 @@
         app:layout_constraintHorizontal_weight="3"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/nav_host_fragment_content_bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/nav_host_fragment_content_main"
         app:navGraph="@navigation/nav_control" />
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_content_main"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
@@ -36,18 +36,27 @@
         app:layout_constraintHorizontal_weight="7"
         app:navGraph="@navigation/nav_graph" />
 
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/nav_host_fragment_content_control"
+        android:background="@color/gray"
+        android:elevation="1dp"
+        />
 
 
-    <fragment
+
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_content_bottom"
         android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="90dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/nav_host_fragment_content_control"
         app:layout_constraintEnd_toEndOf="parent"
         app:defaultNavHost="false"
-        app:layout_constraintEnd_toStartOf="@id/nav_host_fragment_content_main"
         app:navGraph="@navigation/nav_bottom" />
 
 

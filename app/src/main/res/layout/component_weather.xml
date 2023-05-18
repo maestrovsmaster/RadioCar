@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/gray"
+    android:layout_margin="0dp"
+    >
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="4dp"
+            >
+
+
+            <ImageView
+                android:id="@+id/ivWeatherIcon"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:elevation="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/ic_favorite"
+                android:scaleType="fitCenter"
+                android:layout_margin="4dp"
+                />
+
+            <TextView
+                android:id="@+id/tvCity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivWeatherIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                android:gravity="start"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                tools:text="CityName" />
+
+            <TextView
+                android:id="@+id/tvTemperature"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toEndOf="@id/ivWeatherIcon"
+                app:layout_constraintTop_toBottomOf="@id/tvCity"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:gravity="start|center"
+                tools:text="+25"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-medium"
+                />
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+
+

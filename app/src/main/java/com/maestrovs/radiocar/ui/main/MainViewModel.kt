@@ -3,20 +3,17 @@ package com.maestrovs.radiocar.ui.main
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.maestrovs.radiocar.data.entities.Station
+import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.repository.StationRepository
-import com.maestrovs.radiocar.enums.PlayAction
-import com.maestrovs.radiocar.enums.PlayState
+import com.maestrovs.radiocar.enums.radio.PlayAction
+import com.maestrovs.radiocar.enums.radio.PlayState
 import com.maestrovs.radiocar.events.PlayActionEvent
 import com.maestrovs.radiocar.events.PlayUrlEvent
 import com.maestrovs.radiocar.ui.radio.StationEvent
-import com.maestrovs.radiocar.utils.Resource
-import com.maestrovs.radiocar.utils.combineWith
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -42,6 +39,26 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     val selectedStation: LiveData<StationEvent> = _selectedStation
 
     var lastPlayUrlEvent: PlayUrlEvent? = null
+
+
+
+
+    fun setIfNeedInitStation(station: Station){
+        Log.d("Recent++","recent+")
+        var shouldSetLastRecent = false
+        _selectedStation.value?.let{
+            Log.d("Recent++","recent++")
+            if(it.station == null){
+                Log.d("Recent++","recent+++")
+                shouldSetLastRecent = true
+            }
+
+        }
+        if(shouldSetLastRecent){
+            _selectedStation.value = StationEvent(station, PlayState.Stop)
+        }
+    }
+
 
     private fun setStationEvent() {
         Log.d("Station", "switchStationState  setStationEvent = ${selectedStation.value}")

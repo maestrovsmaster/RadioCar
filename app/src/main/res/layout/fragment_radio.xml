@@ -7,10 +7,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/pink"/>
+
 
 
     <LinearLayout
@@ -69,7 +66,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/pink"/>
+        android:background="@color/gray"/>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

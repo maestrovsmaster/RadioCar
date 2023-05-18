@@ -22,8 +22,8 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.ui.PlayerNotificationManager.NotificationListener
 import com.google.android.exoplayer2.util.Log
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.enums.PlayAction
-import com.maestrovs.radiocar.enums.PlayState
+import com.maestrovs.radiocar.enums.radio.PlayAction
+import com.maestrovs.radiocar.enums.radio.PlayState
 import com.maestrovs.radiocar.events.PlayActionEvent
 import com.maestrovs.radiocar.events.PlayUrlEvent
 import com.maestrovs.radiocar.ui.main.MainActivity
