@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,15 +11,18 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:cardCornerRadius="8dp"
     app:cardElevation="8dp"
-    app:cardBackgroundColor="@color/gray"
+    app:cardBackgroundColor="@color/white"
     android:layout_margin="0dp"
+    tools:layout_width="150dp"
     >
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layWeather"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="4dp"
+            tools:visibility="visible"
             >
 
 
@@ -32,7 +36,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/ic_favorite"
                 android:scaleType="fitCenter"
-                android:layout_margin="4dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="3dp"
                 />
 
             <TextView
@@ -46,7 +51,10 @@
                 android:gravity="start"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                tools:text="CityName" />
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:text="CityName wery wery long"
+                />
 
             <TextView
                 android:id="@+id/tvTemperature"
@@ -67,6 +75,55 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layError"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="4dp"
+        android:visibility="gone"
+        tools:visibility="invisible"
+        >
+
+        <ImageView
+            android:id="@+id/ivErrIcon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:elevation="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/ic_no_weather"
+            android:scaleType="fitCenter"
+            android:layout_margin="4dp"
+            app:tint="@color/red" />
+
+        <TextView
+            android:id="@+id/tvErrText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivErrIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="4dp"
+            android:gravity="start"
+            android:textColor="@color/red"
+            android:textSize="12sp"
+            android:text="Weather service isn't available" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:indeterminateTintMode="src_atop"
+        android:indeterminateTint="@color/gray"
+        />
 
 
     </androidx.cardview.widget.CardView>

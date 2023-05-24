@@ -14,4 +14,6 @@
     <string name="symbol_radio">&#128251;</string>
     <string name="notification_radio_description">The best Car radio 🚗</string>
 
+    <string name="weather_unavailable">Weather service isnt available</string>
+
 </resources>

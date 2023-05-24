@@ -10,4 +10,6 @@ object Constants {
     const val BASE_WEATHER_URL = "https://api.openweathermap.org/"
 
 
+    const val CHECK_WEATHER_MINUTES_DELAY = 1
+
 }

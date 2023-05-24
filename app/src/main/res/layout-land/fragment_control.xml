@@ -20,13 +20,63 @@
         android:layout_weight="1" />
 
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
         android:layout_weight="1"
-        app:cardBackgroundColor="@color/red"
-        app:cardCornerRadius="8dp"></androidx.cardview.widget.CardView>
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        >
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:cardCornerRadius="6dp"
+
+            >
+
+            <ImageView
+                android:id="@+id/btBluetooth"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:src="@drawable/ic_bt_on"
+                android:scaleType="fitCenter"
+                android:padding="8dp"
+                android:background="@drawable/ripple_gray_bl"
+                android:clickable="true"
+                android:focusable="true"
+                />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:cardCornerRadius="6dp"
+            android:layout_marginStart="16dp"
+
+            >
+
+            <ImageView
+                android:id="@+id/btSettings"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_settings"
+                android:scaleType="fitCenter"
+                android:padding="8dp"
+                android:background="@drawable/ripple_gray_bl"
+                android:clickable="true"
+                android:focusable="true"
+                />
+
+        </androidx.cardview.widget.CardView>
+
+
+    </LinearLayout>
 
 
     <LinearLayout

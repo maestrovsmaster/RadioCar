@@ -1,5 +1,6 @@
 package com.maestrovs.radiocar.ui.main
 
+import android.location.Location
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -31,6 +32,37 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     init {
         EventBus.getDefault().register(this);
     }
+
+
+    private var _bluetoothStatus =  MutableLiveData<Boolean?>(null)
+    val bluetoothStatus get() = _bluetoothStatus
+    fun setBluetoothStatus(isEnabled: Boolean){
+        _bluetoothStatus.value = isEnabled
+    }
+
+
+    private var _speed =  MutableLiveData<Float>(0f)
+    val speed get() = _speed
+
+
+    private var _currentLocation =  MutableLiveData<Location?>(null)
+    val location get() = _currentLocation
+    fun setLocation(newLocation: Location) {
+
+
+
+        _currentLocation.value = newLocation
+
+
+        location.value?.let {
+            _speed.value = SpeedManager.updateSpeed(it)
+        }
+
+    }
+
+
+
+
 
 
     private var _selectedStation = MutableLiveData<StationEvent>(null).apply {
