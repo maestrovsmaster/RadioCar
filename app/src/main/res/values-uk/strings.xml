@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RadioCar</string>
-    <string name="weather_unavailable">Weather service isn\'t available</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="next">Далі</string>
+    <string name="previous">Назад</string>
+    <string name="notification_radio_description">Краще Авто Радіо</string>
+    <string name="weather_unavailable">Сервіс погоди недоступний</string>
+    <string name="confirm_exit">Вийти із застосунку?</string>
+    <string name="yes">ТАК</string>
+    <string name="no">НІ</string>
+    <string name="km_h">км/год</string>
 </resources>

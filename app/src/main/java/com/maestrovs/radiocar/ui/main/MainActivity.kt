@@ -13,18 +13,24 @@ import android.os.Bundle
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import android.view.KeyEvent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.maestrovs.radiocar.common.Constants
 import com.maestrovs.radiocar.databinding.ActivityMainBinding
 import com.maestrovs.radiocar.service.AudioPlayerService
+import com.maestrovs.radiocar.ui.components.ExitDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -103,6 +109,17 @@ class MainActivity : AppCompatActivity() {
 
         // Register a broadcast receiver for observing Bluetooth status changes
         registerBluetoothStatusReceiver()
+
+
+       /* //save last location
+        lifecycleScope.launch {
+            while (true) {
+                   mainViewModel.location.value?.let {
+                       WeatherManager.setCurrentLocationCoords(this@MainActivity, it.getCoords2d() )
+                   }
+                delay(Constants.SAVE_LAST_LOCATION_DELAY * 60 * 1000L) // Delay for CHECK_WEATHER_MINUTES_DELAY minutes
+            }
+        }*/
     }
 
 
@@ -202,7 +219,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        Log.d("onBack","onBack")
+        return if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Log.d("onBack","onBack1")
+            ExitDialog(this).show()
+            false
+        } else super.onKeyDown(keyCode, event)
+    }
 
 
 }

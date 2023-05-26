@@ -10,6 +10,8 @@ import androidx.lifecycle.viewModelScope
 import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
 import com.maestrovs.radiocar.data.repository.WeatherRepository
+import com.maestrovs.radiocar.ui.main.Coords2d
+import com.maestrovs.radiocar.ui.main.WeatherManager
 import com.maestrovs.radiocar.utils.Resource
 import kotlinx.coroutines.launch
 
@@ -47,6 +49,10 @@ class ControlViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
 
         val lat: Double = location.latitude
         val lon: Double = location.longitude
+
+
+
+
         viewModelScope.launch {
             val response = weatherRepository.getWeatherDataByCoordinates(lat, lon)
             when (response.status) {

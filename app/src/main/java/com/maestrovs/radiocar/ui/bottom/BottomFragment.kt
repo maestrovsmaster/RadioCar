@@ -61,9 +61,15 @@ class BottomFragment : Fragment() {
             mainViewModel.switchCurrentStationState()
         }
 
+        binding.tvStation.setOnClickListener {
+            mainViewModel.switchCurrentStationState()
+        }
+
         binding.btFavorite.setOnClickListener {
             mainViewModel.switchFavorite()
         }
+
+
 
     }
 
@@ -97,6 +103,7 @@ class BottomFragment : Fragment() {
             }
 
             stationEvent.station?.let { station ->
+
 
 
 

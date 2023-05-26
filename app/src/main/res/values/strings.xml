@@ -2,18 +2,24 @@
     <string name="app_name">RadioCar</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="station_detail_bitrate">%1$1d kbps</string>
-    <string name="station_detail_broken">INDISPONIBLE</string>
-    <string name="station_detail_deleted_on_server">SUPPRIMÉ</string>
+    <string name="station_detail_bitrate" translatable="false">%1$1d kbps</string>
+    <string name="station_detail_broken" translatable="false">INDISPONIBLE</string>
+    <string name="station_detail_deleted_on_server" translatable="false">SUPPRIMÉ</string>
 
-    <string name="symbol_radio">&#128251;</string>
+    <string name="symbol_radio" translatable="false">&#128251;</string>
     <string name="notification_radio_description">The best Car radio 🚗</string>
 
     <string name="weather_unavailable">Weather service isnt available</string>
+
+    <string name="confirm_exit">Are you certain that you wish to exit the application?</string>
+
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+
+    <string name="km_h">km/h</string>
 
 </resources>

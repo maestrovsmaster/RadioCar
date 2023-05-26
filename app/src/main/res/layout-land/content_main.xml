@@ -16,7 +16,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:defaultNavHost="true"
-        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintHorizontal_weight="5"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -33,7 +33,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/nav_host_fragment_content_control"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_weight="7"
+        app:layout_constraintHorizontal_weight="6"
         app:navGraph="@navigation/nav_graph" />
 
     <View

@@ -81,7 +81,9 @@
         app:layout_constraintEnd_toStartOf="@id/btFavorite"
         app:layout_constraintStart_toEndOf="@id/playPause"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="asd asd asd" />
+        tools:text="asd asd asd"
+        android:clickable="true"
+        />
 
 
 

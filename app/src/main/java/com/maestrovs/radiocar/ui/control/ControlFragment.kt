@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +15,14 @@ import androidx.lifecycle.lifecycleScope
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.common.Constants.CHECK_WEATHER_MINUTES_DELAY
 import com.maestrovs.radiocar.databinding.FragmentControlBinding
+import com.maestrovs.radiocar.ui.main.Coords2d
 import com.maestrovs.radiocar.ui.main.MainViewModel
+import com.maestrovs.radiocar.ui.main.WeatherManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.Math.round
+
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -71,16 +75,16 @@ class ControlFragment : Fragment() {
             launchPhoneIntent()
         }
 
-        binding.btBluetooth!!.setOnClickListener {
+        binding.btBluetooth.setOnClickListener {
             launchBluetoothIntent()
         }
 
 
         mainViewModel.bluetoothStatus.observe(viewLifecycleOwner){
             val isBluetoothEnable = it?:return@observe
-            binding.btBluetooth.setImageDrawable(ContextCompat.getDrawable(requireContext(),
+            binding.btBluetooth.setIconResource(
                 if(isBluetoothEnable){
-                    R.drawable.ic_bt_on}else{R.drawable.ic_bt_off}))
+                    R.drawable.ic_bt_on}else{R.drawable.ic_bt_off})
         }
 
 
@@ -108,6 +112,9 @@ class ControlFragment : Fragment() {
 
         controlViewModel.weatherResponse.observe(viewLifecycleOwner) {
             binding.weatherWidget.setWeatherResponse(it)
+
+
+
         }
 
         controlViewModel.weatherError.observe(viewLifecycleOwner) {
@@ -133,6 +140,7 @@ class ControlFragment : Fragment() {
                     controlViewModel.fetchWeather()
                 }
                 delay(CHECK_WEATHER_MINUTES_DELAY * 60 * 1000L) // Delay for CHECK_WEATHER_MINUTES_DELAY minutes
+
             }
         }
 
@@ -168,6 +176,8 @@ class ControlFragment : Fragment() {
     fun customRound(number: Double): Double {
         return if (number - number.toInt() >= 0.4) round(number).toDouble() else number.toInt().toDouble() + 2
     }
+
+
 
 
     override fun onDestroyView() {
