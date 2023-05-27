@@ -4,7 +4,7 @@
     <item android:id="@android:id/mask">
         <shape android:shape="rectangle">
             <solid android:color="@color/gray" />
-            <corners android:radius="@dimen/ripple_radius" />
+            <corners android:radius="8dp" />
         </shape>
     </item>
 
@@ -12,8 +12,20 @@
         <shape xmlns:android="http://schemas.android.com/apk/res/android"
             android:shape="rectangle">
             <gradient android:type="radial" android:gradientRadius="70dp"
-                android:startColor="#33B5B2B5" android:endColor="#CC958795" />
+                android:startColor="#3326D67E" android:endColor="#E6368C61"
 
+                />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+
+    <item android:id="@android:id/background">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="rectangle">
+            <corners android:radius="8dp"></corners> <!-- change this -->
+            <stroke
+                android:width="2dp"
+                android:color="#69B867"/>
         </shape>
     </item>
 </ripple>

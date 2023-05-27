@@ -154,22 +154,20 @@ class RadioFragment : Fragment() {
     }
 
 
-    fun updateButtons(listType: ListType) {
-        val activeColor = ContextCompat.getColor(requireContext(), R.color.pink)
-        val inactiveColor = ContextCompat.getColor(requireContext(), R.color.white_80)
+    private fun updateButtons(listType: ListType) {
 
-        var colorRecent = inactiveColor
-        var colorFavorites = inactiveColor
-        var colorAll = inactiveColor
+        var colorRecent = R.drawable.ripple_gray_round
+        var colorFavorites = R.drawable.ripple_gray_round
+        var colorAll = R.drawable.ripple_gray_round
 
         when (listType) {
-            ListType.Recent -> colorRecent = activeColor
-            ListType.Favorites -> colorFavorites = activeColor
-            ListType.All -> colorAll = activeColor
+            ListType.Recent -> colorRecent = R.drawable.ripple_pink_round
+            ListType.Favorites -> colorFavorites = R.drawable.ripple_pink_round
+            ListType.All -> colorAll = R.drawable.ripple_pink_round
         }
-        binding.btRecent.setColorFilter(colorRecent, android.graphics.PorterDuff.Mode.SRC_IN)
-        binding.btFavorite.setColorFilter(colorFavorites, android.graphics.PorterDuff.Mode.SRC_IN)
-        binding.btAll.setColorFilter(colorAll, android.graphics.PorterDuff.Mode.SRC_IN)
+       binding.btRecent.setCardBackground(colorRecent)
+        binding.btFavorite.setCardBackground(colorFavorites)
+       binding.btAll.setCardBackground(colorAll)
 
     }
 

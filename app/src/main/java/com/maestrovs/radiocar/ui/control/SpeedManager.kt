@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.ui.main
+package com.maestrovs.radiocar.ui.control
 
 import android.location.Location
 import android.util.Log
@@ -7,10 +7,10 @@ import kotlin.math.round
 object SpeedManager {
 
 
-    private val cacheSize = 5
+    private val cacheSize = 3
 
     private var arrSpeed = mutableListOf<Float>(
-        0f, 0f, 0f, 0f, 0f,
+        0f, 0f, 0f, //0f, 0f,
     )
 
 
@@ -55,6 +55,18 @@ object SpeedManager {
 
         return mediumSpeed
 
+    }
+
+    fun getSpeedForAnimation(speed: Float): Float = if (speed <= 3.0) {
+        0.2f
+    } else if (speed > 3 && speed < 30) {
+        0.5f
+    } else if (speed >= 30 && speed < 70) {
+        1f
+    } else if (speed >= 70 && speed < 120) {
+        2f
+    } else {
+        3f
     }
 
 

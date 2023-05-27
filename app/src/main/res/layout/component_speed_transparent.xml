@@ -34,7 +34,7 @@
             android:gravity="start|center"
             android:textColor="@color/white"
             android:textSize="28sp"
-            android:text="95" />
+            tools:text="95" />
 
 
         <TextView

@@ -4,20 +4,16 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.common.Constants.CHECK_WEATHER_MINUTES_DELAY
 import com.maestrovs.radiocar.databinding.FragmentControlBinding
-import com.maestrovs.radiocar.ui.main.Coords2d
 import com.maestrovs.radiocar.ui.main.MainViewModel
-import com.maestrovs.radiocar.ui.main.WeatherManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -104,9 +100,13 @@ class ControlFragment : Fragment() {
 
         }
 
-      /*  mainViewModel.speed.observe(viewLifecycleOwner){
-           // binding.speedView!!.speedTo(it,800)
-        }*/
+        mainViewModel.speed.observe(viewLifecycleOwner){ speed ->
+            binding.speedView.setSpeed(speed)
+
+
+
+            binding.animationView.speed = SpeedManager.getSpeedForAnimation(speed)
+        }
 
 
 

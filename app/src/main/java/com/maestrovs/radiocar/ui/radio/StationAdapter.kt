@@ -40,7 +40,7 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
     private val differ = AsyncListDiffer(this, diffCallback)
 
 
-    private var stationEvent: StationEvent? = null;
+    private var stationEvent: StationEvent? = null
 
     interface ItemListener {
         fun onClickedCharacter(item: Station?)
@@ -106,7 +106,7 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
             var selected = false
             var selectedColor = ContextCompat.getColor(context, R.color.transparent)
 
-            var drawPlayingAnim = false;
+            var drawPlayingAnim = false
 
             stationEvent?.let { event ->
                 event.station?.let { selectedStation ->
@@ -127,7 +127,9 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
 
 
             if (selected) {
-                root.setBackgroundColor(selectedColor)
+                //root.setBackgroundColor(selectedColor)
+
+                root.background = ContextCompat.getDrawable(context, R.drawable.ripple_stroke_white)
             } else {
                 root.addRipple().apply {
                     background = with(TypedValue()) {
@@ -144,10 +146,10 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
 
            // animationView.setVisible(drawPlayingAnim)
 
-            var imgUrl: String? = null;
+            var imgUrl: String? = null
 
             Log.d("Picasso", "icon = ${item.favicon}")
-            item.favicon?.let { icon ->
+            item.favicon.let { icon ->
                 if (!icon.isNullOrEmpty()) {
                     imgUrl = item.favicon
                 }

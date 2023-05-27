@@ -14,6 +14,7 @@ import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.enums.radio.PlayState
 import com.maestrovs.radiocar.events.PlayActionEvent
 import com.maestrovs.radiocar.events.PlayUrlEvent
+import com.maestrovs.radiocar.ui.control.SpeedManager
 import com.maestrovs.radiocar.ui.radio.StationEvent
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus

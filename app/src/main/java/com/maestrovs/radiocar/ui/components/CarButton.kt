@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.databinding.ComponentCarButtonBinding
 
-class CarButton (
+class CarButton(
     context: Context,
     attributeSet: AttributeSet
 ) : LinearLayout(context, attributeSet) {
@@ -26,25 +26,33 @@ class CarButton (
 
         binding.apply {
 
-            val icon = typedArray.getResourceId(R.styleable.CarButton_icon,R.drawable.ic_settings)
-            try{
-                icImage.setImageDrawable(ContextCompat.getDrawable(context,icon))
-            }catch (_: Exception){}
+            val icon = typedArray.getResourceId(R.styleable.CarButton_icon, R.drawable.ic_settings)
+            try {
+                icImage.setImageDrawable(ContextCompat.getDrawable(context, icon))
+            } catch (_: Exception) {
+            }
 
-            val background = typedArray.getResourceId(R.styleable.CarButton_background_tint,R.drawable.ripple_gray_round)
-            try{
+            val background = typedArray.getResourceId(
+                R.styleable.CarButton_background_tint,
+                R.drawable.ripple_gray_round
+            )
+            try {
                 icImage.setBackgroundResource(background)
-            }catch (_: Exception){}
+            } catch (_: Exception) {
+            }
 
-            val strokeColor = typedArray.getResourceId(R.styleable.CarButton_stroke_color,R.color.white)
-            try{
+            val strokeColor =
+                typedArray.getResourceId(R.styleable.CarButton_stroke_color, R.color.white)
+            try {
                 cardView.strokeColor = ContextCompat.getColor(context, strokeColor)
-            }catch (_: Exception){}
+            } catch (_: Exception) {
+            }
 
-            val strokeWidth = typedArray.getLayoutDimension(R.styleable.CarButton_stroke_width,0)
-            try{
+            val strokeWidth = typedArray.getLayoutDimension(R.styleable.CarButton_stroke_width, 0)
+            try {
                 cardView.strokeWidth = strokeWidth
-            }catch (_: Exception){}
+            } catch (_: Exception) {
+            }
 
 
             isClickable = true
@@ -60,10 +68,18 @@ class CarButton (
     }
 
 
-    public fun setIconResource(icon: Int){
-        try{
-            binding.icImage.setImageDrawable(ContextCompat.getDrawable(context,icon))
-        }catch (_: Exception){}
+    public fun setCardBackground(background: Int) {
+        try {
+            binding.icImage.setBackgroundResource(background)
+        } catch (_: Exception) {
+        }
+    }
+
+    public fun setIconResource(icon: Int) {
+        try {
+            binding.icImage.setImageDrawable(ContextCompat.getDrawable(context, icon))
+        } catch (_: Exception) {
+        }
     }
 
     override fun setOnClickListener(l: OnClickListener?) {

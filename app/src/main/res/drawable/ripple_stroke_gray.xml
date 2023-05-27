@@ -11,9 +11,10 @@
     <item android:id="@android:id/background">
         <shape xmlns:android="http://schemas.android.com/apk/res/android"
             android:shape="rectangle">
-            <gradient android:type="radial" android:gradientRadius="70dp"
-                android:startColor="#33B5B2B5" android:endColor="#CC958795" />
-
+            <corners android:radius="8dp"></corners> <!-- change this -->
+            <stroke
+                android:width="2dp"
+                android:color="@color/gray_dark"/>
         </shape>
     </item>
 </ripple>

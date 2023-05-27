@@ -33,7 +33,9 @@
         android:paddingHorizontal="0dp"
         android:paddingVertical="16dp"
         android:visibility="visible"
-        android:weightSum="3">
+        android:weightSum="3"
+        tools:visiblity="gone"
+        >
 
 
         <LinearLayout
@@ -73,13 +75,13 @@
                 android:orientation="vertical">
 
                 <com.maestrovs.radiocar.ui.components.SpeedWidgetTransparent
+                    android:id="@+id/speedView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="-8dp"
                     android:gravity="center"
-                    android:text="50 km/h"
                     android:textColor="@color/white"
                     android:textSize="36sp" />
             </LinearLayout>

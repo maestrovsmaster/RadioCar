@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
+import kotlin.math.round
 
 
 open class SpeedWidgetTransparent : FrameLayout {
@@ -71,23 +72,20 @@ open class SpeedWidgetTransparent : FrameLayout {
         }
     }
 
-    fun setWeatherResponse(weatherResponse: WeatherResponse){
-        refreshUI(weatherResponse)
+    fun setSpeed(speed: Float){
+        refreshUI(speed)
     }
 
 
 
-    private fun refreshUI(weatherResponse: WeatherResponse?, errorMessage: String? = null){
+    private fun refreshUI(speed: Float){
 
+        val speedStr = if(speed<2.0) { "0" }else{round(speed)}
+        tvSpeed.text = "$speedStr"
 
 
     }
 
-    public fun setOnBack(l: OnClickListener?) {
-        /* ivBackCard?.setOnClickListener {
-             l?.onClick(it)
-         }*/
-    }
 
 
 }
