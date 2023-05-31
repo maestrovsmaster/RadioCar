@@ -1,19 +1,26 @@
 package com.maestrovs.radiocar.ui.control
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.common.Constants.CHECK_WEATHER_MINUTES_DELAY
 import com.maestrovs.radiocar.databinding.FragmentControlBinding
+import com.maestrovs.radiocar.enums.bluetooth.BT_Status
 import com.maestrovs.radiocar.ui.main.MainViewModel
+import com.maestrovs.radiocar.ui.settings.KEY_SETTINGS_INPUT_MESSAGE
+import com.maestrovs.radiocar.ui.settings.KEY_SETTINGS_RESULT_MESSAGE
+import com.maestrovs.radiocar.ui.settings.SettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -40,6 +47,18 @@ class ControlFragment : Fragment() {
 
         }
     }
+
+
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        Log.d("SettingsActivity","On result ...")
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            val resultMessage = data?.getStringExtra(KEY_SETTINGS_RESULT_MESSAGE)
+            Log.d("SettingsActivity","On result = $resultMessage")
+            mainViewModel.setMustRefreshStatus()
+        }
+    }
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -75,12 +94,21 @@ class ControlFragment : Fragment() {
             launchBluetoothIntent()
         }
 
+        binding.btSettings.setOnClickListener {
+            launchSettingsIntent()
+        }
 
-        mainViewModel.bluetoothStatus.observe(viewLifecycleOwner){
-            val isBluetoothEnable = it?:return@observe
-            binding.btBluetooth.setIconResource(
-                if(isBluetoothEnable){
-                    R.drawable.ic_bt_on}else{R.drawable.ic_bt_off})
+
+        mainViewModel.bluetoothStatus.observe(viewLifecycleOwner){bt_Status ->
+            bt_Status?:return@observe
+
+            val icon = when(bt_Status){
+                BT_Status.Enabled ->  R.drawable.ic_bt_on
+                BT_Status.ConnectedDevice -> R.drawable.ic_bluetooth_connected
+                BT_Status.Disable -> R.drawable.ic_bt_off
+                BT_Status.DisconnectedDevice -> R.drawable.ic_bt_on
+            }
+            binding.btBluetooth.setIconResource(icon)
         }
 
 
@@ -164,12 +192,21 @@ class ControlFragment : Fragment() {
         startActivity(intent)
     }
 
+
+
     private  fun launchBluetoothIntent(){
         val intentOpenBluetoothSettings = Intent()
         intentOpenBluetoothSettings.action = Settings.ACTION_BLUETOOTH_SETTINGS
         startActivity(intentOpenBluetoothSettings)
     }
 
+
+    private fun launchSettingsIntent(){
+        val intent =  SettingsActivity.newIntent(requireContext()).apply {
+            putExtra(KEY_SETTINGS_INPUT_MESSAGE, "")
+        }
+        launcher.launch(intent)
+    }
 
 
 

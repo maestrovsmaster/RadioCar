@@ -9,5 +9,17 @@
     <string name="confirm_exit">Вийти із застосунку?</string>
     <string name="yes">ТАК</string>
     <string name="no">НІ</string>
+
+
+
+    <string name="connected">З\'єднано</string>
+    <string name="disconnected">Роз\'єднано</string>
+
+    <string name="settings_display_on">" Не вимикати екран"</string>
+    <string name="settings_autoplay">Автоматично грати, коли Bluetooth пристрій під\'єднано</string>
+    <string name="settings_display_speed_units">Показувати швидкість в:</string>
+
     <string name="km_h">км/год</string>
+    <string name="mph">MPH</string>
+    <string name="settings_display_temperature_units">Показувати температуру в:</string>
 </resources>

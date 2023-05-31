@@ -28,4 +28,9 @@
 
     <color name="transparent">#00000000</color>
 
+    <color name="yourTrackTintColor">#D3D3D3</color>
+    <color name="yourThumbTintColor">#FFC107</color>
+
+
+
 </resources>

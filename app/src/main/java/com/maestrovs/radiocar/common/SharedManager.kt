@@ -28,6 +28,17 @@ object SharedManager {
     }
 
 
+    fun writeBooleanOption(context: Context, key: String, value: Boolean) {
+        val editor =
+            context.getSharedPreferences(RADIOCAR_PREFS, Context.MODE_PRIVATE).edit()
+        editor.putBoolean(key, value)
+        editor.apply()
+    }
+
+    fun readBooleanOptions(context: Context, key: String, defValue: Boolean): Boolean {
+        val prefs = context.getSharedPreferences(RADIOCAR_PREFS, Context.MODE_PRIVATE)
+        return prefs.getBoolean(key, defValue)
+    }
 
 
 }

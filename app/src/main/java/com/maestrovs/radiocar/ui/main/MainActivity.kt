@@ -1,6 +1,9 @@
 package com.maestrovs.radiocar.ui.main
 
+import android.Manifest
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
@@ -8,33 +11,34 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
-import android.location.Location
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
+import android.view.WindowManager
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.maestrovs.radiocar.common.Constants
 import com.maestrovs.radiocar.databinding.ActivityMainBinding
+import com.maestrovs.radiocar.enums.bluetooth.BT_Status
 import com.maestrovs.radiocar.service.AudioPlayerService
 import com.maestrovs.radiocar.ui.components.ExitDialog
+import com.maestrovs.radiocar.ui.settings.ui.main.SettingsManager
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
 
 
     private var audioPlayerService: AudioPlayerService? = null
@@ -48,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            Log.d("ASD","onServiceConnected")
+            Log.d("ASD", "onServiceConnected")
             val binder = service as AudioPlayerService.LocalBinder
             audioPlayerService = binder.getService()
 
@@ -61,12 +65,11 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private lateinit var binding: ActivityMainBinding
 
     private val mainViewModel: MainViewModel by viewModels()
 
-
+    val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
 
     companion object {
@@ -76,7 +79,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -84,12 +86,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
+        if (SettingsManager.isDisplayActive(this)) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+
 
         audioPlayerService?.initializePlayer()
 
 
         // Check for location permissions
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            )
             != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
@@ -101,50 +110,116 @@ class MainActivity : AppCompatActivity() {
             startLocationUpdates()
         }
 
-        // Check the initial Bluetooth status
-        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+
+
         val isBluetoothEnabled = bluetoothAdapter.isEnabled
-        // Handle initial Bluetooth status. Eg: update UI, show snackbar, etc.
-        handleBluetoothStatus(isBluetoothEnabled)
-
-        // Register a broadcast receiver for observing Bluetooth status changes
+        when (isBluetoothEnabled) {
+            true -> mainViewModel.setBluetoothStatus(BT_Status.Enabled)
+            false -> mainViewModel.setBluetoothStatus(BT_Status.Disable)
+        }
         registerBluetoothStatusReceiver()
+        checkConnectedBluetoothDevices()
 
 
-       /* //save last location
-        lifecycleScope.launch {
-            while (true) {
-                   mainViewModel.location.value?.let {
-                       WeatherManager.setCurrentLocationCoords(this@MainActivity, it.getCoords2d() )
-                   }
-                delay(Constants.SAVE_LAST_LOCATION_DELAY * 60 * 1000L) // Delay for CHECK_WEATHER_MINUTES_DELAY minutes
-            }
-        }*/
+
+
+
+        mainViewModel.mustRefreshStatus.observe(this) {
+            applySettingsChanges()
+        }
+
+
+        /* //save last location
+         lifecycleScope.launch {
+             while (true) {
+                    mainViewModel.location.value?.let {
+                        WeatherManager.setCurrentLocationCoords(this@MainActivity, it.getCoords2d() )
+                    }
+                 delay(Constants.SAVE_LAST_LOCATION_DELAY * 60 * 1000L) // Delay for CHECK_WEATHER_MINUTES_DELAY minutes
+             }
+         }*/
     }
 
 
-    private fun handleBluetoothStatus(isEnabled: Boolean) {
-        mainViewModel.setBluetoothStatus(isEnabled)
+
+
+    private fun checkConnectedBluetoothDevices() {
+        val isBluetoothEnabled = bluetoothAdapter.isEnabled
+        if (isBluetoothEnabled) {
+            // Get a list of connected devices
+            bluetoothAdapter.getProfileProxy(
+                applicationContext,
+                object : BluetoothProfile.ServiceListener {
+                    override fun onServiceDisconnected(profile: Int) {}
+                    override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
+
+                        val connectedDevices = proxy.connectedDevices
+
+                        if(connectedDevices.size > 0) {
+                            if(SettingsManager.isAutoplay(this@MainActivity)) {
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    mainViewModel.playCurrentStationState()
+                                }, 1000)
+                            }
+                        }
+                        // Don't forget to close the proxy!
+                        bluetoothAdapter.closeProfileProxy(BluetoothProfile.HEADSET, proxy)
+                    }
+                },
+                BluetoothProfile.HEADSET
+            )
+        } else {
+            println("Bluetooth is not enabled.")
+
+        }
     }
+
 
     private fun registerBluetoothStatusReceiver() {
         bluetoothStatusReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent?.action == BluetoothAdapter.ACTION_STATE_CHANGED) {
-                    val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
-                    when (state) {
-                        BluetoothAdapter.STATE_ON -> handleBluetoothStatus(isEnabled = true)
-                        BluetoothAdapter.STATE_OFF -> handleBluetoothStatus(isEnabled = false)
+                Log.d("BluetoothDevice", "onReceive intent?.action = ${intent?.action}")
+
+                val action = intent?.action ?: return
+                when (action) {
+                    BluetoothAdapter.ACTION_STATE_CHANGED -> {
+                        when (intent.getIntExtra(
+                            BluetoothAdapter.EXTRA_STATE,
+                            BluetoothAdapter.ERROR
+                        )) {
+                            BluetoothAdapter.STATE_ON -> mainViewModel.setBluetoothStatus(BT_Status.Enabled)
+                            BluetoothAdapter.STATE_OFF -> mainViewModel.setBluetoothStatus(BT_Status.Disable)
+                        }
+                    }
+
+                    BluetoothDevice.ACTION_ACL_CONNECTED -> {
+                        val device: BluetoothDevice? =
+                            intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                        mainViewModel.setBluetoothStatus(BT_Status.ConnectedDevice)
+                        if(SettingsManager.isAutoplay(this@MainActivity)) {
+                            mainViewModel.playCurrentStationState()
+                        }
+                    }
+
+                    BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
+                        val device: BluetoothDevice? =
+                            intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                        mainViewModel.setBluetoothStatus(BT_Status.DisconnectedDevice)
+                        mainViewModel.stopCurrentStationState()
                     }
                 }
             }
         }
 
         // Register the broadcast receiver
-        val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
-        registerReceiver(bluetoothStatusReceiver, filter)
+        // val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
+        val intentFilter = IntentFilter().apply {
+            addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+            addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
+            addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
+        }
+        registerReceiver(bluetoothStatusReceiver, intentFilter)
     }
-
 
 
     override fun onStart() {
@@ -166,7 +241,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun startLocationUpdates() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -180,11 +254,9 @@ class MainActivity : AppCompatActivity() {
             override fun onLocationResult(locationResult: LocationResult) {
 
                 for (location in locationResult.locations) {
-                   mainViewModel.setLocation(location)
+                    mainViewModel.setLocation(location)
                 }
             }
-
-
         }
 
         if (ActivityCompat.checkSelfPermission(
@@ -202,13 +274,20 @@ class MainActivity : AppCompatActivity() {
             )
             return
         }
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
     }
 
 
-
     // Handling permissions request result
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_REQUEST_LOCATION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -220,13 +299,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        Log.d("onBack","onBack")
         return if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Log.d("onBack","onBack1")
             ExitDialog(this).show()
             false
         } else super.onKeyDown(keyCode, event)
     }
 
+
+    private fun applySettingsChanges() {
+        keepScreenActive(SettingsManager.isDisplayActive(this))
+    }
+
+    private fun keepScreenActive(shouldKeepScreenActive: Boolean) {
+        if (shouldKeepScreenActive) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
 
 }

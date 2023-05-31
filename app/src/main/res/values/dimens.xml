@@ -2,4 +2,11 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="ripple_radius">6dp</dimen>
+
+
+    <dimen name="settings_divider_margin">12dp</dimen>
+
+    <dimen name="settings_text_main_size">18sp</dimen>
+    <dimen name="settings_text_option_size">16sp</dimen>
+
 </resources>

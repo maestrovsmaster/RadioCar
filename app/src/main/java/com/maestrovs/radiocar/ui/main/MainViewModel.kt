@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.repository.StationRepository
+import com.maestrovs.radiocar.enums.bluetooth.BT_Status
 import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.enums.radio.PlayState
 import com.maestrovs.radiocar.events.PlayActionEvent
@@ -35,10 +36,19 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     }
 
 
-    private var _bluetoothStatus =  MutableLiveData<Boolean?>(null)
+    private var _bluetoothStatus =  MutableLiveData<BT_Status?>(null)
     val bluetoothStatus get() = _bluetoothStatus
-    fun setBluetoothStatus(isEnabled: Boolean){
-        _bluetoothStatus.value = isEnabled
+    fun setBluetoothStatus(btStatus: BT_Status){
+        _bluetoothStatus.value = btStatus
+
+    }
+
+
+    private var _mustRefreshStatus =  MutableLiveData<Boolean?>(null)
+    val mustRefreshStatus get() = _mustRefreshStatus
+    fun setMustRefreshStatus(){
+        _mustRefreshStatus.value = true
+        _mustRefreshStatus.value = false
     }
 
 
@@ -77,12 +87,9 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
 
 
     fun setIfNeedInitStation(station: Station){
-        Log.d("Recent++","recent+")
         var shouldSetLastRecent = false
         _selectedStation.value?.let{
-            Log.d("Recent++","recent++")
             if(it.station == null){
-                Log.d("Recent++","recent+++")
                 shouldSetLastRecent = true
             }
 
@@ -135,13 +142,25 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
         Handler(Looper.getMainLooper()).postDelayed({ lastPlayUrlEvent = null }, 1000)
     }
 
+
+    fun playCurrentStationState() {
+        switchStationState(_selectedStation.value?.station, PlayState.Play)
+    }
+
+    fun stopCurrentStationState() {
+        switchStationState(_selectedStation.value?.station, PlayState.Stop)
+    }
+
+
+
     fun switchCurrentStationState() {
         switchStationState(_selectedStation.value?.station)
     }
 
-    fun switchStationState(newStation: Station?) {
 
-        changeCurrentStationState(newStation)
+    fun switchStationState(newStation: Station?, prefferedPlayState: PlayState? = null) {
+
+        changeCurrentStationState(newStation,prefferedPlayState)
         setStationEvent()
 
 
@@ -154,7 +173,7 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
         }
     }
 
-    private fun changeCurrentStationState(newStation: Station?) {
+    private fun changeCurrentStationState(newStation: Station?, prefferedPlayState: PlayState? = null ) {
         var currentStation: Station? = null
 
         _selectedStation.value?.let {
@@ -171,7 +190,7 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
                 StationEvent(null, PlayState.Stop)
             } else {
                 if (newStation.stationuuid == currentStation!!.stationuuid) {
-                    val newState = if (_selectedStation.value!!.playState == PlayState.Play) {
+                    val newState = prefferedPlayState?:if (_selectedStation.value!!.playState == PlayState.Play) {
                         PlayState.Stop
                     } else {
                         PlayState.Play

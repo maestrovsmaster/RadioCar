@@ -20,6 +20,21 @@
     <string name="yes">YES</string>
     <string name="no">NO</string>
 
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+
+
+
+    <string name="settings_display_on">Keep display active</string>
+    <string name="settings_autoplay">Play automatically when a Bluetooth device is connected</string>
+    <string name="settings_display_speed_units">Display speed in units:</string>
     <string name="km_h">km/h</string>
+    <string name="mph">MPH</string>
+
+    <string name="settings_display_temperature_units">Display temperature in units:</string>
+    <string name="celsium_unit" translatable="false">°C</string>
+    <string name="fahrenheit_unit" translatable="false">°F</string>
+
+
 
 </resources>
