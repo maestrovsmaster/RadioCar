@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
+import com.maestrovs.radiocar.data.remote.weather.WeatherService
 import com.maestrovs.radiocar.data.repository.WeatherRepository
 import com.maestrovs.radiocar.utils.Resource
 import kotlinx.coroutines.launch
@@ -35,15 +36,20 @@ class ControlViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
    // var lon: Double = 30.350417
 
 
-    fun fetchWeather() {
-        if(_currentLocation.value == null){
+    fun fetchWeather(lastLocation: Coords2d? = null) {
+
+
+        val location: Location? = _currentLocation.value
+
+
+        val lat: Double = location?.latitude?:lastLocation?.lat?: with(Double) {
             _weatherError.value = "Location service is unavailable"
+            return
         }
-        val location: Location = _currentLocation.value?: return
-
-
-        val lat: Double = location.latitude
-        val lon: Double = location.longitude
+        val lon: Double = location?.longitude?:lastLocation?.lon?:with(Double) {
+            _weatherError.value = "Location service is unavailable"
+            return
+        }
 
 
 

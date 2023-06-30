@@ -120,7 +120,7 @@ class ControlFragment : Fragment() {
 
             controlViewModel.setLocation(location)
             if (shouldInitWeather) {
-                controlViewModel.fetchWeather()
+                controlViewModel.fetchWeather(WeatherManager.getLastCoords(requireContext()))
             }
 
 

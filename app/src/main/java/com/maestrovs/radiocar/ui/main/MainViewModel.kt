@@ -58,18 +58,19 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
 
     private var _currentLocation =  MutableLiveData<Location?>(null)
     val location get() = _currentLocation
-    fun setLocation(newLocation: Location) {
-
-
+    fun updateLacationAndSpeed(newLocation: Location) {
 
         _currentLocation.value = newLocation
-
 
         location.value?.let {
             _speed.value = SpeedManager.updateSpeed(it)
         }
 
     }
+
+
+
+
 
 
 

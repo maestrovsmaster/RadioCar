@@ -26,9 +26,6 @@ open class WeatherWidget : FrameLayout {
 
     protected var mRootView: View? = null
 
-
-
-
     constructor(context: Context) : super(context) {
         init(context)
     }

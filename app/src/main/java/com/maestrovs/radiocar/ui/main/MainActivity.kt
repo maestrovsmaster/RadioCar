@@ -1,6 +1,5 @@
 package com.maestrovs.radiocar.ui.main
 
-import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothProfile
@@ -11,7 +10,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -19,9 +17,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
 import android.view.WindowManager
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -254,7 +250,7 @@ class MainActivity : AppCompatActivity() {
             override fun onLocationResult(locationResult: LocationResult) {
 
                 for (location in locationResult.locations) {
-                    mainViewModel.setLocation(location)
+                    mainViewModel.updateLacationAndSpeed(location)
                 }
             }
         }
