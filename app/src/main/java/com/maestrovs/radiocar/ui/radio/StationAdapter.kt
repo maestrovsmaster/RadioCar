@@ -148,7 +148,7 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
 
             var imgUrl: String? = null
 
-            Log.d("Picasso", "icon = ${item.favicon}")
+            //Log.d("Picasso", "icon = ${item.favicon}")
             item.favicon.let { icon ->
                 if (!icon.isNullOrEmpty()) {
                     imgUrl = item.favicon

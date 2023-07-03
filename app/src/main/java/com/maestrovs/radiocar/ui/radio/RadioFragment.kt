@@ -1,10 +1,13 @@
 package com.maestrovs.radiocar.ui.radio
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +17,7 @@ import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.databinding.FragmentRadioBinding
+import com.maestrovs.radiocar.extensions.setVisible
 import com.maestrovs.radiocar.ui.components.WrapFlexboxLayoutManager
 import com.maestrovs.radiocar.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,7 +51,7 @@ class RadioFragment : Fragment() {
 
 
     private lateinit var adapter: StationAdapter
-    private lateinit var layoutManager : WrapFlexboxLayoutManager
+    private lateinit var layoutManager: WrapFlexboxLayoutManager
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -125,6 +129,19 @@ class RadioFragment : Fragment() {
 
         }
 
+        radioViewModel.searched.observe(viewLifecycleOwner) {
+            Log.d("Searched", "Searched 1")
+            it?.let {
+                Log.d("Searched", "Searched 2")
+                if (currentListType == ListType.Searched) {
+                    processResources(it)
+                }
+            }
+
+        }
+
+
+
 
         radioViewModel.fetchRecent()
         updateButtons(ListType.Recent)
@@ -149,9 +166,46 @@ class RadioFragment : Fragment() {
             updateButtons(ListType.Favorites)
             radioViewModel.fetchFavorites()
         }
-        //
 
+        binding.btSearch.setOnClickListener {
+            currentListType = ListType.Searched
+            layoutManager.justifyContent = JustifyContent.FLEX_START
+            updateButtons(ListType.Searched)
+            //radioViewModel.searchStations("нв")
+        }
+
+        /* binding.etSearch.setOnSearchClickListener {
+            Log.d("Search","Search1")
+            val text =binding.etSearch.query.toString()
+            Log.d("Search","Search2 $text")
+            if(text.isNotEmpty()) {
+                radioViewModel.searchStations(text)
+            }
+        }*/
+
+        binding.etSearch.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+
+
+            //
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                Log.d("Search","Search2 $query")
+                query?:return true
+                if(query.isNotEmpty()) {
+                    radioViewModel.searchStations(query)
+                }
+                val inputManager = binding.etSearch.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputManager.hideSoftInputFromWindow(binding.etSearch.windowToken, 0)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+
+        })
     }
+
 
 
     private fun updateButtons(listType: ListType) {
@@ -159,15 +213,21 @@ class RadioFragment : Fragment() {
         var colorRecent = R.drawable.ripple_gray_round
         var colorFavorites = R.drawable.ripple_gray_round
         var colorAll = R.drawable.ripple_gray_round
+        var colorSearched = R.drawable.ripple_gray_round
 
         when (listType) {
             ListType.Recent -> colorRecent = R.drawable.ripple_pink_round
             ListType.Favorites -> colorFavorites = R.drawable.ripple_pink_round
             ListType.All -> colorAll = R.drawable.ripple_pink_round
+            ListType.Searched -> colorSearched = R.drawable.ripple_pink_round
         }
-       binding.btRecent.setCardBackground(colorRecent)
+
+        binding.btRecent.setCardBackground(colorRecent)
         binding.btFavorite.setCardBackground(colorFavorites)
-       binding.btAll.setCardBackground(colorAll)
+        binding.btAll.setCardBackground(colorAll)
+        binding.btSearch.setCardBackground(colorSearched)
+
+        binding.etSearch.setVisible(listType == ListType.Searched)
 
     }
 
@@ -181,14 +241,14 @@ class RadioFragment : Fragment() {
                 response.data.let { list ->
                     if (list != null) {
                         adapter.submitList(list)
-                        if (currentListType == ListType.Recent  && firstStart) {
-                            if(list.isNullOrEmpty()) {
+                        if (currentListType == ListType.Recent && firstStart) {
+                            if (list.isNullOrEmpty()) {
                                 currentListType = ListType.All
                                 layoutManager.justifyContent = JustifyContent.FLEX_START
                                 firstStart = false
                                 radioViewModel.fetchStations()
                                 updateButtons(ListType.All)
-                            }else if(list.isNotEmpty()){
+                            } else if (list.isNotEmpty()) {
                                 mainViewModel.setIfNeedInitStation(list[0])
                             }
                         }
@@ -216,5 +276,5 @@ class RadioFragment : Fragment() {
 }
 
 enum class ListType {
-    Recent, Favorites, All
+    Recent, Favorites, All, Searched
 }

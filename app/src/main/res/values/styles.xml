@@ -29,4 +29,13 @@
         <item name="colorControlHighlight">@color/red</item>
     </style>
 
+    <style name="ThemeOverlay.SearchView" parent="">
+        <!-- Text color -->
+        <item name="android:editTextColor">@color/white</item>
+        <!-- Hint text color -->
+        <item name="android:textColorHint">@color/white</item>
+
+        <item name="colorControlNormal">#FFFFFF</item>
+    </style>
+
 </resources>

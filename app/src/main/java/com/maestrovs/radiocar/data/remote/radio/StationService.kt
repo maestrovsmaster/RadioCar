@@ -3,6 +3,7 @@ package com.maestrovs.radiocar.data.remote.radio
 import com.maestrovs.radiocar.data.entities.radio.Station
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface StationService {
@@ -10,4 +11,10 @@ interface StationService {
     suspend fun getStations(@Query("countrycode") country: String = "UA",
                               @Query("offset") offset: Int = 0,
                               @Query("limit") limit: Int = 200):Response<List<Station>>
+
+    @GET("/json/stations/byname/{searchterm}")
+    suspend fun getStationsByName(@Path("searchterm")  searchterm: String,
+                            @Query("offset") offset: Int = 0,
+                            @Query("limit") limit: Int = 200):Response<List<Station>>
+
 }

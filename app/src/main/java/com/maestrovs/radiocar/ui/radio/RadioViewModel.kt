@@ -1,5 +1,6 @@
 package com.maestrovs.radiocar.ui.radio
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -47,6 +48,20 @@ class RadioViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
 
     fun fetchFavorites() {
         _fetchFavoritesTrigger.value = Unit
+    }
+
+    private val _searchStationsTrigger = MutableLiveData<String>()
+    val searched: LiveData<Resource<List<Station>>> = _searchStationsTrigger.switchMap {
+        Log.d("Searched","Searched 0  $it")
+        mainRepository.getStationsByName(it)
+
+       // mainRepository.getFavoritesStations()
+
+    }
+
+    fun searchStations(term:String) {
+        //mainRepository.getStationsByName(term)
+        _searchStationsTrigger.value = term
     }
 
 }

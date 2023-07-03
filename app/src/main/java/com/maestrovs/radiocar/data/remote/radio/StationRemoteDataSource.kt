@@ -6,10 +6,24 @@ import javax.inject.Inject
 
 class StationRemoteDataSource @Inject constructor(
     private val stationService: StationService,
-): BaseDataSource() {
+) : BaseDataSource() {
 
-    suspend fun getStations( country: String = "UA",
-                            offset: Int = 0,
-                            limit: Int = PAGE_SIZE) = getResult { stationService.getStations(offset = offset, limit = limit) }
+    suspend fun getStations(
+        country: String = "UA",
+        offset: Int = 0,
+        limit: Int = PAGE_SIZE
+    ) = getResult { stationService.getStations(offset = offset, limit = limit) }
+
+    suspend fun getStationsByName(
+        searchterm: String,
+        offset: Int = 0,
+        limit: Int = PAGE_SIZE
+    ) = getResult {
+        stationService.getStationsByName(
+            searchterm = searchterm,
+            offset = offset,
+            limit = limit
+        )
+    }
 
 }

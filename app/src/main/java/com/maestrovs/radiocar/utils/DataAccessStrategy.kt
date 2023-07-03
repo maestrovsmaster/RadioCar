@@ -13,7 +13,7 @@ fun <T, A> performGetOperation(
     saveCallResult: suspend (A) -> Unit
 ): LiveData<Resource<T>> =
     liveData(Dispatchers.IO) {
-        Log.d("RequestResult","emit...")
+        Log.d("RequestResult", "emit...")
         emit(Resource.loading())
         val source = databaseQuery.invoke().map { Resource.success(it) }
         emitSource(source)
@@ -23,8 +23,26 @@ fun <T, A> performGetOperation(
             saveCallResult(responseStatus.data!!)
 
         } else if (responseStatus.status == ERROR) {
-           // emit(Resource.error(responseStatus.message!!))
-          //  emitSource(source)
+            // emit(Resource.error(responseStatus.message!!))
+            //  emitSource(source)
+        }
+    }
+
+fun <A> performNetworkOperation(
+    networkCall: suspend () -> Resource<A>,
+    saveCallResult: suspend (A) -> Unit
+): LiveData<Resource<A>> =
+    liveData(Dispatchers.IO) {
+
+        val resources = networkCall.invoke()
+        emit(resources)
+
+        if (resources.status == SUCCESS) {
+            saveCallResult(resources.data!!)
+
+        } else if (resources.status == ERROR) {
+            // emit(Resource.error(responseStatus.message!!))
+            //  emitSource(source)
         }
     }
 
@@ -36,9 +54,10 @@ fun <T> performLocalGetOperation(databaseQuery: () -> LiveData<T>): LiveData<Res
         emitSource(source)
     }
 
+
 fun performLocalSetOperation(databaseQuery: () -> (Unit)): LiveData<Resource<Unit>> =
     liveData(Dispatchers.IO) {
-        Log.d("Database",">>recentStations setRecent----")
+        Log.d("Database", ">>recentStations setRecent----")
         emit(Resource.loading())
         databaseQuery.invoke()
         emit(Resource.success(Unit))

@@ -1,5 +1,7 @@
 package com.maestrovs.radiocar.data.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.entities.radio.tables.Favorites
@@ -11,6 +13,7 @@ import com.maestrovs.radiocar.data.remote.radio.StationRemoteDataSource
 import com.maestrovs.radiocar.utils.Resource
 import com.maestrovs.radiocar.utils.performGetOperation
 import com.maestrovs.radiocar.utils.performLocalGetOperation
+import com.maestrovs.radiocar.utils.performNetworkOperation
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
@@ -30,9 +33,17 @@ class StationRepository @Inject constructor(
     )
 
 
+    fun getStationsByName(searchterm: String) = performNetworkOperation(
 
-    fun getStations2() =
-        liveData<Resource<List<Station>>>(Dispatchers.IO) {remoteDataSource.getStations() }
+        networkCall = { remoteDataSource.getStationsByName(searchterm) },
+        saveCallResult = { localDataSource.insertAll(it) }
+    )
+
+
+   /* fun getStationsByName(searchterm: String) =
+        liveData<Resource<List<Station>>>(Dispatchers.IO) {
+            emit(
+            remoteDataSource.getStationsByName(searchterm) ) }*/
 
 
 
