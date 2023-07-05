@@ -15,7 +15,9 @@ import com.maestrovs.radiocar.enums.radio.PlayState
 import com.maestrovs.radiocar.extensions.addRipple
 import com.maestrovs.radiocar.extensions.setVisible
 import com.squareup.picasso.Picasso
+
 import kotlinx.android.synthetic.main.item_radio.view.btFavorite
+import kotlinx.android.synthetic.main.item_radio.view.ivCountry
 import kotlinx.android.synthetic.main.item_radio.view.ivCover
 import kotlinx.android.synthetic.main.item_radio.view.root
 import kotlinx.android.synthetic.main.item_radio.view.tvName
@@ -83,17 +85,20 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
         val item = differ.currentList[position]
 
         holder.itemView.apply {
-            // tvName.text = "${item.employee_name}"
-            //tvSalary.text = "Salary: Rs.${item.employee_salary}"
-            //tvAge.text = "Age: ${item.employee_age}"
 
             var favoriteImgRes = R.drawable.ic_empty_24
 
             root.setOnClickListener {
-
                 onItem.onClickedCharacter(item)
-
             }
+
+            Log.d("RadioCountry","country = ${item.country}   code = ${item.countrycode}")
+
+            //val resourceId =  FlagK//FlagKit.getResId(context, "tr")
+
+           // ivCountry.setImageResource(resourceId)
+
+           // val drawable = FlagKit.getDrawable(this, "tr")
 
             item.isFavorite?.let {
                 if(it == 1) {

@@ -171,17 +171,14 @@ class RadioFragment : Fragment() {
             currentListType = ListType.Searched
             layoutManager.justifyContent = JustifyContent.FLEX_START
             updateButtons(ListType.Searched)
-            //radioViewModel.searchStations("нв")
+
+            radioViewModel.searched.value?.let{ lastSearchResult ->
+                processResources(lastSearchResult)
+            }?: kotlin.run { showList(listOf()) }
+
         }
 
-        /* binding.etSearch.setOnSearchClickListener {
-            Log.d("Search","Search1")
-            val text =binding.etSearch.query.toString()
-            Log.d("Search","Search2 $text")
-            if(text.isNotEmpty()) {
-                radioViewModel.searchStations(text)
-            }
-        }*/
+
 
         binding.etSearch.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
@@ -237,24 +234,7 @@ class RadioFragment : Fragment() {
         when (response.status) {
             Resource.Status.SUCCESS -> {
                 binding.progressBar.visibility = View.GONE
-
-                response.data.let { list ->
-                    if (list != null) {
-                        adapter.submitList(list)
-                        if (currentListType == ListType.Recent && firstStart) {
-                            if (list.isNullOrEmpty()) {
-                                currentListType = ListType.All
-                                layoutManager.justifyContent = JustifyContent.FLEX_START
-                                firstStart = false
-                                radioViewModel.fetchStations()
-                                updateButtons(ListType.All)
-                            } else if (list.isNotEmpty()) {
-                                mainViewModel.setIfNeedInitStation(list[0])
-                            }
-                        }
-                    }
-
-                }
+                showList(response.data)
             }
 
             Resource.Status.ERROR -> {
@@ -265,7 +245,28 @@ class RadioFragment : Fragment() {
                 binding.progressBar.visibility = View.VISIBLE
             }
         }
+    }
 
+    private fun showList(list: List<Station>?){
+        if (list != null) {
+
+            val filteredList = filterAll(list)
+
+            adapter.submitList(filteredList)
+            if (currentListType == ListType.Recent && firstStart) {
+                if (filteredList.isNullOrEmpty()) {
+                    currentListType = ListType.All
+                    layoutManager.justifyContent = JustifyContent.FLEX_START
+                    firstStart = false
+                    radioViewModel.fetchStations()
+                    updateButtons(ListType.All)
+                } else if (filteredList.isNotEmpty()) {
+                    mainViewModel.setIfNeedInitStation(filteredList[0])
+                }
+            }
+        }else{
+            adapter.submitList(listOf())
+        }
     }
 
 
