@@ -139,7 +139,10 @@ dependencies {
 
 
     //Flags
-   // implementation 'com.github.KaKaVip:Android-Flag-Kit:v0.1'
+    // implementation 'com.github.KaKaVip:Android-Flag-Kit:v0.1'
+
+    implementation 'com.github.murgupluoglu:flagkit-android:1.0.2'
+
 
     //Paging
 

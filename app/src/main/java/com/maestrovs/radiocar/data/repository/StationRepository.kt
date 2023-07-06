@@ -1,5 +1,6 @@
 package com.maestrovs.radiocar.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
@@ -25,10 +26,10 @@ class StationRepository @Inject constructor(
 ) {
 
 
-    fun getStations() = performGetOperation(
-        databaseQuery = { localDataSource.getAllStationsWithFavouriteStatus() //getAllStations() //getAllStationsWithFavouriteStatus()/
+    fun getStations(countryCode: String) = performGetOperation(
+        databaseQuery = { localDataSource.getStationsByName(countryCode) //getAllStationsWithFavouriteStatus()/
                         },
-        networkCall = { remoteDataSource.getStations() },
+        networkCall = { remoteDataSource.getStations(countryCode) },
         saveCallResult = { localDataSource.insertAll(it) }
     )
 
@@ -39,11 +40,6 @@ class StationRepository @Inject constructor(
         saveCallResult = { localDataSource.insertAll(it) }
     )
 
-
-   /* fun getStationsByName(searchterm: String) =
-        liveData<Resource<List<Station>>>(Dispatchers.IO) {
-            emit(
-            remoteDataSource.getStationsByName(searchterm) ) }*/
 
 
 
@@ -64,6 +60,7 @@ class StationRepository @Inject constructor(
 
 
     suspend fun setFavorite(stationuuid: String) {
+        Log.d("Set","Set favorite ")
         favoritesSource.insert(Favorites(stationuuid))
     }
 

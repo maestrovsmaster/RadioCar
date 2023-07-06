@@ -14,6 +14,7 @@ import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.enums.radio.PlayState
 import com.maestrovs.radiocar.extensions.addRipple
 import com.maestrovs.radiocar.extensions.setVisible
+import com.murgupluoglu.flagkit.FlagKit
 import com.squareup.picasso.Picasso
 
 import kotlinx.android.synthetic.main.item_radio.view.btFavorite
@@ -92,11 +93,12 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
                 onItem.onClickedCharacter(item)
             }
 
-            Log.d("RadioCountry","country = ${item.country}   code = ${item.countrycode}")
+           // Log.d("RadioCountry","country = ${item.country}   code = ${item.countrycode}  name = ${item.name}")
 
-            //val resourceId =  FlagK//FlagKit.getResId(context, "tr")
+            val flagId =  FlagKit.getResId(context, item.countrycode)
+            ivCountry.setImageResource(flagId)
 
-           // ivCountry.setImageResource(resourceId)
+            ivCountry.setVisible(!item.countrycode.isNullOrEmpty())
 
            // val drawable = FlagKit.getDrawable(this, "tr")
 
