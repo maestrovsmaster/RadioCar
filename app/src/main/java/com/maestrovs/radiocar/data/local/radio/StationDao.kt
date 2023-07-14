@@ -39,13 +39,15 @@ interface StationDao {
     SELECT stations.* , (favorites.stationuuid IS NOT NULL) as isFavorite
     FROM stations 
     INNER JOIN recent ON stations.stationuuid = recent.stationuuid LEFT JOIN favorites ON stations.stationuuid = favorites.stationuuid
-""")
+    ORDER BY recent.id DESC
+    """)
     fun getRecentStations(): LiveData<List<Station>>
 
     @Query("""
     SELECT stations.* , (favorites.stationuuid IS NOT NULL) as isFavorite
     FROM stations 
     INNER JOIN favorites ON stations.stationuuid = favorites.stationuuid
+    ORDER BY favorites.id DESC
 """)
     fun getFavoritesStations(): LiveData<List<Station>>
 

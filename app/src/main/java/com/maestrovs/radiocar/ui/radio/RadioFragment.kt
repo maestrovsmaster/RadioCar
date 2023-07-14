@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.flexbox.FlexDirection
@@ -19,6 +17,8 @@ import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.databinding.FragmentRadioBinding
 import com.maestrovs.radiocar.extensions.setVisible
 import com.maestrovs.radiocar.ui.components.WrapFlexboxLayoutManager
+import com.maestrovs.radiocar.ui.radio.utils.errorMapper
+import com.maestrovs.radiocar.ui.radio.utils.filterAll
 import com.maestrovs.radiocar.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -103,7 +103,9 @@ class RadioFragment : Fragment() {
 
 
         radioViewModel.stations.observe(viewLifecycleOwner) {
+            Log.d("ApiError","Server *  ${it} ")
             it?.let {
+                Log.d("ApiError","Server *2  ${it} ")
                 if (currentListType == ListType.All) {
                     processResources(it)
                 }
@@ -234,15 +236,20 @@ class RadioFragment : Fragment() {
         when (response.status) {
             Resource.Status.SUCCESS -> {
                 binding.progressBar.visibility = View.GONE
+                binding.tvError.setVisible(false)
                 showList(response.data)
             }
 
             Resource.Status.ERROR -> {
                 binding.progressBar.visibility = View.GONE
+                Log.d("ApiError","Server error  ${response.message}  = ${response.data}")
+                binding.tvError.setVisible(true)
+                binding.tvError.text = errorMapper(response.message?:"",requireContext())
             }
 
             Resource.Status.LOADING -> {
                 binding.progressBar.visibility = View.VISIBLE
+                binding.tvError.setVisible(false)
             }
         }
     }

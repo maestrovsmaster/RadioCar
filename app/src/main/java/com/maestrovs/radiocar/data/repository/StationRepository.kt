@@ -51,21 +51,21 @@ class StationRepository @Inject constructor(
 
 
     suspend fun setRecent(stationuuid: String) {
-        recentSource.insert(Recent(stationuuid))
+        recentSource.insert(Recent(stationuuid = stationuuid))
     }
 
     suspend fun deleteRecent(stationuuid: String) {
-        recentSource.delete(Recent(stationuuid))
+        recentSource.delete(Recent(stationuuid = stationuuid))
     }
 
 
     suspend fun setFavorite(stationuuid: String) {
         Log.d("Set","Set favorite ")
-        favoritesSource.insert(Favorites(stationuuid))
+        favoritesSource.insert(Favorites(stationuuid = stationuuid))
     }
 
     suspend fun deleteFavorite(stationuuid: String) {
-        favoritesSource.delete(Favorites(stationuuid))
+        favoritesSource.delete(Favorites(stationuuid = stationuuid))
     }
 
 

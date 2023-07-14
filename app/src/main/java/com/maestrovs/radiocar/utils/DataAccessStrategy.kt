@@ -19,11 +19,12 @@ fun <T, A> performGetOperation(
         emitSource(source)
 
         val responseStatus = networkCall.invoke()
+        Log.d("ApiError", " -- responseStatus.status ${responseStatus.status}")
         if (responseStatus.status == SUCCESS) {
             saveCallResult(responseStatus.data!!)
 
         } else if (responseStatus.status == ERROR) {
-            // emit(Resource.error(responseStatus.message!!))
+             emit(Resource.error(responseStatus.message!!))
             //  emitSource(source)
         }
     }

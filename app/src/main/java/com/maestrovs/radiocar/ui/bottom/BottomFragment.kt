@@ -15,7 +15,7 @@ import com.maestrovs.radiocar.databinding.FragmentBottomBinding
 import com.maestrovs.radiocar.ui.components.PlayPauseView
 import com.maestrovs.radiocar.enums.radio.PlayState
 import com.maestrovs.radiocar.extensions.setVisible
-import com.maestrovs.radiocar.ui.radio.StationEvent
+import com.maestrovs.radiocar.ui.radio.utils.StationEvent
 import com.squareup.picasso.Picasso
 
 /**

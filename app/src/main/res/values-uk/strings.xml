@@ -22,4 +22,10 @@
     <string name="km_h">км/год</string>
     <string name="mph">MPH</string>
     <string name="settings_display_temperature_units">Показувати температуру в:</string>
+
+
+    <string name="error_500">Внутрішня помилка сервера</string>
+    <string name="error_503">Сервіс тимчасово недоступний</string>
+    <string name="error_no_address">Помилка з_єднання</string>
+
 </resources>
