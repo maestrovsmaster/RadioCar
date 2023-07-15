@@ -28,4 +28,7 @@
     <string name="error_503">Сервіс тимчасово недоступний</string>
     <string name="error_no_address">Помилка з_єднання</string>
 
+    <string name="country">Країна</string>
+    <string name="country_not_selected">Не вибрана</string>
+
 </resources>

@@ -48,6 +48,54 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="@dimen/settings_text_main_size"
+                android:text="@string/country"/>
+
+
+            <RelativeLayout
+                android:id="@+id/lvSelectCountry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:id="@+id/tvSelectedCountry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/arrowIcon"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/settings_text_main_size"
+                    android:text="SelectedCountryName"/>
+
+                <ImageView
+                    android:id="@+id/arrowIcon"
+                    android:layout_width="32dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="0dp"
+                    android:src="@drawable/ic_arrow_right"
+                    app:tint="@color/white" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_dark"
+                android:visibility="visible"
+                android:layout_marginEnd="46dp"
+                android:layout_marginVertical="@dimen/settings_divider_margin"
+                />
+
+
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/swDisplayActive"
                 android:layout_width="match_parent"
@@ -172,6 +220,9 @@
                     android:text="@string/fahrenheit_unit"/>
 
             </RadioGroup>
+
+
+
 
         </LinearLayout>
 

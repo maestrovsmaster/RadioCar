@@ -39,4 +39,7 @@
     <string name="error_503">Service Unavailable</string>
     <string name="error_no_address">No address associated with hostname</string>
 
+    <string name="country">Country</string>
+    <string name="country_not_selected">Not selected</string>
+
 </resources>

@@ -68,7 +68,7 @@ class PlayPauseView : AppCompatImageView {
 
     fun setState(state: Int) {
 
-        if (state != lastState || changedConfiguration) {
+      //  if (state != lastState || changedConfiguration) {
             when (state) {
                 STATE_PLAY -> {
                     setImageDrawable(mPlayToPauseAnim)
@@ -80,7 +80,7 @@ class PlayPauseView : AppCompatImageView {
                     mPauseToPlay!!.start()
                 }
             }
-        }
+      //  }
         lastState = state
         changedConfiguration = false
     }

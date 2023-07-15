@@ -30,6 +30,10 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.hbb20.countrypicker.dialog.launchCountryPickerDialog
+import com.hbb20.countrypicker.models.CPCountry
+import com.maestrovs.radiocar.R
+import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.databinding.ActivityMainBinding
 import com.maestrovs.radiocar.enums.bluetooth.BT_Status
 import com.maestrovs.radiocar.service.AudioPlayerService
@@ -135,6 +139,21 @@ class MainActivity : AppCompatActivity() {
             applySettingsChanges()
         }
 
+
+
+
+
+
+        if(!CurrentCountryManager.isAskCountry(this)) {
+            launchCountryPickerDialog { country: CPCountry? ->
+                val newSelectedCountry = country?:return@launchCountryPickerDialog
+                Log.d("Country", "CountryCode = $newSelectedCountry")
+               // binding.tvSelectedCountry.text =  "${newSelectedCountry.flagEmoji} ${newSelectedCountry.name}"
+                CurrentCountryManager.writeCountry(this,newSelectedCountry)
+                mainViewModel.setMustRefreshStatus()
+            }
+            CurrentCountryManager.setAskedCountryTrue(this)
+        }
 
 
 

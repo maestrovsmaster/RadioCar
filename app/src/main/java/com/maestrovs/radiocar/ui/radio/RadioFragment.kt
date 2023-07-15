@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.JustifyContent
 import com.maestrovs.radiocar.R
+import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.databinding.FragmentRadioBinding
@@ -157,6 +158,9 @@ class RadioFragment : Fragment() {
         }
 
 
+        mainViewModel.mustRefreshStatus.observe(viewLifecycleOwner){
+         //   radioViewModel.fetchStations(CurrentCountryManager.readCountry(requireContext())?.alpha2?:"UA")
+        }
 
 
 
