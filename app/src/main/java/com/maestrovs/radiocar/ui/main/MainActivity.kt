@@ -10,6 +10,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -33,8 +37,11 @@ import com.maestrovs.radiocar.ui.components.ExitDialog
 import com.maestrovs.radiocar.ui.settings.ui.main.SettingsManager
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    val TAG = "MainActivity"
 
 
     private var audioPlayerService: AudioPlayerService? = null
@@ -66,6 +73,10 @@ class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModels()
 
     val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+
+
+
+
 
 
     companion object {
@@ -123,6 +134,8 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.mustRefreshStatus.observe(this) {
             applySettingsChanges()
         }
+
+
 
 
         /* //save last location
@@ -193,7 +206,7 @@ class MainActivity : AppCompatActivity() {
                             intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                         mainViewModel.setBluetoothStatus(BT_Status.ConnectedDevice)
                         if(SettingsManager.isAutoplay(this@MainActivity)) {
-                            mainViewModel.playCurrentStationState()
+                         //   mainViewModel.playCurrentStationState()
                         }
                     }
 

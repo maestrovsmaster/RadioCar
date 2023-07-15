@@ -40,9 +40,6 @@ class StationRepository @Inject constructor(
         saveCallResult = { localDataSource.insertAll(it) }
     )
 
-
-
-
     fun getRecentStations() = performLocalGetOperation(databaseQuery = {
         localDataSource.getRecentStations() })
 
@@ -55,17 +52,16 @@ class StationRepository @Inject constructor(
     }
 
     suspend fun deleteRecent(stationuuid: String) {
-        recentSource.delete(Recent(stationuuid = stationuuid))
+        recentSource.delete( stationuuid)
     }
 
 
     suspend fun setFavorite(stationuuid: String) {
-        Log.d("Set","Set favorite ")
         favoritesSource.insert(Favorites(stationuuid = stationuuid))
     }
 
     suspend fun deleteFavorite(stationuuid: String) {
-        favoritesSource.delete(Favorites(stationuuid = stationuuid))
+        favoritesSource.delete(stationuuid)
     }
 
 

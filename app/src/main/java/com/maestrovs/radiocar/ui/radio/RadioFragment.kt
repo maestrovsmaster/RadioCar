@@ -15,6 +15,7 @@ import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.databinding.FragmentRadioBinding
+import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.extensions.setVisible
 import com.maestrovs.radiocar.ui.components.WrapFlexboxLayoutManager
 import com.maestrovs.radiocar.ui.radio.utils.errorMapper
@@ -70,12 +71,17 @@ class RadioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter = StationAdapter(object : StationAdapter.ItemListener {
-            override fun onClickedCharacter(item: Station?) {
-                Log.d("Station", "~~~~~~~~~~ Station Url \uD83C\uDFB5  ${item?.url}")
-                mainViewModel.switchStationState(item)
+            override fun onClickedCharacter(station: Station?) {
+                Log.d("Station", "~~~~~~~~~~ Station Url \uD83C\uDFB5  ${station?.url}")
+             ///   mainViewModel.switchStationState(item)
                 // if(item != null) {
                 // adapter.setSelectedStation(item)
                 // }
+
+                station?.let {
+                    mainViewModel.setStation(it)
+                }
+
             }
 
         })
@@ -96,8 +102,16 @@ class RadioFragment : Fragment() {
 
         binding.recycler.adapter = adapter
 
-        mainViewModel.selectedStation.observe(viewLifecycleOwner) { stationEvent ->
-            adapter.setStationEvent(stationEvent)
+        mainViewModel.selectedStation.observe(viewLifecycleOwner) { it ->
+            val station = it?: return@observe
+            adapter.setStation(station)
+
+        }
+
+        mainViewModel.playAction.observe(viewLifecycleOwner) { playAction ->
+            if(playAction == PlayAction.Resume || playAction == PlayAction.Pause || playAction == PlayAction.Idle) {
+                adapter.setPlayAction(playAction)
+            }
 
         }
 
@@ -141,6 +155,8 @@ class RadioFragment : Fragment() {
             }
 
         }
+
+
 
 
 

@@ -9,12 +9,18 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import androidx.core.content.res.ResourcesCompat
+import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -23,7 +29,6 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager.NotificationLi
 import com.google.android.exoplayer2.util.Log
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.enums.radio.PlayAction
-import com.maestrovs.radiocar.enums.radio.PlayState
 import com.maestrovs.radiocar.events.PlayActionEvent
 import com.maestrovs.radiocar.events.PlayUrlEvent
 import com.maestrovs.radiocar.ui.main.MainActivity
@@ -37,6 +42,8 @@ const val NOTIFICATION_REQUEST_CODE = 56465
 @AndroidEntryPoint
 class AudioPlayerService : Service(), Player.Listener {
 
+    val TAG = "AudioPlayerService"
+
 
     private val binder = LocalBinder()
     private var exoPlayer: SimpleExoPlayer? = null
@@ -44,21 +51,22 @@ class AudioPlayerService : Service(), Player.Listener {
     private lateinit var playerNotificationManager: PlayerNotificationManager
 
 
+    /* old implementation
     override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
 
-        sendMessageToViewModel(
-            if (playWhenReady) {
-                PlayAction.Resume
-            } else {
-                PlayAction.Pause
-            }
-        )
-    }
+         sendMessageToViewModel(
+             if (playWhenReady) {
+                 PlayAction.Resume
+             } else {
+                 PlayAction.Pause
+             }
+         )
+     }*/
 
     override fun onPlaybackStateChanged(playbackState: Int) {
         super.onPlaybackStateChanged(playbackState)
         // Handle playback state changes here
-        sendMessageToViewModel(PlayAction.Previous)
+      //  sendMessageToViewModel(PlayAction.Previous)
     }
 
     override fun onPositionDiscontinuity(
@@ -69,11 +77,9 @@ class AudioPlayerService : Service(), Player.Listener {
         super.onPositionDiscontinuity(oldPosition, newPosition, reason)
         if (reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION) {
             // The player has moved to the next item
-            sendMessageToViewModel(PlayAction.Next)
+           // sendMessageToViewModel(PlayAction.Next)
         }
     }
-
-
 
 
     override fun onCreate() {
@@ -84,7 +90,8 @@ class AudioPlayerService : Service(), Player.Listener {
 
         val channelId = 1231//"audio_player_channel"
         val channelName = "RadioCarChannel"//"getString(R.string.audio_player_channel_name)"
-        val channelDescription = "RadioCarChannelDescription"//"getString(R.string.audio_player_channel_description)"
+        val channelDescription =
+            "RadioCarChannelDescription"//"getString(R.string.audio_player_channel_description)"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_LOW
@@ -109,14 +116,11 @@ class AudioPlayerService : Service(), Player.Listener {
 
                     var title = ""
                     lastPlayUrlEvent?.let {
-                        title = it.name ?:""
+                        title = it.name ?: ""
                     }
 
-                    return    getString(R.string.symbol_radio)+" $title"
+                    return getString(R.string.symbol_radio) + " $title"
                 }
-
-
-
 
 
                 override fun createCurrentContentIntent(player: Player): PendingIntent? {
@@ -174,7 +178,13 @@ class AudioPlayerService : Service(), Player.Listener {
         // playerNotificationManager.setUsePlayPauseActions(true)
         playerNotificationManager.setUseStopAction(true)
 
-        playerNotificationManager.setColor(ResourcesCompat.getColor(this.resources, R.color.pink_gray, null))
+        playerNotificationManager.setColor(
+            ResourcesCompat.getColor(
+                this.resources,
+                R.color.pink_gray,
+                null
+            )
+        )
 
 
 
@@ -183,11 +193,31 @@ class AudioPlayerService : Service(), Player.Listener {
         exoPlayer?.addListener(this)
 
 
+        var connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                android.util.Log.e(TAG, "Lost network connection")
+            }
+
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                android.util.Log.e(TAG, "Network connection available again")
+            }
+        }
+
+        val networkRequest = NetworkRequest.Builder()
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+            .build()
+
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+
+
     }//onCreate
 
 
     private fun sendMessageToViewModel(playAction: PlayAction) {
-        EventBus.getDefault().post(PlayActionEvent(playAction,lastPlayUrlEvent))
+        EventBus.getDefault().post(PlayActionEvent(playAction, lastPlayUrlEvent))
     }
 
 
@@ -250,23 +280,66 @@ class AudioPlayerService : Service(), Player.Listener {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onPlayUrlEvent(event: PlayUrlEvent) {
-        lastPlayUrlEvent = event
-        event.url?.let {
-            playUrl(event.url)
-
-            when (event.playState) {
-                PlayState.Play -> playUrl(event.url)
-                PlayState.Stop -> pausePlayer()
+        event.url?.let { newUrl ->
+            val playAction = event.playAction
+            if(event.playAction!=null){
+                if(playAction == PlayAction.Resume){
+                    playUrl(event.url)
+                }else  pausePlayer()
+            }else {
+                if (newUrl == lastPlayUrlEvent?.url) {
+                    if (exoPlayer?.isPlaying == true) {
+                        pausePlayer()
+                    } else {
+                        playUrl(event.url)
+                    }
+                } else {
+                    playUrl(event.url)
+                }
             }
-
         } ?: kotlin.run {
             stopPlayer()
         }
-
+        lastPlayUrlEvent = event
     }
 
 
+    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+        if (playbackState == Player.STATE_READY && playWhenReady) {
+            Log.d(TAG, "Player is playing")
+            sendMessageToViewModel(PlayAction.Resume)
+        } else if (playbackState == Player.STATE_READY) {
+            Log.d(TAG, "Player is paused")
+            sendMessageToViewModel(PlayAction.Pause)
+        } else if (playbackState == Player.STATE_BUFFERING) {
+            Log.d(TAG, "Player is buffering")
+            sendMessageToViewModel(PlayAction.Buffering)
+        } else if (playbackState == Player.STATE_IDLE) {
+            Log.d(TAG, "Player is idle")
+            sendMessageToViewModel(PlayAction.Idle)
+        }
+    }
 
+    override fun onPlayerError(error: PlaybackException) {
+        sendMessageToViewModel(PlayAction.Error)
+        when (error.errorCode) {
+            ExoPlaybackException.TYPE_SOURCE -> {
+                Log.e(TAG, "Source error: ", error)
+            }
+
+            ExoPlaybackException.TYPE_RENDERER -> {
+                Log.e(TAG, "Renderer error: ", error)
+            }
+
+            ExoPlaybackException.TYPE_UNEXPECTED -> {
+                Log.e(TAG, "Unexpected error: ", error)
+            }
+
+            else -> {
+                Log.e(TAG, "Unknown error: ", error)
+            }
+        }
+    }
 
 
 }

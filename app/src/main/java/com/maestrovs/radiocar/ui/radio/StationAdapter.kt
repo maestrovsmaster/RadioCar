@@ -1,5 +1,6 @@
 package com.maestrovs.radiocar.ui.radio
 
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +11,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.radio.Station
-import com.maestrovs.radiocar.enums.radio.PlayState
+import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.extensions.addRipple
 import com.maestrovs.radiocar.extensions.setVisible
-import com.maestrovs.radiocar.ui.radio.utils.StationEvent
 import com.murgupluoglu.flagkit.FlagKit
 import com.squareup.picasso.Picasso
 
@@ -43,7 +43,8 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
     private val differ = AsyncListDiffer(this, diffCallback)
 
 
-    private var stationEvent: StationEvent? = null
+    private var station: Station? = null
+    private var playAction: PlayAction? = null
 
     interface ItemListener {
         fun onClickedCharacter(item: Station?)
@@ -59,11 +60,19 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
     /**
      * Set station event about last selected Station
      */
-    fun setStationEvent(stationEvent: StationEvent) {
-        this.stationEvent = stationEvent
+    fun setStation(station: Station) {
+        this.station = station
         notifyDataSetChanged()
     }
 
+
+    /**
+     * Set station event about last selected Station
+     */
+    fun setPlayAction( playAction: PlayAction) {
+        this.playAction = playAction
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StationViewHolder {
         return StationViewHolder(
@@ -115,26 +124,26 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
 
             var drawPlayingAnim = false
 
-            stationEvent?.let { event ->
-                event.station?.let { selectedStation ->
+
+
+            station?.let {  selectedStation ->
                     if (selectedStation.stationuuid == item.stationuuid) {
                         selected = true
-                        selectedColor = when (event.playState) {
-                            PlayState.Play -> ContextCompat.getColor(context, R.color.pink)
-                            PlayState.Stop -> ContextCompat.getColor(context, R.color.pink_gray)
-                        }
-                        drawPlayingAnim = when (event.playState) {
-                            PlayState.Play -> true
-                            PlayState.Stop -> false
+
+                        playAction?.let { playAction ->
+                            Log.d("Station", "+++2 $playAction")
+                            selectedColor = if(playAction == PlayAction.Resume) {
+                                ContextCompat.getColor(context, R.color.pink)
+                            }else{
+                                ContextCompat.getColor(context, R.color.pink_gray)
+                            }
+                            drawPlayingAnim = playAction == PlayAction.Resume
                         }
                     }
-                }
             }
 
-
-
             if (selected) {
-                //root.setBackgroundColor(selectedColor)
+               // root.setBackgroundColor(selectedColor)
 
                 root.background = ContextCompat.getDrawable(context, R.drawable.ripple_stroke_white)
             } else {

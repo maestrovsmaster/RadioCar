@@ -19,8 +19,8 @@ interface FavoritesDao {
     suspend fun insert(station: Favorites)
 
 
-    @Delete
-    suspend fun delete(stationuuid: Favorites)
+    @Query("DELETE FROM favorites WHERE stationuuid = :stationuuid")
+    suspend fun delete(stationuuid: String)
 
 
 }

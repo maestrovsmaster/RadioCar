@@ -19,8 +19,9 @@ interface RecentDao {
     suspend fun insert(station: Recent)
 
 
-    @Delete
-    suspend fun delete(stationuuid: Recent)
+
+    @Query("DELETE FROM recent WHERE stationuuid = :stationuuid")
+    suspend fun delete(stationuuid: String)
 
 
 }

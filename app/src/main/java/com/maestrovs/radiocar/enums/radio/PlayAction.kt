@@ -4,5 +4,8 @@ enum class PlayAction {
     Resume,
     Pause,
     Previous,
-    Next
+    Next,
+    Buffering,
+    Idle,
+    Error
 }
