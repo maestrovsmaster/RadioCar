@@ -15,17 +15,17 @@ class RadioViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
 
 
 
-    private val _fetchStationsTrigger = MutableLiveData<Unit>()
-    val stations: LiveData<Resource<List<Station>>> = _fetchStationsTrigger.switchMap {
-        mainRepository.getStations("UA")
+    private val _fetchStationsTrigger = MutableLiveData<String>()
+    val stations: LiveData<Resource<List<Station>>> = _fetchStationsTrigger.switchMap {countryCode->
+        mainRepository.getStations(countryCode)
     }
 
     init {
-        fetchStations()
+       // fetchStations("sdf")
     }
 
-    fun fetchStations() {
-        _fetchStationsTrigger.value = Unit
+    fun fetchStations(countryCode: String) {
+        _fetchStationsTrigger.value = countryCode
     }
 
 

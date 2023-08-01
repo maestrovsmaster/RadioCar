@@ -14,7 +14,7 @@ interface StationDao {
     fun getAllStations() : LiveData<List<Station>>
 
     @Query("SELECT * FROM stations WHERE countrycode = :countryCode")
-    fun getStationsByName(countryCode: String) : LiveData<List<Station>>
+    fun getStationsByCountryCode(countryCode: String) : LiveData<List<Station>>
 
 
     //     SELECT Item.id, Item.name, (Favourite.id IS NOT NULL) as isFavorite

@@ -143,7 +143,6 @@ class RadioFragment : Fragment() {
                     processResources(it)
                 }
             }
-
         }
 
         radioViewModel.searched.observe(viewLifecycleOwner) {
@@ -159,7 +158,8 @@ class RadioFragment : Fragment() {
 
 
         mainViewModel.mustRefreshStatus.observe(viewLifecycleOwner){
-         //   radioViewModel.fetchStations(CurrentCountryManager.readCountry(requireContext())?.alpha2?:"UA")
+           radioViewModel.fetchStations(CurrentCountryManager.readCountry(requireContext())?.alpha2?:
+           CurrentCountryManager.DEFAULT_COUNTRY)
         }
 
 
@@ -172,7 +172,8 @@ class RadioFragment : Fragment() {
             currentListType = ListType.All
             layoutManager.justifyContent = JustifyContent.SPACE_AROUND
             updateButtons(ListType.All)
-            radioViewModel.fetchStations()
+            radioViewModel.fetchStations(CurrentCountryManager.readCountry(requireContext())?.alpha2?:
+            CurrentCountryManager.DEFAULT_COUNTRY)
         }
 
         binding.btRecent.setOnClickListener {
@@ -285,7 +286,8 @@ class RadioFragment : Fragment() {
                     currentListType = ListType.All
                     layoutManager.justifyContent = JustifyContent.FLEX_START
                     firstStart = false
-                    radioViewModel.fetchStations()
+                    radioViewModel.fetchStations(CurrentCountryManager.readCountry(requireContext())?.alpha2?:
+                    CurrentCountryManager.DEFAULT_COUNTRY)
                     updateButtons(ListType.All)
                 } else if (filteredList.isNotEmpty()) {
                     mainViewModel.setIfNeedInitStation(filteredList[0])

@@ -9,6 +9,8 @@ object CurrentCountryManager {
 
     private const val ASK_COUNTRY_KEY = "ASK_COUNTRY_KEY"
 
+    const val DEFAULT_COUNTRY = "UK"
+
     fun writeCountry(context: Context, country: CPCountry) {
         val countryJson = Gson().toJson(country)
 

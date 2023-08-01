@@ -1,5 +1,6 @@
 package com.maestrovs.radiocar.ui.main
 
+import android.Manifest.permission.BLUETOOTH_CONNECT
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothProfile
@@ -14,6 +15,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -86,6 +88,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
 
         private const val PERMISSIONS_REQUEST_LOCATION = 124
+        private const val PERMISSIONS_REQUEST_BLUETOOTH = 145
         fun callingIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 
@@ -129,6 +132,7 @@ class MainActivity : AppCompatActivity() {
             false -> mainViewModel.setBluetoothStatus(BT_Status.Disable)
         }
         registerBluetoothStatusReceiver()
+
         checkConnectedBluetoothDevices()
 
 
@@ -138,10 +142,6 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.mustRefreshStatus.observe(this) {
             applySettingsChanges()
         }
-
-
-
-
 
 
         if(!CurrentCountryManager.isAskCountry(this)) {
@@ -172,6 +172,16 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun checkConnectedBluetoothDevices() {
+
+        if (ContextCompat.checkSelfPermission(this@MainActivity, BLUETOOTH_CONNECT) == PackageManager.PERMISSION_DENIED)
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+            {
+                ActivityCompat.requestPermissions(this@MainActivity, arrayOf(BLUETOOTH_CONNECT), PERMISSIONS_REQUEST_BLUETOOTH)
+                return
+            }
+        }
+
         val isBluetoothEnabled = bluetoothAdapter.isEnabled
         if (isBluetoothEnabled) {
             // Get a list of connected devices
@@ -322,6 +332,12 @@ class MainActivity : AppCompatActivity() {
                 startLocationUpdates()
             } else {
                 // Permission denied, show a message or disable features that require the permission.
+            }
+        }
+
+        if(requestCode == PERMISSIONS_REQUEST_BLUETOOTH){
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                registerBluetoothStatusReceiver()
             }
         }
     }
