@@ -65,7 +65,6 @@ class MainActivity : AppCompatActivity() {
             Log.d("ASD", "onServiceConnected")
             val binder = service as AudioPlayerService.LocalBinder
             audioPlayerService = binder.getService()
-
             serviceBound = true
         }
 
@@ -80,10 +79,6 @@ class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModels()
 
     val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-
-
-
-
 
 
     companion object {
@@ -137,9 +132,6 @@ class MainActivity : AppCompatActivity() {
         checkConnectedBluetoothDevices()
 
 
-
-
-
         mainViewModel.mustRefreshStatus.observe(this) {
             applySettingsChanges()
         }
@@ -155,24 +147,7 @@ class MainActivity : AppCompatActivity() {
             }
             CurrentCountryManager.setAskedCountryTrue(this)
         }
-
-
-
-
-
-        /* //save last location
-         lifecycleScope.launch {
-             while (true) {
-                    mainViewModel.location.value?.let {
-                        WeatherManager.setCurrentLocationCoords(this@MainActivity, it.getCoords2d() )
-                    }
-                 delay(Constants.SAVE_LAST_LOCATION_DELAY * 60 * 1000L) // Delay for CHECK_WEATHER_MINUTES_DELAY minutes
-             }
-         }*/
     }
-
-
-
 
     private fun checkConnectedBluetoothDevices() {
 

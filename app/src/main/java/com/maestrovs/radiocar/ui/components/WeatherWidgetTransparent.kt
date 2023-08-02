@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.util.AttributeSet
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.core.content.ContextCompat
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
 import com.maestrovs.radiocar.extensions.setVisible
+import com.maestrovs.radiocar.ui.settings.ui.main.TemperatureUnit
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.component_weather.view.layError
 
@@ -21,13 +23,12 @@ import kotlinx.android.synthetic.main.component_weather.view.rootCard
 import kotlinx.android.synthetic.main.component_weather.view.tvErrText
 import kotlinx.android.synthetic.main.component_weather_transparent.view.layWeather
 import kotlinx.android.synthetic.main.component_weather_transparent.view.progress
+import kotlin.math.roundToInt
 
 
 open class WeatherWidgetTransparent : FrameLayout {
 
     protected var mRootView: View? = null
-
-
 
 
     constructor(context: Context) : super(context) {
@@ -53,6 +54,8 @@ open class WeatherWidgetTransparent : FrameLayout {
     lateinit var ivWeatherIcon: ImageView
     lateinit var tvCity: TextView
     lateinit var tvTemperature: TextView
+    lateinit var tvUnit: TextView
+
     protected open fun init(context: Context) {
 
         foregroundGravity = Gravity.CENTER_VERTICAL
@@ -62,6 +65,7 @@ open class WeatherWidgetTransparent : FrameLayout {
         tvCity = mRootView!!.findViewById(R.id.tvCity)
         tvTemperature = mRootView!!.findViewById(R.id.tvTemperature)
         ivWeatherIcon = mRootView!!.findViewById(R.id.ivWeatherIcon)
+        tvUnit = mRootView!!.findViewById(R.id.tvUnit)
 
         initUI()
 
@@ -84,11 +88,22 @@ open class WeatherWidgetTransparent : FrameLayout {
         }
     }
 
-    fun setWeatherResponse(weatherResponse: WeatherResponse){
+    private var temperatureUnit: TemperatureUnit = TemperatureUnit.C
+    private var weatherResponse: WeatherResponse? = null
+
+    fun setWeatherResponse(weatherResponse: WeatherResponse, temperatureUnit: TemperatureUnit) {
+        this.temperatureUnit = temperatureUnit
+        this.weatherResponse = weatherResponse
         refreshUI(weatherResponse)
     }
 
-    fun setWeatherError(errorMessage: String){
+    fun changeTemperatureUnit(temperatureUnit: TemperatureUnit) {
+        this.temperatureUnit = temperatureUnit
+        refreshUI(weatherResponse)
+
+    }
+
+    fun setWeatherError(errorMessage: String) {
         refreshUI(null, errorMessage)
     }
 
@@ -100,9 +115,8 @@ open class WeatherWidgetTransparent : FrameLayout {
         intArrayOf(android.R.attr.state_pressed)  // pressed
     )
 
-    fun setWeatherELoading(){
+    fun setWeatherELoading() {
         progress.setVisible(true)
-
 
 
         val colors = intArrayOf(
@@ -116,9 +130,9 @@ open class WeatherWidgetTransparent : FrameLayout {
         rootCard.setCardBackgroundColor(myList)
     }
 
-    private fun refreshUI(weatherResponse: WeatherResponse?, errorMessage: String? = null){
+    private fun refreshUI(weatherResponse: WeatherResponse?, errorMessage: String? = null) {
 
-        layWeather.setVisible(weatherResponse!=null)
+        layWeather.setVisible(weatherResponse != null)
         layError.setVisible(weatherResponse == null)
 
         progress.setVisible(false)
@@ -128,7 +142,11 @@ open class WeatherWidgetTransparent : FrameLayout {
 
             tvCity.text = weatherResponse.name
 
-            val temperatureFloat = weatherResponse.main.temp
+            val temperatureFloat = when (temperatureUnit) {
+                TemperatureUnit.C -> weatherResponse.main.temp
+                TemperatureUnit.F -> convertCelsiumToFahrenheit(weatherResponse.main.temp).toFloat()
+            }
+
 
             var textColorRes = R.color.black
 
@@ -145,12 +163,18 @@ open class WeatherWidgetTransparent : FrameLayout {
                 }
 
 
-            val tempStr = temperatureFloat.toInt().toString()
+            val tempStr = temperatureFloat.roundToInt().toString()
 
             val displayTemp = "$tempPref$tempStr" //°C
 
 
             tvTemperature.text = displayTemp
+
+
+            tvUnit.text = when (temperatureUnit) {
+                TemperatureUnit.C -> "°C"
+                TemperatureUnit.F -> "°F"
+            }
 
             // tvTemperature.setTextColor(textColorRes)
 
@@ -167,12 +191,13 @@ open class WeatherWidgetTransparent : FrameLayout {
                     .centerCrop()
                     .into(ivWeatherIcon)
             }
-        }?: kotlin.run {
-            tvErrText.text = errorMessage?:"Weather service isn't available"
+        } ?: kotlin.run {
+            tvErrText.text = errorMessage ?: "Weather service isn't available"
         }
-
-
     }
+
+
+    private fun convertCelsiumToFahrenheit(celsium: Float) = ((celsium*(9.0 / 5.0))+32)
 
     public fun setOnBack(l: OnClickListener?) {
         /* ivBackCard?.setOnClickListener {

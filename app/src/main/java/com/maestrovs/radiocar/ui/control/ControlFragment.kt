@@ -22,7 +22,11 @@ import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.maestrovs.radiocar.ui.settings.KEY_SETTINGS_INPUT_MESSAGE
 import com.maestrovs.radiocar.ui.settings.KEY_SETTINGS_RESULT_MESSAGE
 import com.maestrovs.radiocar.ui.settings.SettingsActivity
+import com.maestrovs.radiocar.ui.settings.ui.main.SettingsManager
+import com.maestrovs.radiocar.ui.settings.ui.main.SpeedUnit
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_control.speedView
+import kotlinx.android.synthetic.main.fragment_control.weatherWidget
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.Math.round
@@ -57,7 +61,16 @@ class ControlFragment : Fragment() {
             val resultMessage = data?.getStringExtra(KEY_SETTINGS_RESULT_MESSAGE)
             Log.d("SettingsActivity","On result = $resultMessage")
             mainViewModel.setMustRefreshStatus()
+            refreshMeasures()
         }
+    }
+
+    private fun refreshMeasures(){
+        speedView.setUnit( when(SettingsManager.getSpeedUnit(requireContext())){
+            SpeedUnit.kmh -> getString(R.string.km_h)
+            SpeedUnit.mph -> getString(R.string.mph)
+        })
+        weatherWidget.changeTemperatureUnit(SettingsManager.getTemperatureUnit(requireContext()))
     }
 
 
@@ -145,20 +158,22 @@ class ControlFragment : Fragment() {
         }
 
         mainViewModel.speed.observe(viewLifecycleOwner){ speed ->
-            binding.speedView.setSpeed(speed)
+            binding.speedView.setSpeedKmh(speed, SettingsManager.getSpeedUnit(requireContext()))
             binding.animationView.speed = SpeedManager.getSpeedForAnimation(speed)
         }
 
 
 
         controlViewModel.weatherResponse.observe(viewLifecycleOwner) {
-            binding.weatherWidget.setWeatherResponse(it)
+            binding.weatherWidget.setWeatherResponse(it, SettingsManager.getTemperatureUnit(requireContext()))
         }
 
         controlViewModel.weatherError.observe(viewLifecycleOwner) {
             val msg = it ?: return@observe
             binding.weatherWidget.setWeatherError(msg)
         }
+
+        refreshMeasures()
 
 
         //Check Weather loop

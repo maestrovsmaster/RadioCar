@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
+import com.maestrovs.radiocar.ui.settings.ui.main.SpeedUnit
 import kotlin.math.round
 
 
@@ -72,11 +73,20 @@ open class SpeedWidgetTransparent : FrameLayout {
         }
     }
 
-    fun setSpeed(speed: Float){
-        refreshUI(speed)
+
+    fun setSpeedKmh(speedKmh: Float, speedUnit: SpeedUnit){
+        when(speedUnit){
+            SpeedUnit.kmh ->  refreshUI(speedKmh)
+            SpeedUnit.mph -> refreshUI(convertToMph(speedKmh).toFloat())
+        }
+
     }
 
+    private fun convertToMph(kmh: Float) = kmh*0.6213711922
 
+    fun setUnit(unit: String){
+        tvUnit.text = "$unit"
+    }
 
     private fun refreshUI(speed: Float){
 
