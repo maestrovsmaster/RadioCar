@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">RadioCar</string>
+    <string name="app_name">TripTune</string>
     <string name="action_settings">Налаштування</string>
     <string name="next">Далі</string>
     <string name="previous">Назад</string>
