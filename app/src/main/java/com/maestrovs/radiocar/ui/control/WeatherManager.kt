@@ -7,7 +7,7 @@ import android.location.Location
 object WeatherManager {
 
     private val LAST_LOCATION_LAT = "LAST_LOCATION_LAT"
-    private val LAST_LOCATION_LON = "LAST_LOCATION_LAT"
+    private val LAST_LOCATION_LON = "LAST_LOCATION_LON"
 
 
     public fun setCurrentLocationCoords(context: Context, coords: Coords2d) {

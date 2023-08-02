@@ -1,10 +1,12 @@
 package com.maestrovs.radiocar.ui.control
 
 import android.location.Location
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
 import com.maestrovs.radiocar.data.remote.weather.WeatherService
 import com.maestrovs.radiocar.data.repository.WeatherRepository
@@ -32,30 +34,30 @@ class ControlViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     fun setLocation(newLocation: Location) {
         _currentLocation.value = newLocation
     }
-   // var lat: Double = 50.411785
-   // var lon: Double = 30.350417
 
 
-    fun fetchWeather(lastLocation: Coords2d? = null) {
+    var lastLocation: Coords2d? = null
 
+    var countryName: String = CurrentCountryManager.DEFAULT_CITY
+
+
+    fun fetchWeather() {
+
+        Log.d("Weather","fetchWeather $lastLocation")
 
         val location: Location? = _currentLocation.value
 
 
-        val lat: Double = location?.latitude?:lastLocation?.lat?: with(Double) {
-            _weatherError.value = "Location service is unavailable"
-            return
-        }
-        val lon: Double = location?.longitude?:lastLocation?.lon?:with(Double) {
-            _weatherError.value = "Location service is unavailable"
-            return
-        }
-
-
-
+        val lat: Double? = location?.latitude?:lastLocation?.lat
+        val lon: Double? = location?.longitude?:lastLocation?.lon
 
         viewModelScope.launch {
-            val response = weatherRepository.getWeatherDataByCoordinates(lat, lon)
+            val response = if(lat != null && lon != null) {
+                weatherRepository.getWeatherDataByCoordinates(lat, lon)
+            }else{
+                Log.d("Weather","fetchWeather $countryName")
+                weatherRepository.getWeatherDataByCity(countryName)
+            }
             when (response.status) {
                 Resource.Status.SUCCESS -> {
                     response.data.let { weatherResp ->
@@ -66,7 +68,6 @@ class ControlViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
                 }
 
                 Resource.Status.ERROR -> {
-
                     _weatherError.value = "Weather service is unavailable"
                 }
 

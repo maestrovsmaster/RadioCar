@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.common.Constants.CHECK_WEATHER_MINUTES_DELAY
+import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.databinding.FragmentControlBinding
 import com.maestrovs.radiocar.enums.bluetooth.BT_Status
 import com.maestrovs.radiocar.ui.main.MainViewModel
@@ -66,6 +67,14 @@ class ControlFragment : Fragment() {
 
     private var canFetchWeather = false
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if(controlViewModel.lastLocation == null){
+            fetchCachedLocation()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -111,28 +120,32 @@ class ControlFragment : Fragment() {
             binding.btBluetooth.setIconResource(icon)
         }
 
-
-        mainViewModel.location.observe(viewLifecycleOwner) {
-
-            if (!canFetchWeather) canFetchWeather = true
-            val location = it ?: return@observe
-            val shouldInitWeather = controlViewModel.location.value == null
-
-            controlViewModel.setLocation(location)
-            if (shouldInitWeather) {
-                controlViewModel.fetchWeather(WeatherManager.getLastCoords(requireContext()))
+        mainViewModel.mustRefreshStatus.observe(viewLifecycleOwner){
+            val currentCountry = CurrentCountryManager.readCountry(requireContext())
+            Log.d("Weather","ttmainViewModel.currentCountry ${currentCountry?.name}")
+            if(currentCountry != null){
+                controlViewModel.countryName = currentCountry.name
             }
+            canFetchWeather = true
+            controlViewModel.fetchWeather()
+        }
 
-
-          //  binding.speedView!!.speedTo(updateSpeed(location),600)
+        mainViewModel.location.observe(viewLifecycleOwner) { location ->
+            if(location != null){
+                controlViewModel.setLocation(location)
+                WeatherManager.setCurrentLocationCoords(requireContext(), location.getCoords2d())
+            }else{
+                fetchCachedLocation()
+            }
+            if (!canFetchWeather){
+                canFetchWeather = true
+                controlViewModel.fetchWeather()
+            }
 
         }
 
         mainViewModel.speed.observe(viewLifecycleOwner){ speed ->
             binding.speedView.setSpeed(speed)
-
-
-
             binding.animationView.speed = SpeedManager.getSpeedForAnimation(speed)
         }
 
@@ -140,25 +153,12 @@ class ControlFragment : Fragment() {
 
         controlViewModel.weatherResponse.observe(viewLifecycleOwner) {
             binding.weatherWidget.setWeatherResponse(it)
-
-
-
         }
 
         controlViewModel.weatherError.observe(viewLifecycleOwner) {
             val msg = it ?: return@observe
             binding.weatherWidget.setWeatherError(msg)
         }
-
-      //  binding.speedView!!.setMinMaxSpeed(0f,200f)
-      //  binding.speedView!!.speedTextColor = R.color.red
-        // change ring color, have fun with this method
-     ///err   binding.speedView!!.setSpeedometerColor(Color.RED);
-// change Triangles Color (around the speedometer)
-   //    binding.speedView!!.trianglesColor = Color.GREEN
-// change center indicator width (center triangle)
-       // binding.speedView!!.indica//setIndicatorWidth(15);
-
 
 
         //Check Weather loop
@@ -173,6 +173,18 @@ class ControlFragment : Fragment() {
         }
 
 
+    }
+
+    private fun fetchCachedLocation(){
+        val lastLocation = WeatherManager.getLastCoords(requireContext())
+        if(lastLocation != null){
+            controlViewModel.lastLocation = lastLocation
+        }else{
+            val currentCountry = CurrentCountryManager.readCountry(requireContext())
+            if(currentCountry != null){
+                controlViewModel.countryName = currentCountry.name
+            }
+        }
     }
 
     private fun launchMapIntent(){

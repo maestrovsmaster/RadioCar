@@ -40,6 +40,7 @@ import com.maestrovs.radiocar.databinding.ActivityMainBinding
 import com.maestrovs.radiocar.enums.bluetooth.BT_Status
 import com.maestrovs.radiocar.service.AudioPlayerService
 import com.maestrovs.radiocar.ui.components.ExitDialog
+import com.maestrovs.radiocar.ui.control.WeatherManager
 import com.maestrovs.radiocar.ui.settings.ui.main.SettingsManager
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -154,6 +155,8 @@ class MainActivity : AppCompatActivity() {
             }
             CurrentCountryManager.setAskedCountryTrue(this)
         }
+
+
 
 
 
