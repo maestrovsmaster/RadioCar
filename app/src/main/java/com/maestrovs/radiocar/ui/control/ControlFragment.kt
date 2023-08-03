@@ -18,6 +18,7 @@ import com.maestrovs.radiocar.common.Constants.CHECK_WEATHER_MINUTES_DELAY
 import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.databinding.FragmentControlBinding
 import com.maestrovs.radiocar.enums.bluetooth.BT_Status
+import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.maestrovs.radiocar.ui.settings.KEY_SETTINGS_INPUT_MESSAGE
 import com.maestrovs.radiocar.ui.settings.KEY_SETTINGS_RESULT_MESSAGE
@@ -54,22 +55,25 @@ class ControlFragment : Fragment() {
     }
 
 
-    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        Log.d("SettingsActivity","On result ...")
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data = result.data
-            val resultMessage = data?.getStringExtra(KEY_SETTINGS_RESULT_MESSAGE)
-            Log.d("SettingsActivity","On result = $resultMessage")
-            mainViewModel.setMustRefreshStatus()
-            refreshMeasures()
+    private val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            Log.d("SettingsActivity", "On result ...")
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                val resultMessage = data?.getStringExtra(KEY_SETTINGS_RESULT_MESSAGE)
+                Log.d("SettingsActivity", "On result = $resultMessage")
+                mainViewModel.setMustRefreshStatus()
+                refreshMeasures()
+            }
         }
-    }
 
-    private fun refreshMeasures(){
-        speedView.setUnit( when(SettingsManager.getSpeedUnit(requireContext())){
-            SpeedUnit.kmh -> getString(R.string.km_h)
-            SpeedUnit.mph -> getString(R.string.mph)
-        })
+    private fun refreshMeasures() {
+        speedView.setUnit(
+            when (SettingsManager.getSpeedUnit(requireContext())) {
+                SpeedUnit.kmh -> getString(R.string.km_h)
+                SpeedUnit.mph -> getString(R.string.mph)
+            }
+        )
         weatherWidget.changeTemperatureUnit(SettingsManager.getTemperatureUnit(requireContext()))
     }
 
@@ -80,10 +84,12 @@ class ControlFragment : Fragment() {
 
     private var canFetchWeather = false
 
+    private var isMusicPlaying = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(controlViewModel.lastLocation == null){
+        if (controlViewModel.lastLocation == null) {
             fetchCachedLocation()
         }
     }
@@ -121,11 +127,12 @@ class ControlFragment : Fragment() {
         }
 
 
-        mainViewModel.bluetoothStatus.observe(viewLifecycleOwner){bt_Status ->
-            bt_Status?:return@observe
 
-            val icon = when(bt_Status){
-                BT_Status.Enabled ->  R.drawable.ic_bt_on
+        mainViewModel.bluetoothStatus.observe(viewLifecycleOwner) { bt_Status ->
+            bt_Status ?: return@observe
+
+            val icon = when (bt_Status) {
+                BT_Status.Enabled -> R.drawable.ic_bt_on
                 BT_Status.ConnectedDevice -> R.drawable.ic_bluetooth_connected
                 BT_Status.Disable -> R.drawable.ic_bt_off
                 BT_Status.DisconnectedDevice -> R.drawable.ic_bt_on
@@ -133,10 +140,10 @@ class ControlFragment : Fragment() {
             binding.btBluetooth.setIconResource(icon)
         }
 
-        mainViewModel.mustRefreshStatus.observe(viewLifecycleOwner){
+        mainViewModel.mustRefreshStatus.observe(viewLifecycleOwner) {
             val currentCountry = CurrentCountryManager.readCountry(requireContext())
-            Log.d("Weather","ttmainViewModel.currentCountry ${currentCountry?.name}")
-            if(currentCountry != null){
+            Log.d("Weather", "ttmainViewModel.currentCountry ${currentCountry?.name}")
+            if (currentCountry != null) {
                 controlViewModel.countryName = currentCountry.name
             }
             canFetchWeather = true
@@ -144,28 +151,56 @@ class ControlFragment : Fragment() {
         }
 
         mainViewModel.location.observe(viewLifecycleOwner) { location ->
-            if(location != null){
+            Log.d(
+                "Weather",
+                "ttmainViewModel.location ${location?.latitude}, ${location?.longitude}"
+            )
+            if (location != null) {
                 controlViewModel.setLocation(location)
                 WeatherManager.setCurrentLocationCoords(requireContext(), location.getCoords2d())
-            }else{
+            } else {
                 fetchCachedLocation()
             }
-            if (!canFetchWeather){
+            if (!canFetchWeather) {
                 canFetchWeather = true
                 controlViewModel.fetchWeather()
             }
 
         }
 
-        mainViewModel.speed.observe(viewLifecycleOwner){ speed ->
+        mainViewModel.speed.observe(viewLifecycleOwner) { speed ->
             binding.speedView.setSpeedKmh(speed, SettingsManager.getSpeedUnit(requireContext()))
-            binding.animationView.speed = SpeedManager.getSpeedForAnimation(speed)
+            val speed =
+                SpeedManager.getSpeedForAnimation(speed) * (if (isMusicPlaying || speed > 3) {
+                    1.0f
+                } else {
+                    0.0f
+                })
+
+           // Log.d("Orientation", "speed = $speed " +
+                //    "isMusicPlaying=$isMusicPlaying")
+
+            binding.animationView.speed = speed
+        }
+
+        mainViewModel.playAction.observe(viewLifecycleOwner) { playAction ->
+
+            isMusicPlaying = playAction == PlayAction.Resume
+            //Log.d("Orientation", "playAction = $playAction isMusicPlaying=$isMusicPlaying")
+        }
+
+
+        binding.weatherWidget.setOnClickListener {
+            controlViewModel.fetchWeather()
         }
 
 
 
         controlViewModel.weatherResponse.observe(viewLifecycleOwner) {
-            binding.weatherWidget.setWeatherResponse(it, SettingsManager.getTemperatureUnit(requireContext()))
+            binding.weatherWidget.setWeatherResponse(
+                it,
+                SettingsManager.getTemperatureUnit(requireContext())
+            )
         }
 
         controlViewModel.weatherError.observe(viewLifecycleOwner) {
@@ -190,21 +225,21 @@ class ControlFragment : Fragment() {
 
     }
 
-    private fun fetchCachedLocation(){
+    private fun fetchCachedLocation() {
         val lastLocation = WeatherManager.getLastCoords(requireContext())
-        if(lastLocation != null){
+        if (lastLocation != null) {
             controlViewModel.lastLocation = lastLocation
-        }else{
+        } else {
             val currentCountry = CurrentCountryManager.readCountry(requireContext())
-            if(currentCountry != null){
+            if (currentCountry != null) {
                 controlViewModel.countryName = currentCountry.name
             }
         }
     }
 
-    private fun launchMapIntent(){
+    private fun launchMapIntent() {
         var gmmIntentUri = Uri.parse("geo:0,0")
-       //     Uri.parse("geo:0,0?q=?")
+        //     Uri.parse("geo:0,0?q=?")
 
         mainViewModel.location.value?.let {
             gmmIntentUri = Uri.parse("geo:${it.latitude},${it.longitude}")
@@ -214,34 +249,31 @@ class ControlFragment : Fragment() {
         startActivity(mapIntent)
     }
 
-    private fun launchPhoneIntent(){
+    private fun launchPhoneIntent() {
         val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", "", null))
         startActivity(intent)
     }
 
 
-
-    private  fun launchBluetoothIntent(){
+    private fun launchBluetoothIntent() {
         val intentOpenBluetoothSettings = Intent()
         intentOpenBluetoothSettings.action = Settings.ACTION_BLUETOOTH_SETTINGS
         startActivity(intentOpenBluetoothSettings)
     }
 
 
-    private fun launchSettingsIntent(){
-        val intent =  SettingsActivity.newIntent(requireContext()).apply {
+    private fun launchSettingsIntent() {
+        val intent = SettingsActivity.newIntent(requireContext()).apply {
             putExtra(KEY_SETTINGS_INPUT_MESSAGE, "")
         }
         launcher.launch(intent)
     }
 
 
-
     fun customRound(number: Double): Double {
-        return if (number - number.toInt() >= 0.4) round(number).toDouble() else number.toInt().toDouble() + 2
+        return if (number - number.toInt() >= 0.4) round(number).toDouble() else number.toInt()
+            .toDouble() + 2
     }
-
-
 
 
     override fun onDestroyView() {

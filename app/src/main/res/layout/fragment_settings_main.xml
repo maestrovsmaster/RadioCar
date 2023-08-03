@@ -222,6 +222,50 @@
             </RadioGroup>
 
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_dark"
+                android:visibility="visible"
+                android:layout_marginEnd="46dp"
+                android:layout_marginVertical="@dimen/settings_divider_margin"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/settings_text_main_size"
+                android:text="@string/about_app"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textStyle="italic"
+                android:textSize="@dimen/settings_text_option_size"
+                android:text="@string/description"/>
+
+            <TextView
+                android:id="@+id/tvVersion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/settings_text_option_size"
+                android:text=""/>
+
+            <TextView
+                android:id="@+id/tvCreatedBy"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="@dimen/settings_text_option_size"
+                android:text="@string/created_by"/>
+
 
 
         </LinearLayout>

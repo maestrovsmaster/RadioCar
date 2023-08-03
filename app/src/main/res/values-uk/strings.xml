@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TripTune</string>
+    <string name="app_name">RadioCar</string>
     <string name="action_settings">Налаштування</string>
     <string name="next">Далі</string>
     <string name="previous">Назад</string>
@@ -30,5 +30,12 @@
 
     <string name="country">Країна</string>
     <string name="country_not_selected">Не вибрана</string>
+
+    <string name="about_app">Про додаток</string>
+
+    <string name="description"><b>Radio Car:</b> Ваш ідеальний супутник у дорожній подорожі!</string>
+
+    <string name="created_by">© 2023 Vasyl Horodetskyi</string>
+    <string name="app_version">Версія додатку</string>
 
 </resources>

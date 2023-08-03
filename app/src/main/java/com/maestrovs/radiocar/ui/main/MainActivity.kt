@@ -121,15 +121,18 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        if (bluetoothAdapter != null) {
 
-        val isBluetoothEnabled = bluetoothAdapter.isEnabled
-        when (isBluetoothEnabled) {
-            true -> mainViewModel.setBluetoothStatus(BT_Status.Enabled)
-            false -> mainViewModel.setBluetoothStatus(BT_Status.Disable)
+            val isBluetoothEnabled = bluetoothAdapter.isEnabled
+            when (isBluetoothEnabled) {
+                true -> mainViewModel.setBluetoothStatus(BT_Status.Enabled)
+                false -> mainViewModel.setBluetoothStatus(BT_Status.Disable)
+            }
+            registerBluetoothStatusReceiver()
+
+            checkConnectedBluetoothDevices()
+
         }
-        registerBluetoothStatusReceiver()
-
-        checkConnectedBluetoothDevices()
 
 
         mainViewModel.mustRefreshStatus.observe(this) {
@@ -137,12 +140,12 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        if(!CurrentCountryManager.isAskCountry(this)) {
+        if (!CurrentCountryManager.isAskCountry(this)) {
             launchCountryPickerDialog { country: CPCountry? ->
-                val newSelectedCountry = country?:return@launchCountryPickerDialog
+                val newSelectedCountry = country ?: return@launchCountryPickerDialog
                 Log.d("Country", "CountryCode = $newSelectedCountry")
-               // binding.tvSelectedCountry.text =  "${newSelectedCountry.flagEmoji} ${newSelectedCountry.name}"
-                CurrentCountryManager.writeCountry(this,newSelectedCountry)
+                // binding.tvSelectedCountry.text =  "${newSelectedCountry.flagEmoji} ${newSelectedCountry.name}"
+                CurrentCountryManager.writeCountry(this, newSelectedCountry)
                 mainViewModel.setMustRefreshStatus()
             }
             CurrentCountryManager.setAskedCountryTrue(this)
@@ -151,11 +154,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkConnectedBluetoothDevices() {
 
-        if (ContextCompat.checkSelfPermission(this@MainActivity, BLUETOOTH_CONNECT) == PackageManager.PERMISSION_DENIED)
-        {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-            {
-                ActivityCompat.requestPermissions(this@MainActivity, arrayOf(BLUETOOTH_CONNECT), PERMISSIONS_REQUEST_BLUETOOTH)
+        if (ContextCompat.checkSelfPermission(
+                this@MainActivity,
+                BLUETOOTH_CONNECT
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ActivityCompat.requestPermissions(
+                    this@MainActivity,
+                    arrayOf(BLUETOOTH_CONNECT),
+                    PERMISSIONS_REQUEST_BLUETOOTH
+                )
                 return
             }
         }
@@ -171,8 +180,8 @@ class MainActivity : AppCompatActivity() {
 
                         val connectedDevices = proxy.connectedDevices
 
-                        if(connectedDevices.size > 0) {
-                            if(SettingsManager.isAutoplay(this@MainActivity)) {
+                        if (connectedDevices.size > 0) {
+                            if (SettingsManager.isAutoplay(this@MainActivity)) {
                                 Handler(Looper.getMainLooper()).postDelayed({
                                     mainViewModel.playCurrentStationState()
                                 }, 1000)
@@ -212,8 +221,8 @@ class MainActivity : AppCompatActivity() {
                         val device: BluetoothDevice? =
                             intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                         mainViewModel.setBluetoothStatus(BT_Status.ConnectedDevice)
-                        if(SettingsManager.isAutoplay(this@MainActivity)) {
-                         //   mainViewModel.playCurrentStationState()
+                        if (SettingsManager.isAutoplay(this@MainActivity)) {
+                            //   mainViewModel.playCurrentStationState()
                         }
                     }
 
@@ -313,7 +322,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if(requestCode == PERMISSIONS_REQUEST_BLUETOOTH){
+        if (requestCode == PERMISSIONS_REQUEST_BLUETOOTH) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 registerBluetoothStatusReceiver()
             }

@@ -118,6 +118,8 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        binding.tvVersion.text = "${getString(R.string.app_version)}: ${viewModel.versionDisplay}"
+
     }
 
 }

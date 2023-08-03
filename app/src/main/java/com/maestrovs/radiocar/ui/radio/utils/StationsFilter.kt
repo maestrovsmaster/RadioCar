@@ -8,20 +8,25 @@ fun filterAll(list: List<Station>) = filterByNames(filterByRu(list))
 /**
  * Blacklist
  */
-fun filterByRu(list: List<Station>)  = list.filterNot { it.countrycode in listOf("RU") }
+fun filterByRu(list: List<Station>) = list.filterNot { it.countrycode in listOf("RU") }
 
 /**
  * Blacklist
  */
 fun filterByNames(list: List<Station>) = list.filterNot { station ->
-    listOf("Луганск",
+    listOf(
+        "Луганск",
         "Донецк",
-        "ЛНР" ,
+        "ЛНР",
         "Новороссия",
         "ЛНР",
         "ДНР",
         "Россия",
-        ).any { it in station.name }
+        "РОССИЯ",
+        "МОСКВА",
+        "МОСКВА FM",
+        "Москва"
+    ).any { it in station.name } || station.countrycode == "RU"
 }
 
 fun removeStationsByCountryCode(stations: List<Station>, code: String): List<Station> {
@@ -37,7 +42,11 @@ fun removeStationsByNames(stations: List<Station>, names: List<String>): List<St
 }
 
 
-fun removeStationsByFieldName(stations: List<Station>, fieldName: String, value: String): List<Station> {
+fun removeStationsByFieldName(
+    stations: List<Station>,
+    fieldName: String,
+    value: String
+): List<Station> {
     return stations.filter { station ->
         when (fieldName) {
             "name" -> station.name != value

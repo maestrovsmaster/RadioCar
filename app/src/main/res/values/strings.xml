@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TripTune</string>
+    <string name="app_name">RadioCar</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
 
@@ -41,5 +41,12 @@
 
     <string name="country">Country</string>
     <string name="country_not_selected">Not selected</string>
+
+    <string name="about_app">About app</string>
+
+    <string name="description"><b>Radio Car:</b> Your ideal travel companion on the road!</string>
+
+    <string name="created_by"><b>© 2023 Vasyl Horodetskyi</b></string>
+    <string name="app_version"><b>App version</b></string>
 
 </resources>

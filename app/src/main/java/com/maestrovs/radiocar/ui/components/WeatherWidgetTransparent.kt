@@ -82,7 +82,7 @@ open class WeatherWidgetTransparent : FrameLayout {
         mRootView?.visibility = visibility
     }
 
-    override fun setOnClickListener(l: OnClickListener?) {
+     fun setOnClick(l: OnClickListener?) {
         mRootView?.setOnClickListener {
             l?.onClick(it)
         }
