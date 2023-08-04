@@ -17,8 +17,8 @@ object SpeedManager {
     fun getSmoothSpeed(newSpeed: Float): Float {
 
 
-        Log.d("CustomSpeed", "array in = $arrSpeed")
-        Log.d("CustomSpeed", ">>>>in Speed = $newSpeed")
+        //Log.d("CustomSpeed", "array in = $arrSpeed")
+        //Log.d("CustomSpeed", ">>>>in Speed = $newSpeed")
 
 
         val mediumSpeed = (arrSpeed.sum()) / (cacheSize)
@@ -35,9 +35,9 @@ object SpeedManager {
         arrSpeed.removeAt(0)
         arrSpeed.add(newSpeed)
 
-        Log.d("CustomSpeed", "array out = $arrSpeed ")
-        Log.d("CustomSpeed", "====out Speed = ${round(newMediumSpeed)}  \n\n")
-        Log.d("CustomSpeed", "--------------")
+        //Log.d("CustomSpeed", "array out = $arrSpeed ")
+        //Log.d("CustomSpeed", "====out Speed = ${round(newMediumSpeed)}  \n\n")
+        //Log.d("CustomSpeed", "--------------")
 
         return newMediumSpeed
     }

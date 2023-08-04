@@ -11,6 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.JustifyContent
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.ui.main.MainViewModel
@@ -23,6 +29,7 @@ import com.maestrovs.radiocar.ui.radio.utils.errorMapper
 import com.maestrovs.radiocar.ui.radio.utils.filterAll
 import com.maestrovs.radiocar.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Arrays
 
 
 /**
@@ -34,7 +41,7 @@ class RadioFragment : Fragment() {
 
     var currentListType = ListType.Recent
 
-    var firstStart = true;
+    var firstStart = true
 
 
     private var _binding: FragmentRadioBinding? = null
@@ -65,6 +72,47 @@ class RadioFragment : Fragment() {
     ): View {
 
         _binding = FragmentRadioBinding.inflate(inflater, container, false)
+
+
+
+        binding.adView.adListener = object : AdListener() {
+            override fun onAdFailedToLoad(p0: LoadAdError) {
+                super.onAdFailedToLoad(p0)
+                Log.d("AdMob","AdMob onAdFailedToLoad = $p0")
+            }
+
+            override fun onAdLoaded() {
+                super.onAdLoaded()
+                Log.d("AdMob","AdMob onAdLoaded")
+            }
+
+            override fun onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+                Log.d("AdMob","AdMob onAdClicked")
+            }
+
+            override fun onAdClosed() {
+                // Code to be executed when the user is about to return
+                // to the app after tapping on an ad.
+                Log.d("AdMob","AdMob onAdClosed")
+            }
+        }
+
+        // binding.adView.setAdSize(AdSize.BANNER)
+       // binding.adView.adUnitId = "ca-app-pub-3940256099942544/6300978111"//"ca-app-pub-3109852779138325/6128284569"
+
+
+        val testDeviceIds = Arrays.asList("2571438569BBD089458441E499736CF4")
+        val configuration =
+            RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
+        MobileAds.setRequestConfiguration(configuration)
+
+
+        val adRequest = AdRequest.Builder().build()
+       // binding.adView.setAdSize(AdSize.BANNER) // розмір реклами
+       // binding.adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111") // ID блоку реклами
+        binding.adView.loadAd(adRequest) // завантаження реклами
+
         return binding.root
 
     }
@@ -89,16 +137,18 @@ class RadioFragment : Fragment() {
         // binding.recycler.layoutManager = LinearLayoutManager(requireContext())
 
 
+
+
         layoutManager = WrapFlexboxLayoutManager(context)
         layoutManager.flexDirection = FlexDirection.ROW
         layoutManager.justifyContent = JustifyContent.FLEX_START
         binding.recycler.layoutManager = layoutManager
         binding.recycler.itemAnimator = null
 
-        binding.recycler.setHasFixedSize(true);
-        binding.recycler.setItemViewCacheSize(20);
-        binding.recycler.setDrawingCacheEnabled(true);
-        binding.recycler.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        binding.recycler.setHasFixedSize(true)
+        binding.recycler.setItemViewCacheSize(20)
+        binding.recycler.isDrawingCacheEnabled = true
+        binding.recycler.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
 
 
         binding.recycler.adapter = adapter

@@ -126,12 +126,28 @@ class AudioPlayerService : Service(), Player.Listener {
                 override fun createCurrentContentIntent(player: Player): PendingIntent? {
                     val notificationIntent =
                         Intent(this@AudioPlayerService, MainActivity::class.java)
-                    return PendingIntent.getActivity(
+                    /*return PendingIntent.getActivity(
                         this@AudioPlayerService,
                         0,
                         notificationIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT
-                    )
+                    )*/
+
+                    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        PendingIntent.getActivity(
+                            this@AudioPlayerService,
+                            0,
+                            notificationIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                        )
+                    } else {
+                        PendingIntent.getActivity(
+                            this@AudioPlayerService,
+                            0,
+                            notificationIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                        )
+                    }
                 }
 
                 override fun getCurrentContentText(player: Player): CharSequence {

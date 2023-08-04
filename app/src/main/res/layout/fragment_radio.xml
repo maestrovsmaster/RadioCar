@@ -160,7 +160,21 @@
                 android:paddingHorizontal="4dp"
                 tools:listitem="@layout/item_radio"
                 tools:itemCount="20"
+                android:layout_marginBottom="20dp"
                 />
+
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            ads:layout_constraintBottom_toBottomOf="parent"
+            android:elevation="20dp"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-3109852779138325/6128284569">
+        </com.google.android.gms.ads.AdView>
 
 
         <ProgressBar
