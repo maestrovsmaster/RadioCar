@@ -25,6 +25,25 @@
 
         tools:src="@drawable/bg_music" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivError"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="8dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible"
+        android:padding="8dp"
+        android:src="@drawable/cast_warning48"
+        android:elevation="1dp"
+        app:tint="@color/yourThumbTintColor"
+        android:background="#4D000000"
+
+        />
+
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animationView"
         android:layout_width="0dp"
@@ -70,20 +89,44 @@
         />
 
 
-    <TextView
-        android:id="@+id/tvStation"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="start"
-        android:textColor="@color/white"
-        android:textSize="16sp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btFavorite"
         app:layout_constraintStart_toEndOf="@id/playPause"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="asd asd asd"
-        android:clickable="true"
-        />
+        >
+
+        <TextView
+            android:id="@+id/tvStation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            tools:text="asd asd asd"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/tvError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:textColor="@color/yourThumbTintColor"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium"
+            tools:text="Error playing"
+            android:visibility="gone"
+            android:clickable="true"
+            tools:visibility="visible"
+            />
+
+    </LinearLayout>
+
+
 
 
 
@@ -100,7 +143,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/white"
-        tools:src="@drawable/ic_favorite_stroke_48" />
+        tools:src="@drawable/ic_favorite_stroke_48"
+        />
 
     <LinearLayout
         android:id="@+id/lnWelcome"

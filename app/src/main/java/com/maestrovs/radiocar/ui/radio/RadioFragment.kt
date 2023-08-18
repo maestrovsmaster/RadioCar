@@ -160,8 +160,21 @@ class RadioFragment : Fragment() {
         }
 
         mainViewModel.playAction.observe(viewLifecycleOwner) { playAction ->
-            if(playAction == PlayAction.Resume || playAction == PlayAction.Pause || playAction == PlayAction.Idle) {
-                adapter.setPlayAction(playAction)
+           // if(playAction == PlayAction.Resume || playAction == PlayAction.Pause || playAction == PlayAction.Idle) {
+            //    adapter.setPlayAction(playAction)
+           // }
+
+            when(playAction){
+                is PlayAction.Resume , PlayAction.Pause,  PlayAction.Idle->{
+                    adapter.setPlayAction(playAction)
+                }
+                is PlayAction.Error ->{
+                    adapter.setPlayAction(playAction)
+                    //TODO write to corrupt stations
+                }
+                else -> {
+
+                }
             }
 
         }

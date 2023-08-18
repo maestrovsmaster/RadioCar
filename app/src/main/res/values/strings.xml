@@ -49,4 +49,8 @@
     <string name="created_by"><b>© 2023 Vasyl Horodetskyi</b></string>
     <string name="app_version"><b>App version</b></string>
 
+
+    <string name="playback_error">Playback error</string>
+    <string name="radio_stream_unavailable">This stream is temporary unavailable</string>
+
 </resources>

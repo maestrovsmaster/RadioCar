@@ -132,12 +132,12 @@ class StationAdapterPaging(val onItem: ItemListener1) : PagingDataAdapter<Statio
 
                     playAction?.let { playAction ->
                         Log.d("Station", "+++2 $playAction")
-                        selectedColor = if(playAction == PlayAction.Resume) {
+                        selectedColor = if(playAction is PlayAction.Resume) {
                             ContextCompat.getColor(context, R.color.pink)
                         }else{
                             ContextCompat.getColor(context, R.color.pink_gray)
                         }
-                        drawPlayingAnim = playAction == PlayAction.Resume
+                        drawPlayingAnim = playAction is PlayAction.Resume
                     }
                 }
             }

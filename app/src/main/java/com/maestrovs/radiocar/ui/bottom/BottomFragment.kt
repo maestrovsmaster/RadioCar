@@ -54,31 +54,31 @@ class BottomFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mainViewModel.selectedStation.observe(viewLifecycleOwner) { station ->
-            Log.d("Orientation","")
+            Log.d("Orientation", "")
             station?.let { updateStation(station) } ?: run {
                 showPlaceHolder()
             }
         }
 
         mainViewModel.playAction.observe(viewLifecycleOwner) { playAction ->
-            Log.d("Orientation","playAction = $playAction")
+            Log.d("Orientation", "playAction = $playAction")
             updatePlayAction(playAction)
         }
 
 
-          binding.playPause.setOnClickListener {
-              binding.playPause.switchState()
-              mainViewModel.switchCurrentStationState()
-          }
+        binding.playPause.setOnClickListener {
+            binding.playPause.switchState()
+            mainViewModel.switchCurrentStationState()
+        }
 
-          binding.tvStation.setOnClickListener {
-              binding.playPause.switchState()
-              mainViewModel.switchCurrentStationState()
-          }
+        binding.tvStation.setOnClickListener {
+            binding.playPause.switchState()
+            mainViewModel.switchCurrentStationState()
+        }
 
-          binding.btFavorite.setOnClickListener {
-              mainViewModel.switchFavorite()
-          }
+        binding.btFavorite.setOnClickListener {
+            mainViewModel.switchFavorite()
+        }
 
 
     }
@@ -127,21 +127,41 @@ class BottomFragment : Fragment() {
 
     private fun updatePlayAction(playAction: PlayAction) {
 
-        when(playAction){
-            PlayAction.Resume -> {
+        when (playAction) {
+            is PlayAction.Resume -> {
                 binding.playPause.setState(PlayPauseView.STATE_PLAY)
                 showPlayAnim(true)
                 showLoad(false)
+                hideError()
             }
-            PlayAction.Pause, PlayAction.Idle, PlayAction.Error ->{
+
+            is PlayAction.Pause -> {
                 binding.playPause.setState(PlayPauseView.STATE_PAUSE)
                 showPlayAnim(false)
                 showLoad(false)
+                hideError()
             }
-            PlayAction.Buffering -> {
+
+            is PlayAction.Idle -> {
+                binding.playPause.setState(PlayPauseView.STATE_PAUSE)
+                showPlayAnim(false)
+                showLoad(false)
+
+            }
+
+            is PlayAction.Error -> {
+                binding.playPause.setState(PlayPauseView.STATE_PAUSE)
+                showPlayAnim(false)
+                showLoad(false)
+                showError(processError(requireContext(),playAction))
+            }
+
+            is PlayAction.Buffering -> {
                 showPlayAnim(false)
                 showLoad(true)
+                hideError()
             }
+
             else -> {}
         }
 
@@ -163,10 +183,24 @@ class BottomFragment : Fragment() {
             binding.loadProgress.setVisible(false)
         } else {
             binding.loadProgress.setVisible(true)
-            Handler(Looper.getMainLooper()).postDelayed({
-                binding.loadProgress.setVisible(false)
-            }, delayLoadAnimation)
+            //Handler(Looper.getMainLooper()).postDelayed({
+            //    binding.loadProgress.setVisible(false)
+           // }, delayLoadAnimation)
         }
+    }
+
+
+    private fun showError(text: String) {
+        binding.tvError.text = text
+        binding.tvError.setVisible(true)
+        binding.btFavorite.setVisible(false)
+        binding.ivError.setVisible(true)
+    }
+
+    private fun hideError() {
+        binding.tvError.setVisible(false)
+        binding.btFavorite.setVisible(true)
+        binding.ivError.setVisible(false)
     }
 
 

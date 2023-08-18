@@ -108,6 +108,9 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onCustomEvent(event: PlayActionEvent) {
 
+        com.google.android.exoplayer2.util.Log.d("MainViewModel",
+            "MainViewModel: received event from service: ${event.toString()}" )
+
         var eventLast = event.playUrlEvent
         _playAction.value = event.playAction
 

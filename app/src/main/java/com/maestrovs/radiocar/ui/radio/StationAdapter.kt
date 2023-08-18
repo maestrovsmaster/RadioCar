@@ -124,7 +124,7 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
 
             var drawPlayingAnim = false
 
-
+            var loadSuccess = true
 
             station?.let {  selectedStation ->
                     if (selectedStation.stationuuid == item.stationuuid) {
@@ -132,12 +132,15 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
 
                         playAction?.let { playAction ->
                             Log.d("Station", "+++2 $playAction")
-                            selectedColor = if(playAction == PlayAction.Resume) {
+                            selectedColor = if(playAction is PlayAction.Resume) {
                                 ContextCompat.getColor(context, R.color.pink)
                             }else{
                                 ContextCompat.getColor(context, R.color.pink_gray)
                             }
-                            drawPlayingAnim = playAction == PlayAction.Resume
+
+                            loadSuccess = !(playAction is PlayAction.Error)
+
+                            drawPlayingAnim = playAction is PlayAction.Resume
                         }
                     }
             }
@@ -145,7 +148,12 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
             if (selected) {
                // root.setBackgroundColor(selectedColor)
 
-                root.background = ContextCompat.getDrawable(context, R.drawable.ripple_stroke_white)
+                root.background =
+                    if(loadSuccess) {
+                        ContextCompat.getDrawable(context, R.drawable.ripple_stroke_white)
+                    }else{
+                        ContextCompat.getDrawable(context, R.drawable.ripple_yellow_err)
+                    }
             } else {
                 root.addRipple().apply {
                     background = with(TypedValue()) {

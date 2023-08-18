@@ -299,7 +299,7 @@ class AudioPlayerService : Service(), Player.Listener {
         event.url?.let { newUrl ->
             val playAction = event.playAction
             if(event.playAction!=null){
-                if(playAction == PlayAction.Resume){
+                if(playAction is PlayAction.Resume){
                     playUrl(event.url)
                 }else  pausePlayer()
             }else {
@@ -337,7 +337,7 @@ class AudioPlayerService : Service(), Player.Listener {
     }
 
     override fun onPlayerError(error: PlaybackException) {
-        sendMessageToViewModel(PlayAction.Error)
+        sendMessageToViewModel(PlayAction.Error(null, error))
         when (error.errorCode) {
             ExoPlaybackException.TYPE_SOURCE -> {
                 Log.e(TAG, "Source error: ", error)
