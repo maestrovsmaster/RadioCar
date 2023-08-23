@@ -21,7 +21,9 @@
         android:padding="12dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_call"
-        android:tint="@color/white" />
+        android:tint="@color/white"
+        android:importantForAccessibility="no"
+        />
 
 </com.maestrovs.radiocar.ui.components.AutoResizeMaterialCardView>
 

@@ -30,7 +30,7 @@
         android:elevation="10dp"
         android:scaleType="fitXY"
         tools:src="@drawable/ic_favorite_24"
-        />
+        android:importantForAccessibility="no" />
 
     </com.google.android.material.card.MaterialCardView>
 

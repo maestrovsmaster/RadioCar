@@ -8,6 +8,9 @@ import androidx.lifecycle.switchMap
 import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.utils.Resource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class RadioViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     private val mainRepository: StationRepository,)
@@ -61,6 +64,13 @@ class RadioViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
         mainRepository.getStationsByName(it)
 
        // mainRepository.getFavoritesStations()
+
+    }
+
+     fun insertStations(list: List<Station>){
+         GlobalScope.launch(Dispatchers.IO) {
+             mainRepository.insertStations(list)
+         }
 
     }
 

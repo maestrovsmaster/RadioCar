@@ -1,0 +1,42 @@
+package com.maestrovs.radiocar.data.default_podcasts
+
+val jaz_fm_json = """
+{
+    "changeuuid":"28ce66de-5746-4abb-80e0-33bb52232b50",
+    "stationuuid":"ba6280e7-8c72-420d-a20b-2fdd6988b353",
+    "serveruuid":"2b4ee594-498d-401a-b05c-ae4ce6e0c7ad",
+    "name":"Jazz FM UK",
+    "url":"https://edge-bauerall-01-gos2.sharp-stream.com/jazzhigh.aac",
+    "url_resolved":"https://edge-bauerall-01-gos2.sharp-stream.com/jazzhigh.aac",
+    "homepage":"https://planetradio.co.uk/jazz-fm/",
+    "favicon":"https://ukradiolive.com/public/uploads/radio_img/jazz-fm/play_250_250.jpg",
+    "tags":"blues,jazz,london,soul",
+    "country":"The United Kingdom Of Great Britain And Northern Ireland",
+    "countrycode":"GB",
+    "iso_3166_2":null,
+    "state":"London",
+    "language":"english",
+    "languagecodes":"en",
+    "votes":41,
+    "lastchangetime":"2023-07-30 20:21:38",
+    "lastchangetime_iso8601":"2023-07-30T20:21:38Z",
+    "codec":"AAC+",
+    "bitrate":128,
+    "hls":0,
+    "lastcheckok":1,
+    "lastchecktime":"2023-08-23 01:00:32",
+    "lastchecktime_iso8601":"2023-08-23T01:00:32Z",
+    "lastcheckoktime":"2023-08-23 01:00:32",
+    "lastcheckoktime_iso8601":"2023-08-23T01:00:32Z",
+    "lastlocalchecktime":"2023-08-22 12:55:05",
+    "lastlocalchecktime_iso8601":"2023-08-22T12:55:05Z",
+    "clicktimestamp":"2023-08-23 07:25:51",
+    "clicktimestamp_iso8601":"2023-08-23T07:25:51Z",
+    "clickcount":18,
+    "clicktrend":1,
+    "ssl_error":0,
+    "geo_lat":null,
+    "geo_long":null,
+    "has_extended_info":false
+}
+"""

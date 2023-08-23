@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/shape_settings_bg"
-    tools:context=".ui.main.SettingsFragment">
+    tools:context=".ui.settings.ui.main.SettingsFragment">
 
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -21,7 +21,9 @@
         android:src="@drawable/ic_close"
         android:tint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/close"
+        />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/btLogo"
@@ -33,7 +35,9 @@
         android:src="@drawable/radio_car_for"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/app_name"
+        />
 
 
     <ScrollView
@@ -73,7 +77,7 @@
                     android:layout_toStartOf="@+id/arrowIcon"
                     android:textColor="@color/white"
                     android:textSize="@dimen/settings_text_main_size"
-                    android:text="SelectedCountryName"/>
+                    tools:text="SelectedCountryName"/>
 
                 <ImageView
                     android:id="@+id/arrowIcon"
@@ -82,7 +86,8 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="0dp"
                     android:src="@drawable/ic_arrow_right"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    android:contentDescription="@string/choose_country" />
 
             </RelativeLayout>
 

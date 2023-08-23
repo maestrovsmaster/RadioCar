@@ -28,6 +28,9 @@
     <string name="error_503">Сервіс тимчасово недоступний</string>
     <string name="error_no_address">Помилка з_єднання</string>
 
+    <string name="radio_service_not_available">Пошук радіостанцій тимчасово не працює. Цим часом насолоджуйтеся цими станціями!</string>
+
+
     <string name="country">Країна</string>
     <string name="country_not_selected">Не вибрана</string>
 
@@ -40,5 +43,8 @@
 
     <string name="playback_error">Помилка відтворення</string>
     <string name="radio_stream_unavailable">Цей стрім тимчасово недоступний</string>
+
+    <string name="close">Закрити</string>
+    <string name="choose_country">Обрати країну</string>
 
 </resources>

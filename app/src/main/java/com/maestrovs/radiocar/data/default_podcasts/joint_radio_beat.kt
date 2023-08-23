@@ -1,0 +1,42 @@
+package com.maestrovs.radiocar.data.default_podcasts
+
+val cowboys_juke_json ="""
+{
+      "changeuuid":"1f361f51-fa83-4f07-9410-b15e568238a4",
+      "stationuuid":"db47aac1-84e3-4abc-a1eb-e8d65c0a2b09",
+      "serveruuid":"2d808c67-00ab-406d-9dfb-0b0c93f9b501",
+      "name":"Cowboy’s Juke Joint Radio",
+      "url":"http://streaming.live365.com/a31378",
+      "url_resolved":"http://ais-edge104-live365-dal02.cdnstream.com/a31378",
+      "homepage":"https://cowboysjukejoint.com/",
+      "favicon":"",
+      "tags":"blues rock,southern rock",
+      "country":"The United States Of America",
+      "countrycode":"US",
+      "iso_3166_2":null,
+      "state":"",
+      "language":"english",
+      "languagecodes":"en",
+      "votes":34,
+      "lastchangetime":"2022-03-28 12:47:38",
+      "lastchangetime_iso8601":"2022-03-28T12:47:38Z",
+      "codec":"MP3",
+      "bitrate":128,
+      "hls":0,
+      "lastcheckok":1,
+      "lastchecktime":"2023-08-23 03:49:28",
+      "lastchecktime_iso8601":"2023-08-23T03:49:28Z",
+      "lastcheckoktime":"2023-08-23 03:49:28",
+      "lastcheckoktime_iso8601":"2023-08-23T03:49:28Z",
+      "lastlocalchecktime":"2023-08-23 03:49:28",
+      "lastlocalchecktime_iso8601":"2023-08-23T03:49:28Z",
+      "clicktimestamp":"2023-08-22 10:03:48",
+      "clicktimestamp_iso8601":"2023-08-22T10:03:48Z",
+      "clickcount":7,
+      "clicktrend":1,
+      "ssl_error":0,
+      "geo_lat":null,
+      "geo_long":null,
+      "has_extended_info":false
+   }
+"""

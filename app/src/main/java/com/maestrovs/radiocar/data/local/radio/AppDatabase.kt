@@ -8,7 +8,7 @@ import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.entities.radio.tables.Favorites
 import com.maestrovs.radiocar.data.entities.radio.tables.Recent
 
-@Database(entities = [Station::class, Recent::class, Favorites::class], version = 1, exportSchema = false)
+@Database(entities = [Station::class, Recent::class, Favorites::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun stationDao(): StationDao

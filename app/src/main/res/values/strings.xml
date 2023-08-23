@@ -36,7 +36,8 @@
     <string name="fahrenheit_unit" translatable="false">°F</string>
 
     <string name="error_500">Internal Server Error</string>
-    <string name="error_503">Service Unavailable</string>
+    <string name="error_503">Service temporary Unavailable</string>
+    <string name="radio_service_not_available">Our radio search is temporarily down. Enjoy these handpicked stations for now!</string>
     <string name="error_no_address">No address associated with hostname</string>
 
     <string name="country">Country</string>
@@ -52,5 +53,8 @@
 
     <string name="playback_error">Playback error</string>
     <string name="radio_stream_unavailable">This stream is temporary unavailable</string>
+
+    <string name="close">Close</string>
+    <string name="choose_country">Choose country</string>
 
 </resources>

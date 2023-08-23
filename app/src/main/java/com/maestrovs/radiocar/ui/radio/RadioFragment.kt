@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.flexbox.FlexDirection
@@ -19,12 +20,17 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.common.CurrentCountryManager
+import com.maestrovs.radiocar.data.default_podcasts.bbc_uk_json
+import com.maestrovs.radiocar.data.default_podcasts.cowboys_juke_json
+import com.maestrovs.radiocar.data.default_podcasts.jaz_fm_json
+import com.maestrovs.radiocar.data.default_podcasts.parseStation
 import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.databinding.FragmentRadioBinding
 import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.extensions.setVisible
 import com.maestrovs.radiocar.ui.components.WrapFlexboxLayoutManager
+import com.maestrovs.radiocar.ui.radio.utils.RadioErrorType
 import com.maestrovs.radiocar.ui.radio.utils.errorMapper
 import com.maestrovs.radiocar.ui.radio.utils.filterAll
 import com.maestrovs.radiocar.utils.Resource
@@ -78,28 +84,28 @@ class RadioFragment : Fragment() {
         binding.adView.adListener = object : AdListener() {
             override fun onAdFailedToLoad(p0: LoadAdError) {
                 super.onAdFailedToLoad(p0)
-                Log.d("AdMob","AdMob onAdFailedToLoad = $p0")
+                Log.d("AdMob", "AdMob onAdFailedToLoad = $p0")
             }
 
             override fun onAdLoaded() {
                 super.onAdLoaded()
-                Log.d("AdMob","AdMob onAdLoaded")
+                Log.d("AdMob", "AdMob onAdLoaded")
             }
 
             override fun onAdClicked() {
                 // Code to be executed when the user clicks on an ad.
-                Log.d("AdMob","AdMob onAdClicked")
+                Log.d("AdMob", "AdMob onAdClicked")
             }
 
             override fun onAdClosed() {
                 // Code to be executed when the user is about to return
                 // to the app after tapping on an ad.
-                Log.d("AdMob","AdMob onAdClosed")
+                Log.d("AdMob", "AdMob onAdClosed")
             }
         }
 
         // binding.adView.setAdSize(AdSize.BANNER)
-       // binding.adView.adUnitId = "ca-app-pub-3940256099942544/6300978111"//"ca-app-pub-3109852779138325/6128284569"
+        // binding.adView.adUnitId = "ca-app-pub-3940256099942544/6300978111"//"ca-app-pub-3109852779138325/6128284569"
 
 
         val testDeviceIds = Arrays.asList("2571438569BBD089458441E499736CF4")
@@ -109,8 +115,8 @@ class RadioFragment : Fragment() {
 
 
         val adRequest = AdRequest.Builder().build()
-       // binding.adView.setAdSize(AdSize.BANNER) // розмір реклами
-       // binding.adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111") // ID блоку реклами
+        // binding.adView.setAdSize(AdSize.BANNER) // розмір реклами
+        // binding.adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111") // ID блоку реклами
         binding.adView.loadAd(adRequest) // завантаження реклами
 
         return binding.root
@@ -122,7 +128,7 @@ class RadioFragment : Fragment() {
         adapter = StationAdapter(object : StationAdapter.ItemListener {
             override fun onClickedCharacter(station: Station?) {
                 Log.d("Station", "~~~~~~~~~~ Station Url \uD83C\uDFB5  ${station?.url}")
-             ///   mainViewModel.switchStationState(item)
+                ///   mainViewModel.switchStationState(item)
                 // if(item != null) {
                 // adapter.setSelectedStation(item)
                 // }
@@ -135,8 +141,6 @@ class RadioFragment : Fragment() {
 
         })
         // binding.recycler.layoutManager = LinearLayoutManager(requireContext())
-
-
 
 
         layoutManager = WrapFlexboxLayoutManager(context)
@@ -154,24 +158,26 @@ class RadioFragment : Fragment() {
         binding.recycler.adapter = adapter
 
         mainViewModel.selectedStation.observe(viewLifecycleOwner) { it ->
-            val station = it?: return@observe
+            val station = it ?: return@observe
             adapter.setStation(station)
 
         }
 
         mainViewModel.playAction.observe(viewLifecycleOwner) { playAction ->
-           // if(playAction == PlayAction.Resume || playAction == PlayAction.Pause || playAction == PlayAction.Idle) {
+            // if(playAction == PlayAction.Resume || playAction == PlayAction.Pause || playAction == PlayAction.Idle) {
             //    adapter.setPlayAction(playAction)
-           // }
+            // }
 
-            when(playAction){
-                is PlayAction.Resume , PlayAction.Pause,  PlayAction.Idle->{
+            when (playAction) {
+                is PlayAction.Resume, PlayAction.Pause, PlayAction.Idle -> {
                     adapter.setPlayAction(playAction)
                 }
-                is PlayAction.Error ->{
+
+                is PlayAction.Error -> {
                     adapter.setPlayAction(playAction)
                     //TODO write to corrupt stations
                 }
+
                 else -> {
 
                 }
@@ -181,9 +187,9 @@ class RadioFragment : Fragment() {
 
 
         radioViewModel.stations.observe(viewLifecycleOwner) {
-            Log.d("ApiError","Server *  ${it} ")
+            Log.d("ApiError", "Server *  ${it} ")
             it?.let {
-                Log.d("ApiError","Server *2  ${it} ")
+                Log.d("ApiError", "Server *2  ${it} ")
                 if (currentListType == ListType.All) {
                     processResources(it)
                 }
@@ -220,9 +226,11 @@ class RadioFragment : Fragment() {
         }
 
 
-        mainViewModel.mustRefreshStatus.observe(viewLifecycleOwner){
-           radioViewModel.fetchStations(CurrentCountryManager.readCountry(requireContext())?.alpha2?:
-           CurrentCountryManager.DEFAULT_COUNTRY)
+        mainViewModel.mustRefreshStatus.observe(viewLifecycleOwner) {
+            radioViewModel.fetchStations(
+                CurrentCountryManager.readCountry(requireContext())?.alpha2
+                    ?: CurrentCountryManager.DEFAULT_COUNTRY
+            )
         }
 
 
@@ -235,8 +243,10 @@ class RadioFragment : Fragment() {
             currentListType = ListType.All
             layoutManager.justifyContent = JustifyContent.SPACE_AROUND
             updateButtons(ListType.All)
-            radioViewModel.fetchStations(CurrentCountryManager.readCountry(requireContext())?.alpha2?:
-            CurrentCountryManager.DEFAULT_COUNTRY)
+            radioViewModel.fetchStations(
+                CurrentCountryManager.readCountry(requireContext())?.alpha2
+                    ?: CurrentCountryManager.DEFAULT_COUNTRY
+            )
         }
 
         binding.btRecent.setOnClickListener {
@@ -258,9 +268,9 @@ class RadioFragment : Fragment() {
             layoutManager.justifyContent = JustifyContent.FLEX_START
             updateButtons(ListType.Searched)
 
-            radioViewModel.searched.value?.let{ lastSearchResult ->
+            radioViewModel.searched.value?.let { lastSearchResult ->
                 processResources(lastSearchResult)
-            }?: kotlin.run { showList(listOf()) }
+            } ?: kotlin.run { showList(listOf()) }
 
         }
 
@@ -272,12 +282,13 @@ class RadioFragment : Fragment() {
 
             //
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.d("Search","Search2 $query")
-                query?:return true
-                if(query.isNotEmpty()) {
+                Log.d("Search", "Search2 $query")
+                query ?: return true
+                if (query.isNotEmpty()) {
                     radioViewModel.searchStations(query)
                 }
-                val inputManager = binding.etSearch.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val inputManager =
+                    binding.etSearch.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputManager.hideSoftInputFromWindow(binding.etSearch.windowToken, 0)
                 return true
             }
@@ -288,7 +299,6 @@ class RadioFragment : Fragment() {
 
         })
     }
-
 
 
     private fun updateButtons(listType: ListType) {
@@ -326,9 +336,50 @@ class RadioFragment : Fragment() {
 
             Resource.Status.ERROR -> {
                 binding.progressBar.visibility = View.GONE
-                Log.d("ApiError","Server error  ${response.message}  = ${response.data}")
+                Log.d("ApiError", "Server error  ${response.message}  = ${response.data}")
                 binding.tvError.setVisible(true)
-                binding.tvError.text = errorMapper(response.message?:"",requireContext())
+
+                when (errorMapper(response.message ?: "")) {
+                    RadioErrorType.ServiceNotAvailable -> {
+                        binding.tvError.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.yourThumbTintColor
+                            )
+                        )
+                        binding.tvError.text = getString(R.string.radio_service_not_available)
+                    }
+
+                    RadioErrorType.NoInternet -> {
+                        binding.tvError.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.red
+                            )
+                        )
+                        binding.tvError.text = getString(R.string.error_no_address)
+                    }
+
+                    RadioErrorType.Other -> {
+                        binding.tvError.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.red
+                            )
+                        )
+                        binding.tvError.text = response.message ?: ""
+                    }
+                }
+
+                if (adapter.itemCount == 0) {
+                    val bbc_uk_json = parseStation(bbc_uk_json)
+                    val jaz_fm_json = parseStation(jaz_fm_json)
+                    val cowboys_juke_json = parseStation(cowboys_juke_json)
+                    val list = listOf(bbc_uk_json, jaz_fm_json, cowboys_juke_json)
+
+                    showList(list)
+                    radioViewModel.insertStations(list)
+                }
             }
 
             Resource.Status.LOADING -> {
@@ -338,7 +389,7 @@ class RadioFragment : Fragment() {
         }
     }
 
-    private fun showList(list: List<Station>?){
+    private fun showList(list: List<Station>?) {
         if (list != null) {
 
             val filteredList = filterAll(list)
@@ -349,14 +400,16 @@ class RadioFragment : Fragment() {
                     currentListType = ListType.All
                     layoutManager.justifyContent = JustifyContent.FLEX_START
                     firstStart = false
-                    radioViewModel.fetchStations(CurrentCountryManager.readCountry(requireContext())?.alpha2?:
-                    CurrentCountryManager.DEFAULT_COUNTRY)
+                    radioViewModel.fetchStations(
+                        CurrentCountryManager.readCountry(requireContext())?.alpha2
+                            ?: CurrentCountryManager.DEFAULT_COUNTRY
+                    )
                     updateButtons(ListType.All)
                 } else if (filteredList.isNotEmpty()) {
                     mainViewModel.setIfNeedInitStation(filteredList[0])
                 }
             }
-        }else{
+        } else {
             adapter.submitList(listOf())
         }
     }

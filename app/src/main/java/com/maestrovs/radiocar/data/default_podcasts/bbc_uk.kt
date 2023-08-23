@@ -1,0 +1,42 @@
+package com.maestrovs.radiocar.data.default_podcasts
+
+val bbc_uk_json = """
+ {
+   "changeuuid":"ba061924-953f-4dfb-be2a-4ab59d1d47ba",
+   "stationuuid":"d97b5842-8e9b-46cc-85f0-d2dff6738c7c",
+   "serveruuid":"495941d8-37d2-4b1f-93fd-1b22d773778e",
+   "name":"BBC Radio 1",
+   "url":"http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_low/ak/bbc_radio_one.m3u8",
+   "url_resolved":"http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_low/ak/bbc_radio_one.m3u8",
+   "homepage":"https://www.bbc.co.uk/sounds/play/live:bbc_radio_one",
+   "favicon":"https://rmp.files.bbci.co.uk/playspace/img/apple-touch-icon.96d5401f35.png",
+   "tags":"hot adult contemporary",
+   "country":"The United Kingdom Of Great Britain And Northern Ireland",
+   "countrycode":"GB",
+   "iso_3166_2":null,
+   "state":"",
+   "language":"english",
+   "languagecodes":"en",
+   "votes":740,
+   "lastchangetime":"2023-07-30 20:21:17",
+   "lastchangetime_iso8601":"2023-07-30T20:21:17Z",
+   "codec":"AAC+",
+   "bitrate":101,
+   "hls":1,
+   "lastcheckok":1,
+   "lastchecktime":"2023-08-21 11:55:30",
+   "lastchecktime_iso8601":"2023-08-21T11:55:30Z",
+   "lastcheckoktime":"2023-08-21 11:55:30",
+   "lastcheckoktime_iso8601":"2023-08-21T11:55:30Z",
+   "lastlocalchecktime":"2023-08-21 05:05:09",
+   "lastlocalchecktime_iso8601":"2023-08-21T05:05:09Z",
+   "clicktimestamp":"2023-08-21 19:55:50",
+   "clicktimestamp_iso8601":"2023-08-21T19:55:50Z",
+   "clickcount":458,
+   "clicktrend":20,
+   "ssl_error":0,
+   "geo_lat":51.5187810883189,
+   "geo_long":-0.14384418791451026,
+   "has_extended_info":false
+}
+"""

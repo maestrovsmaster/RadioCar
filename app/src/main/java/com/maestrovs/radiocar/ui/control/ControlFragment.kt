@@ -151,10 +151,10 @@ class ControlFragment : Fragment() {
         }
 
         mainViewModel.location.observe(viewLifecycleOwner) { location ->
-            Log.d(
-                "Weather",
-                "ttmainViewModel.location ${location?.latitude}, ${location?.longitude}"
-            )
+           // Log.d(
+           //     "Weather",
+           //     "ttmainViewModel.location ${location?.latitude}, ${location?.longitude}"
+           // )
             if (location != null) {
                 controlViewModel.setLocation(location)
                 WeatherManager.setCurrentLocationCoords(requireContext(), location.getCoords2d())

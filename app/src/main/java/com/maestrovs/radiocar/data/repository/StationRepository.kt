@@ -17,6 +17,9 @@ import com.maestrovs.radiocar.utils.performLocalGetOperation
 import com.maestrovs.radiocar.utils.performNetworkOperation
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
+import androidx.lifecycle.liveData
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class StationRepository @Inject constructor(
     private val remoteDataSource: StationRemoteDataSource,
@@ -39,6 +42,12 @@ class StationRepository @Inject constructor(
         networkCall = { remoteDataSource.getStationsByName(searchterm) },
         saveCallResult = { localDataSource.insertAll(it) }
     )
+
+    suspend fun insertStations(list: List<Station>){
+
+       localDataSource.insertAll(list)
+
+    }
 
     fun getRecentStations() = performLocalGetOperation(databaseQuery = {
         localDataSource.getRecentStations() })
