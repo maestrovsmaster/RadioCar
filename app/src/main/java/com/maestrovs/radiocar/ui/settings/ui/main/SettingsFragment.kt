@@ -2,16 +2,21 @@ package com.maestrovs.radiocar.ui.settings.ui.main
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.hbb20.countrypicker.dialog.launchCountryPickerDialog
 import com.hbb20.countrypicker.models.CPCountry
 import com.maestrovs.radiocar.R
+import com.maestrovs.radiocar.common.Constants.ABOUT_RADIO_URL
+import com.maestrovs.radiocar.common.Constants.CONTACT_EMAIL
+import com.maestrovs.radiocar.common.Constants.PRIVACY_URL
 import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.databinding.FragmentSettingsMainBinding
 import com.maestrovs.radiocar.ui.settings.KEY_SETTINGS_RESULT_MESSAGE
@@ -106,20 +111,69 @@ class SettingsFragment : Fragment() {
 
         val selectedCountry = CurrentCountryManager.readCountry(requireContext())
 
-        binding.tvSelectedCountry.text = selectedCountry?.let { "${it.flagEmoji} ${it.name}" }
-            ?: run { getString(R.string.country_not_selected) }
+        binding.tvSelectedCountry.setTitle(selectedCountry?.let { "${it.flagEmoji} ${it.name}" }
+            ?: run { getString(R.string.country_not_selected) })
 
-        binding.lvSelectCountry.setOnClickListener {
+        binding.tvSelectedCountry.setOnClickListener {
             requireContext().launchCountryPickerDialog { country: CPCountry? ->
-                val newSelectedCountry = country?:return@launchCountryPickerDialog
+                val newSelectedCountry = country ?: return@launchCountryPickerDialog
                 Log.d("Country", "CountryCode = $newSelectedCountry")
-                binding.tvSelectedCountry.text =  "${newSelectedCountry.flagEmoji} ${newSelectedCountry.name}"
-                CurrentCountryManager.writeCountry(requireContext(),newSelectedCountry)
+                binding.tvSelectedCountry.setTitle("${newSelectedCountry.flagEmoji} ${newSelectedCountry.name}")
+                CurrentCountryManager.writeCountry(requireContext(), newSelectedCountry)
             }
         }
 
         binding.tvVersion.text = "${getString(R.string.app_version)}: ${viewModel.versionDisplay}"
 
+
+
+        binding.tvPrivacyPolicy.setOnClickListener {
+            startPrivacyIntent()
+        }
+
+        binding.tvOpenApi.setOnClickListener {
+            startOpenApiIntent()
+        }
+
+        binding.tvContactUs.setOnClickListener {
+
+            startEmailIntent()
+        }
+
+    }
+
+    fun startPrivacyIntent() {
+        try {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_URL))
+            startActivity(browserIntent)
+        } catch (_: Exception) {
+        }
+    }
+
+    fun startOpenApiIntent() {
+        try {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(ABOUT_RADIO_URL))
+            startActivity(browserIntent)
+        } catch (_: Exception) {
+        }
+    }
+
+    fun startEmailIntent() {
+        try {
+        val mailto = "mailto:$CONTACT_EMAIL" +
+                "?subject=" + Uri.encode("RadioCar app issue") +
+                "&body=" + Uri.encode("RadioCar ${getString(R.string.app_version)}: ${viewModel.versionDisplay}\n\r")
+
+        val emailIntent = Intent(Intent.ACTION_SENDTO)
+        emailIntent.data = Uri.parse(mailto)
+        //if (emailIntent.resolveActivity(requireActivity().packageManager) != null) {
+            startActivity(emailIntent)
+       // } else {
+            // Show error message to user or log the error
+         //   Toast.makeText(requireContext(), "No email clients installed.", Toast.LENGTH_SHORT).show()
+        //}
+        } catch (_: Exception) {
+        }
     }
 
 }

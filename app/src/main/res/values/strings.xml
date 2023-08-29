@@ -43,6 +43,11 @@
     <string name="country">Country</string>
     <string name="country_not_selected">Not selected</string>
 
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="open_api">Open API</string>
+
+    <string name="contact_us">Contact Us</string>
+
     <string name="about_app">About app</string>
 
     <string name="description"><b>Radio Car:</b> Your ideal travel companion on the road!</string>

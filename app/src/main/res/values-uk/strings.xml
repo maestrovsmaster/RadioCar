@@ -34,6 +34,11 @@
     <string name="country">Країна</string>
     <string name="country_not_selected">Не вибрана</string>
 
+    <string name="privacy_policy">Політика конфіденційності</string>
+    <string name="open_api">Open API</string>
+
+    <string name="contact_us">"Зв'яжіться з нами"</string>
+
     <string name="about_app">Про додаток</string>
 
     <string name="description"><b>Radio Car:</b> Ваш ідеальний супутник у дорожній подорожі!</string>
