@@ -22,8 +22,8 @@ android {
         applicationId "com.maestrovs.radiocar"
         minSdk 23
         targetSdk 33
-        versionCode 6
-        versionName "0.0.6"
+        versionCode 7
+        versionName "0.0.7"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -175,6 +175,9 @@ dependencies {
 
     //ADV
     implementation 'com.google.android.gms:play-services-ads:22.2.0'
+
+    //Bluetooth hardware media control
+    implementation 'androidx.media:media:1.4.3'
 
 
 }

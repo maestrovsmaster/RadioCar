@@ -18,8 +18,12 @@
            devices. -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <!--bibo01 : hardware option-->
-    <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- for play in the background -->
     <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- Optional: for play local music -->
@@ -32,10 +36,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-
-
-
 
 
     <application xmlns:tools="http://schemas.android.com/tools"
@@ -52,7 +52,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3109852779138325~2311177105"/>
+            android:value="ca-app-pub-3109852779138325~2311177105" />
 
 
         <activity
@@ -62,7 +62,13 @@
         <service
             android:name=".service.AudioPlayerService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="true"
+            android:permission="android.permission.MEDIA_CONTENT_CONTROL">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+
+        </service>
 
         <activity
             android:name=".ui.splash.SplashActivity"

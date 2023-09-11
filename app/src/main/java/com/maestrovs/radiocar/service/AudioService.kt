@@ -37,6 +37,11 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
+
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
+
+
 const val NOTIFICATION_REQUEST_CODE = 56465
 
 @AndroidEntryPoint
@@ -50,23 +55,13 @@ class AudioPlayerService : Service(), Player.Listener {
 
     private lateinit var playerNotificationManager: PlayerNotificationManager
 
+    private lateinit var mediaSession: MediaSessionCompat //Class for controll bluetooth hardware buttons clicking
 
-    /* old implementation
-    override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-
-         sendMessageToViewModel(
-             if (playWhenReady) {
-                 PlayAction.Resume
-             } else {
-                 PlayAction.Pause
-             }
-         )
-     }*/
 
     override fun onPlaybackStateChanged(playbackState: Int) {
         super.onPlaybackStateChanged(playbackState)
         // Handle playback state changes here
-      //  sendMessageToViewModel(PlayAction.Previous)
+        //  sendMessageToViewModel(PlayAction.Previous)
     }
 
     override fun onPositionDiscontinuity(
@@ -77,7 +72,7 @@ class AudioPlayerService : Service(), Player.Listener {
         super.onPositionDiscontinuity(oldPosition, newPosition, reason)
         if (reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION) {
             // The player has moved to the next item
-           // sendMessageToViewModel(PlayAction.Next)
+            // sendMessageToViewModel(PlayAction.Next)
         }
     }
 
@@ -182,10 +177,7 @@ class AudioPlayerService : Service(), Player.Listener {
                     stopForeground(false)
                 }
             }
-        })
-
-
-            .build()
+        }).build()
 
 
 
@@ -209,7 +201,7 @@ class AudioPlayerService : Service(), Player.Listener {
         exoPlayer?.addListener(this)
 
 
-        var connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onLost(network: Network) {
                 super.onLost(network)
@@ -229,8 +221,75 @@ class AudioPlayerService : Service(), Player.Listener {
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
 
 
+        initializeMediaButtonsPlayStopSession()
+
     }//onCreate
 
+
+    /**
+     * Callback for listening hardware bluetooth clicking buttons.
+     */
+    private fun initializeMediaButtonsPlayStopSession() {
+        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+        mediaButtonIntent.setClass(this, AudioPlayerService::class.java)
+
+        val pendingIntent: PendingIntent =
+            PendingIntent.getService(
+                this,
+                0,
+                mediaButtonIntent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+
+        mediaSession = MediaSessionCompat(this, "AudioPlayerService").apply {
+
+            // Setup Callback
+            setCallback(object : MediaSessionCompat.Callback() {
+
+                override fun onPlay() {
+                    super.onPlay()
+                    // Play media
+                    android.util.Log.d("BluetoothDevice", "Bluetooth play")
+                    lastPlayUrlEvent?.url?.let {
+                        playUrl(it)
+                    }
+                    sendMessageToViewModel(PlayAction.Resume)
+                }
+
+                override fun onPause() {
+                    super.onPause()
+                    // Pause media
+                    android.util.Log.d("BluetoothDevice", "Bluetooth pause")
+                    pausePlayer()
+                    sendMessageToViewModel(PlayAction.Pause)
+                }
+
+
+                override fun onSkipToNext() {
+                    super.onSkipToNext()
+                    // Next media
+                    android.util.Log.d("BluetoothDevice", "Bluetooth next")
+                }
+
+                override fun onSkipToPrevious() {
+                    super.onSkipToPrevious()
+                    // Previous media
+                    android.util.Log.d("BluetoothDevice", "Bluetooth previous")
+                }
+            })
+
+            // Other media session configurations...
+        }
+
+
+        //mediaSession.setCallback(MediaSessionCallback())
+        mediaSession.setMediaButtonReceiver(pendingIntent)
+
+        val playbackState = PlaybackStateCompat.Builder()
+            .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE)
+            .build()
+        mediaSession.setPlaybackState(playbackState)
+    }
 
     private fun sendMessageToViewModel(playAction: PlayAction) {
         EventBus.getDefault().post(PlayActionEvent(playAction, lastPlayUrlEvent))
@@ -290,6 +349,7 @@ class AudioPlayerService : Service(), Player.Listener {
         EventBus.getDefault().unregister(this)
         super.onDestroy()
         releasePlayer()
+        mediaSession.release()
     }
 
     var lastPlayUrlEvent: PlayUrlEvent? = null
@@ -298,11 +358,11 @@ class AudioPlayerService : Service(), Player.Listener {
     fun onPlayUrlEvent(event: PlayUrlEvent) {
         event.url?.let { newUrl ->
             val playAction = event.playAction
-            if(event.playAction!=null){
-                if(playAction is PlayAction.Resume){
+            if (event.playAction != null) {
+                if (playAction is PlayAction.Resume) {
                     playUrl(event.url)
-                }else  pausePlayer()
-            }else {
+                } else pausePlayer()
+            } else {
                 if (newUrl == lastPlayUrlEvent?.url) {
                     if (exoPlayer?.isPlaying == true) {
                         pausePlayer()
