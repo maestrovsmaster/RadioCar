@@ -22,9 +22,6 @@
             app:destination="@id/chooseCountryFragment"
             app:popUpToInclusive="true"
             />
-        <action
-            android:id="@+id/action_splashFragment_to_carLogoFragment"
-            app:destination="@id/carLogoFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
