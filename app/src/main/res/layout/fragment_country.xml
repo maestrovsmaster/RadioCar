@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/background_app"
+    android:id="@+id/scene_container"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="0dp"
+    >
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        >
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/logo"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/radio_car_for"
+            android:padding="10dp"
+            android:layout_marginEnd="0dp"
+            android:visibility="visible"
+            android:layout_marginHorizontal="20dp"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btBack"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/arrow_back"
+            app:tint="@color/white"
+            android:padding="10dp"
+            android:layout_marginEnd="0dp"
+            android:visibility="visible"
+            android:layout_centerVertical="true"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btNext"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:drawableEnd="@drawable/ic_arrow_right"
+            android:text="@string/next"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:drawableTint="@color/white"
+            android:drawablePadding="0dp"
+            android:paddingHorizontal="0dp"
+            android:background="?attr/selectableItemBackground"
+            />
+
+    </RelativeLayout>
+
+
+
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_country"
+        android:textColor="@color/gray"
+        android:textSize="22sp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        >
+
+        <ImageView
+            android:id="@+id/ivFlag"
+            android:layout_width="44dp"
+            android:layout_height="26dp"
+            android:scaleType="fitXY"
+            />
+
+        <TextView
+            android:id="@+id/tvCountry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:gravity="start"
+            tools:text="CountryName"/>
+
+
+    </LinearLayout>
+
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" Or choose another: "
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/cpCountry_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxStrokeColor="@color/edit_text_color"
+        app:counterTextColor="@color/white"
+        app:hintTextColor="@color/gray"
+        app:boxBackgroundColor="@color/black_60"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="20dp"
+        android:hint="Country Name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/cpCountry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textCursorDrawable="@drawable/gray_cursor_drawable"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:background="@color/white"
+        android:layout_marginHorizontal="20dp"
+        />
+
+
+
+
+</LinearLayout>

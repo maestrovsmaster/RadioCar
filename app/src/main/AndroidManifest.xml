@@ -71,7 +71,7 @@
         </service>
 
         <activity
-            android:name=".ui.splash.SplashActivity"
+            android:name=".ui.splash_activity.SplashActivity"
             android:exported="true"
             android:noHistory="true"
             android:theme="@style/AppTheme.Translucent">

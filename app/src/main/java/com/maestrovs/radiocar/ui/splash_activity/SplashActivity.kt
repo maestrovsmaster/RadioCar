@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.ui.splash
+package com.maestrovs.radiocar.ui.splash_activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle

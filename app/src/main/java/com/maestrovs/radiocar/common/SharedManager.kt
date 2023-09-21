@@ -40,5 +40,17 @@ object SharedManager {
         return prefs.getBoolean(key, defValue)
     }
 
+    fun writeIntOption(context: Context, key: String, value: Int) {
+        val editor =
+            context.getSharedPreferences(RADIOCAR_PREFS, Context.MODE_PRIVATE).edit()
+        editor.putInt(key, value)
+        editor.apply()
+    }
+
+    fun readIntOptions(context: Context, key: String, defValue: Int): Int {
+        val prefs = context.getSharedPreferences(RADIOCAR_PREFS, Context.MODE_PRIVATE)
+        return prefs.getInt(key, defValue)
+    }
+
 
 }

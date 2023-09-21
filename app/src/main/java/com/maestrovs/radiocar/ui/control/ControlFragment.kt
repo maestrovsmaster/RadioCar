@@ -13,18 +13,19 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.maestrovs.radiocar.R
+import com.maestrovs.radiocar.common.CarLogoManager
 import com.maestrovs.radiocar.common.Constants.CHECK_WEATHER_MINUTES_DELAY
 import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.databinding.FragmentControlBinding
 import com.maestrovs.radiocar.enums.bluetooth.BT_Status
 import com.maestrovs.radiocar.enums.radio.PlayAction
+import com.maestrovs.radiocar.extensions.setVisible
 import com.maestrovs.radiocar.ui.main.MainViewModel
-import com.maestrovs.radiocar.ui.settings.KEY_SETTINGS_INPUT_MESSAGE
-import com.maestrovs.radiocar.ui.settings.KEY_SETTINGS_RESULT_MESSAGE
-import com.maestrovs.radiocar.ui.settings.SettingsActivity
-import com.maestrovs.radiocar.ui.settings.ui.main.SettingsManager
-import com.maestrovs.radiocar.ui.settings.ui.main.SpeedUnit
+import com.maestrovs.radiocar.ui.settings.SettingsManager
+import com.maestrovs.radiocar.ui.settings.SpeedUnit
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_control.speedView
 import kotlinx.android.synthetic.main.fragment_control.weatherWidget
@@ -55,17 +56,7 @@ class ControlFragment : Fragment() {
     }
 
 
-    private val launcher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            Log.d("SettingsActivity", "On result ...")
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data = result.data
-                val resultMessage = data?.getStringExtra(KEY_SETTINGS_RESULT_MESSAGE)
-                Log.d("SettingsActivity", "On result = $resultMessage")
-                mainViewModel.setMustRefreshStatus()
-                refreshMeasures()
-            }
-        }
+
 
     private fun refreshMeasures() {
         speedView.setUnit(
@@ -124,6 +115,7 @@ class ControlFragment : Fragment() {
 
         binding.btSettings.setOnClickListener {
             launchSettingsIntent()
+            mainViewModel.setMustNavToSettings()
         }
 
 
@@ -208,6 +200,13 @@ class ControlFragment : Fragment() {
             binding.weatherWidget.setWeatherError(msg)
         }
 
+        CarLogoManager.readLogoResId(requireContext())?.let {
+            binding.ivCarLogo?.setIconResource(it)
+            binding.ivCarLogo?.setVisible(true)
+        }?: kotlin.run {
+            binding.ivCarLogo?.setVisible(false)
+        }
+
         refreshMeasures()
 
 
@@ -221,6 +220,8 @@ class ControlFragment : Fragment() {
 
             }
         }
+
+
 
 
     }
@@ -263,10 +264,11 @@ class ControlFragment : Fragment() {
 
 
     private fun launchSettingsIntent() {
-        val intent = SettingsActivity.newIntent(requireContext()).apply {
-            putExtra(KEY_SETTINGS_INPUT_MESSAGE, "")
-        }
-        launcher.launch(intent)
+       // val intent = SettingsActivity.newIntent(requireContext()).apply {
+        //    putExtra(KEY_SETTINGS_INPUT_MESSAGE, "")
+       // }
+       // launcher.launch(intent)
+       // _binding?.?.findNavController().navigate(R.id.action_mainFragment_to_settingsFragment)
     }
 
 

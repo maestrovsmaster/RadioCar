@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.ui.settings.ui.main
+package com.maestrovs.radiocar.ui.settings
 
 import android.content.Context
 import com.maestrovs.radiocar.common.SharedManager

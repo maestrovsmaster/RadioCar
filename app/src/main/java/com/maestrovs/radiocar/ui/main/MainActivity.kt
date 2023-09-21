@@ -24,22 +24,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.initialization.InitializationStatus
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.FirebaseApp
-import com.hbb20.countrypicker.dialog.launchCountryPickerDialog
-import com.hbb20.countrypicker.models.CPCountry
-import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.databinding.ActivityMainBinding
 import com.maestrovs.radiocar.enums.bluetooth.BT_Status
 import com.maestrovs.radiocar.service.AudioPlayerService
 import com.maestrovs.radiocar.ui.components.ExitDialog
-import com.maestrovs.radiocar.ui.settings.ui.main.SettingsManager
+import com.maestrovs.radiocar.ui.settings.SettingsManager
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -142,7 +137,7 @@ class MainActivity : AppCompatActivity() {
             applySettingsChanges()
         }
 
-
+            /*
         if (!CurrentCountryManager.isAskCountry(this)) {
             launchCountryPickerDialog { country: CPCountry? ->
                 val newSelectedCountry = country ?: return@launchCountryPickerDialog
@@ -152,7 +147,7 @@ class MainActivity : AppCompatActivity() {
                 mainViewModel.setMustRefreshStatus()
             }
             CurrentCountryManager.setAskedCountryTrue(this)
-        }
+        }*/
     }
 
     private fun checkConnectedBluetoothDevices() {
@@ -332,12 +327,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+    /*override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return if (keyCode == KeyEvent.KEYCODE_BACK) {
             ExitDialog(this).show()
             false
         } else super.onKeyDown(keyCode, event)
-    }
+    }*/
 
 
     private fun applySettingsChanges() {

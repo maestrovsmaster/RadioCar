@@ -7,6 +7,7 @@ plugins {
     id 'kotlin-android-extensions'
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
+    id 'androidx.navigation.safeargs.kotlin'
 
 
 }
@@ -158,7 +159,7 @@ dependencies {
 
     // optional - Jetpack Compose integration
     // implementation("androidx.paging:paging-compose:1.0.0-alpha19")
-
+    //Country picker
     implementation 'com.hbb20:android-country-picker:0.0.7'
 
     // Import the Firebase BoM
@@ -178,6 +179,10 @@ dependencies {
 
     //Bluetooth hardware media control
     implementation 'androidx.media:media:1.4.3'
+
+    //Country detect
+    implementation 'com.github.kittinunf.fuel:fuel:2.1.0'
+    implementation 'com.github.kittinunf.fuel:fuel-gson:2.1.0'
 
 
 }

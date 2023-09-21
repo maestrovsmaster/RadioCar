@@ -34,6 +34,9 @@
     <string name="country">Країна</string>
     <string name="country_not_selected">Не вибрана</string>
 
+    <string name="car_logo">Логотип</string>
+    <string name="car_logo_not_selected">Не вибрано</string>
+
     <string name="privacy_policy">Політика конфіденційності</string>
     <string name="open_api">Open API</string>
 
@@ -51,5 +54,7 @@
 
     <string name="close">Закрити</string>
     <string name="choose_country">Обрати країну</string>
+
+
 
 </resources>

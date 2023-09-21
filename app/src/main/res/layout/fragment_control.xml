@@ -36,6 +36,8 @@
         >
 
 
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -91,6 +93,24 @@
 
 
         </LinearLayout>
+
+        <com.maestrovs.radiocar.ui.components.CarLogo
+            android:id="@+id/ivCarLogo"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="30dp"
+            android:visibility="visible"
+            app:stroke_color="@color/gray30a"
+            app:background_tint="@drawable/ripple_logo_round"
+            app:stroke_width="3"
+            android:alpha="0.94"
+            />
+
 
 
         <LinearLayout

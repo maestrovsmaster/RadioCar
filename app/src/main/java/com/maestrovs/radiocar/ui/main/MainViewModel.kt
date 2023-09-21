@@ -48,6 +48,13 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
         _mustRefreshStatus.value = false
     }
 
+    private var _mustNavToSettings =  MutableLiveData<Boolean?>(null)
+    val mustNavToSettings get() = _mustNavToSettings
+    fun setMustNavToSettings(){
+        _mustNavToSettings.value = true
+        _mustNavToSettings.value = false
+    }
+
 
     private var _speed =  MutableLiveData<Float>(0f)
     val speed get() = _speed

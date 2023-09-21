@@ -43,6 +43,9 @@
     <string name="country">Country</string>
     <string name="country_not_selected">Not selected</string>
 
+    <string name="car_logo">Logo</string>
+    <string name="car_logo_not_selected">Not selected</string>
+
     <string name="privacy_policy">Privacy Policy</string>
     <string name="open_api">Open API</string>
 
@@ -61,5 +64,7 @@
 
     <string name="close">Close</string>
     <string name="choose_country">Choose country</string>
+
+
 
 </resources>

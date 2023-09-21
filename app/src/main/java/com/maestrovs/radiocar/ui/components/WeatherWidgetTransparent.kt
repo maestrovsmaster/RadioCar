@@ -2,9 +2,7 @@ package com.maestrovs.radiocar.ui.components
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +13,7 @@ import androidx.core.content.ContextCompat
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
 import com.maestrovs.radiocar.extensions.setVisible
-import com.maestrovs.radiocar.ui.settings.ui.main.TemperatureUnit
+import com.maestrovs.radiocar.ui.settings.TemperatureUnit
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.component_weather.view.layError
 
