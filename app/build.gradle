@@ -23,8 +23,8 @@ android {
         applicationId "com.maestrovs.radiocar"
         minSdk 23
         targetSdk 33
-        versionCode 7
-        versionName "0.0.7"
+        versionCode 8
+        versionName "0.0.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -140,7 +140,7 @@ dependencies {
 
 
     //Eventbus
-    implementation 'org.greenrobot:eventbus:3.2.0'
+    implementation 'org.greenrobot:eventbus:3.3.1'
 
 
     //Flags

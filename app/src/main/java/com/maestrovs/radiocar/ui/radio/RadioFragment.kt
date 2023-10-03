@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.JustifyContent
 import com.google.android.gms.ads.AdListener
@@ -143,7 +144,7 @@ class RadioFragment : Fragment() {
         // binding.recycler.layoutManager = LinearLayoutManager(requireContext())
 
 
-        layoutManager = WrapFlexboxLayoutManager(context)
+       /* layoutManager = WrapFlexboxLayoutManager(context)
         layoutManager.flexDirection = FlexDirection.ROW
         layoutManager.justifyContent = JustifyContent.FLEX_START
         binding.recycler.layoutManager = layoutManager
@@ -153,7 +154,9 @@ class RadioFragment : Fragment() {
         binding.recycler.setItemViewCacheSize(20)
         binding.recycler.isDrawingCacheEnabled = true
         binding.recycler.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
+*/
 
+        binding.recycler.layoutManager = GridLayoutManager(context, 3)
 
         binding.recycler.adapter = adapter
 
@@ -241,7 +244,7 @@ class RadioFragment : Fragment() {
 
         binding.btAll.setOnClickListener {
             currentListType = ListType.All
-            layoutManager.justifyContent = JustifyContent.SPACE_AROUND
+         //   layoutManager.justifyContent = JustifyContent.SPACE_AROUND
             updateButtons(ListType.All)
             radioViewModel.fetchStations(
                 CurrentCountryManager.readCountry(requireContext())?.alpha2
@@ -251,21 +254,21 @@ class RadioFragment : Fragment() {
 
         binding.btRecent.setOnClickListener {
             currentListType = ListType.Recent
-            layoutManager.justifyContent = JustifyContent.FLEX_START
+           // layoutManager.justifyContent = JustifyContent.FLEX_START
             updateButtons(ListType.Recent)
             radioViewModel.fetchRecent()
         }
 
         binding.btFavorite.setOnClickListener {
             currentListType = ListType.Favorites
-            layoutManager.justifyContent = JustifyContent.FLEX_START
+           // layoutManager.justifyContent = JustifyContent.FLEX_START
             updateButtons(ListType.Favorites)
             radioViewModel.fetchFavorites()
         }
 
         binding.btSearch.setOnClickListener {
             currentListType = ListType.Searched
-            layoutManager.justifyContent = JustifyContent.FLEX_START
+         //   layoutManager.justifyContent = JustifyContent.FLEX_START
             updateButtons(ListType.Searched)
 
             radioViewModel.searched.value?.let { lastSearchResult ->

@@ -5,6 +5,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -16,7 +17,6 @@ import com.maestrovs.radiocar.extensions.addRipple
 import com.maestrovs.radiocar.extensions.setVisible
 import com.murgupluoglu.flagkit.FlagKit
 import com.squareup.picasso.Picasso
-
 import kotlinx.android.synthetic.main.item_radio.view.btFavorite
 import kotlinx.android.synthetic.main.item_radio.view.ivCountry
 import kotlinx.android.synthetic.main.item_radio.view.ivCover
@@ -191,6 +191,11 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
                     .resize(120, 120)
                     .centerCrop()
                     .into(ivCover)
+                //val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_radio)
+                //ivCover.setImageDrawable(drawable)
+
+
+
             }
 
         }
