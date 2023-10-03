@@ -109,6 +109,7 @@
             app:background_tint="@drawable/ripple_logo_round"
             app:stroke_width="3"
             android:alpha="0.94"
+            android:layout_marginStart="0dp"
             />
 
 
