@@ -55,6 +55,10 @@
     <string name="close">Закрити</string>
     <string name="choose_country">Обрати країну</string>
 
+    <string name="remove">Видалити</string>
+    <string name="cancel">Скасувати</string>
+    <string name="remove_ask">Видалити?</string>
 
+    <string name="done">Готово</string>
 
 </resources>

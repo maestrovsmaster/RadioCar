@@ -113,16 +113,16 @@
 
         <ImageView
             android:id="@+id/ivErrIcon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:elevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_no_weather"
+            android:src="@drawable/ic_search"
             android:scaleType="fitCenter"
             android:layout_margin="4dp"
-            app:tint="@color/red" />
+            app:tint="@color/gray" />
 
         <TextView
             android:id="@+id/tvErrText"

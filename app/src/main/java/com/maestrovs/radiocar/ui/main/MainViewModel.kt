@@ -177,6 +177,13 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
         }
     }
 
+     fun deleteRecent(stationuuid: String) {
+         stopCurrentStationState()
+        viewModelScope.launch {
+            mainRepository.deleteRecent(stationuuid)
+        }
+    }
+
 
     fun setRecent(stationuuid: String, isRecent: Boolean) {
         Log.d("Database",">>recentStations setRecent1")

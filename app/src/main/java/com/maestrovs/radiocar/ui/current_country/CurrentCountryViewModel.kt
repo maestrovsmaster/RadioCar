@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.ui.splash_start_fragment.current_country
+package com.maestrovs.radiocar.ui.current_country
 
 import android.util.Log
 import androidx.lifecycle.LiveData

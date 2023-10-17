@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.ui.splash_start_fragment.current_country
+package com.maestrovs.radiocar.ui.current_country
 
 import android.os.Bundle
 import android.util.Log
@@ -64,12 +64,20 @@ class ChooseCountryFragment : Fragment() {
 
         binding.btBack.setVisible(canBack)
         binding.logo.setVisible(!canBack)
-        binding.btNext.setVisible(!canBack)
+        binding.btNext.setVisible(true)
 
+        binding.btNext.text = when(canBack){
+            true -> getString(R.string.done)
+            false -> getString(R.string.next)
+        }
 
 
         binding.btNext.setOnClickListener {
-            findNavController().navigate(R.id.action_chooseCountryFragment_to_mainFragment)
+            if(canBack){
+                findNavController().popBackStack()
+            }else {
+                findNavController().navigate(R.id.action_chooseCountryFragment_to_mainFragment)
+            }
         }
 
         binding.btBack.setOnClickListener {
@@ -84,7 +92,7 @@ class ChooseCountryFragment : Fragment() {
             it?.let { txt ->
                 findCountry(txt)?.let { country ->
                     setCurrentCountry(country)
-                    binding.btNext.setVisible(!canBack)
+                   // binding.btNext.setVisible(true)
                 }
             }
 
@@ -113,7 +121,7 @@ class ChooseCountryFragment : Fragment() {
         { selectedCountry: CPCountry ->
             Log.d("CurrentCountry", "CurrentCountry selectedCountry= $selectedCountry")
             setCurrentCountry(selectedCountry)
-            binding.btNext.setVisible(!canBack)
+          //  binding.btNext.setVisible(!canBack)
         }
     }
 

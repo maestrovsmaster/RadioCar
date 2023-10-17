@@ -47,7 +47,9 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
     private var playAction: PlayAction? = null
 
     interface ItemListener {
-        fun onClickedCharacter(item: Station?)
+        fun onClickedItem(station: Station?)
+
+        fun onLongClickedItem(station: Station?)
     }
 
     inner class StationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
@@ -99,7 +101,12 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
             var favoriteImgRes = R.drawable.ic_empty_24
 
             root.setOnClickListener {
-                onItem.onClickedCharacter(item)
+                onItem.onClickedItem(item)
+            }
+
+            root.setOnLongClickListener {
+                onItem.onLongClickedItem(item)
+                false
             }
 
            // Log.d("RadioCountry","country = ${item.country}   code = ${item.countrycode}  name = ${item.name}")

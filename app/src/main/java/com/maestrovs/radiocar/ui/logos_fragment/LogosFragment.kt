@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.ui.settings.logos_fragment
+package com.maestrovs.radiocar.ui.logos_fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater

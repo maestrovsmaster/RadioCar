@@ -21,6 +21,7 @@ import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.common.SharedManager
 import com.maestrovs.radiocar.databinding.FragmentSplashBinding
 import com.maestrovs.radiocar.ui.main.MainViewModel
+import com.maestrovs.radiocar.ui.settings.SettingsFragmentDirections
 import com.transitionseverywhere.extra.Scale
 
 
@@ -59,11 +60,13 @@ class SplashFragment : Fragment() {
 
         if (currentCountry != null) {
             findNavController().navigate(R.id.action_splashFragment_to_mainFragment)
-       } else {
-           findNavController().navigate(R.id.action_splashFragment_to_chooseCountryFragment)
+        } else {
+            findNavController().navigate(
+                SplashFragmentDirections.actionSplashFragmentToChooseCountryFragment(false)
+            )
         }
 
-       // findNavController().navigate(R.id.action_splashFragment_to_carLogoFragment)
+        // findNavController().navigate(R.id.action_splashFragment_to_carLogoFragment)
         //
 
     }

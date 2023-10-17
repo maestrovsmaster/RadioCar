@@ -40,7 +40,7 @@
     </fragment>
     <fragment
         android:id="@+id/chooseCountryFragment"
-        android:name="com.maestrovs.radiocar.ui.splash_start_fragment.current_country.ChooseCountryFragment"
+        android:name="com.maestrovs.radiocar.ui.current_country.ChooseCountryFragment"
         android:label="ChooseCountryFragment"
         tools:layout="@layout/fragment_country"
         >
@@ -84,7 +84,7 @@
     </fragment>
     <fragment
         android:id="@+id/carLogoFragment"
-        android:name="com.maestrovs.radiocar.ui.settings.logos_fragment.LogosFragment"
+        android:name="com.maestrovs.radiocar.ui.logos_fragment.LogosFragment"
         android:label="TestFragment"
         tools:layout="@layout/fragment_logos"
         />

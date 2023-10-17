@@ -65,6 +65,10 @@
     <string name="close">Close</string>
     <string name="choose_country">Choose country</string>
 
+    <string name="remove">Remove</string>
+    <string name="cancel">Cancel</string>
+    <string name="remove_ask">Remove?</string>
 
+    <string name="done">Done</string>
 
 </resources>
