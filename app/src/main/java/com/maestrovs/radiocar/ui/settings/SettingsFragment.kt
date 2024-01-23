@@ -13,6 +13,7 @@ import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.common.CarLogoManager
 import com.maestrovs.radiocar.common.Constants.ABOUT_RADIO_URL
 import com.maestrovs.radiocar.common.Constants.CONTACT_EMAIL
+import com.maestrovs.radiocar.common.Constants.PLAY_MARKET_URL
 import com.maestrovs.radiocar.common.Constants.PRIVACY_URL
 import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.databinding.FragmentSettingsMainBinding
@@ -131,6 +132,10 @@ class SettingsFragment : Fragment() {
         binding.tvVersion.text = "${getString(R.string.app_version)}: ${viewModel.versionDisplay}"
 
 
+        binding.tvPlayMarket.setOnClickListener {
+            startPlayMarketIntent()
+        }
+
 
         binding.tvPrivacyPolicy.setOnClickListener {
             startPrivacyIntent()
@@ -147,7 +152,7 @@ class SettingsFragment : Fragment() {
 
     }
 
-    fun startPrivacyIntent() {
+    private fun startPrivacyIntent() {
         try {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_URL))
             startActivity(browserIntent)
@@ -155,7 +160,15 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    fun startOpenApiIntent() {
+    private fun startPlayMarketIntent() {
+        try {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_MARKET_URL))
+            startActivity(browserIntent)
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun startOpenApiIntent() {
         try {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(ABOUT_RADIO_URL))
             startActivity(browserIntent)

@@ -15,7 +15,6 @@ import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
 import com.maestrovs.radiocar.extensions.setVisible
 import com.maestrovs.radiocar.ui.settings.TemperatureUnit
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.component_weather.view.layError
 
 import kotlinx.android.synthetic.main.component_weather.view.rootCard
 import kotlinx.android.synthetic.main.component_weather.view.tvErrText
@@ -131,7 +130,7 @@ open class WeatherWidgetTransparent : FrameLayout {
     private fun refreshUI(weatherResponse: WeatherResponse?, errorMessage: String? = null) {
 
         layWeather.setVisible(weatherResponse != null)
-        layError.setVisible(weatherResponse == null)
+        tvErrText.setVisible(weatherResponse == null)
 
         progress.setVisible(false)
 
@@ -156,7 +155,7 @@ open class WeatherWidgetTransparent : FrameLayout {
                 if (temperatureFloat > 0.0f) {
                     tempPref = "+"
                 } else if (temperatureFloat < 0) {
-                    tempPref = "-"
+                    tempPref = ""
                     textColorRes
                 }
 

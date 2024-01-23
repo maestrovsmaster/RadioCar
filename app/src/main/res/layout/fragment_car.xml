@@ -28,7 +28,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/shape_movie_background"
+        android:background="@drawable/shape_magnitola_background"
         android:orientation="vertical"
         android:visibility="visible"
         android:weightSum="3"
@@ -44,7 +44,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_weight="2"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/botLn"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:orientation="horizontal"
             android:layout_marginBottom="8dp"
             android:weightSum="2">
@@ -62,7 +62,7 @@
                     android:id="@+id/weatherWidget"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="20dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:background="?selectableItemBackground"
@@ -110,110 +110,26 @@
             app:stroke_width="3"
             android:alpha="0.94"
             android:layout_marginStart="0dp"
+            android:contentDescription="City"
             />
 
 
 
-        <LinearLayout
-            android:id="@+id/botLn"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="16dp"
-            android:alpha="0.8"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="0dp"
-            android:visibility="visible"
-            android:weightSum="4">
 
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-                <com.maestrovs.radiocar.ui.components.CarButton
-                    android:id="@+id/btPhone"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    app:icon="@drawable/ic_call"
-                    app:background_tint="@drawable/ripple_teal_round"
-                    app:stroke_color="@color/teal"
-                    app:stroke_width="3"
-                    />
-
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-
-                <com.maestrovs.radiocar.ui.components.CarButton
-                    android:id="@+id/btNavigation"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    app:icon="@drawable/ic_travel"
-                    app:background_tint="@drawable/ripple_green_round"
-                    app:stroke_color="@color/green"
-                    app:stroke_width="3"
-                    />
-
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-
-                <com.maestrovs.radiocar.ui.components.CarButton
-                    android:id="@+id/btBluetooth"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    app:icon="@drawable/ic_bt_on"
-                    app:background_tint="@drawable/ripple_blue_round"
-                    app:stroke_color="@color/blue"
-                    app:stroke_width="3"
-                    />
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-                <com.maestrovs.radiocar.ui.components.CarButton
-                    android:id="@+id/btSettings"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    app:icon="@drawable/ic_settings"
-                    app:background_tint="@drawable/ripple_gray_round"
-                    app:stroke_color="@color/blue"
-                    app:stroke_width="3"
-                    />
-
-
-            </LinearLayout>
-
-
-        </LinearLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_car6"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="20dp"
+        android:alpha="0.8"
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

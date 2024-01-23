@@ -5,6 +5,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -24,8 +25,9 @@ import kotlinx.android.synthetic.main.item_radio.view.root
 import kotlinx.android.synthetic.main.item_radio.view.tvName
 
 
-class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAdapter.StationViewHolder>()
-   // PagingDataAdapter<Station, StationAdapter.StationViewHolder>(diffCallback)
+class StationAdapter(val onItem: ItemListener) :
+    RecyclerView.Adapter<StationAdapter.StationViewHolder>()
+// PagingDataAdapter<Station, StationAdapter.StationViewHolder>(diffCallback)
 {
 
     companion object {
@@ -47,7 +49,7 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
     private var playAction: PlayAction? = null
 
     interface ItemListener {
-        fun onClickedItem(station: Station?)
+        fun onClickedItem(station: Station?, mustUpdateList: Boolean)
 
         fun onLongClickedItem(station: Station?)
     }
@@ -71,7 +73,7 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
     /**
      * Set station event about last selected Station
      */
-    fun setPlayAction( playAction: PlayAction) {
+    fun setPlayAction(playAction: PlayAction) {
         this.playAction = playAction
         notifyDataSetChanged()
     }
@@ -101,7 +103,7 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
             var favoriteImgRes = R.drawable.ic_empty_24
 
             root.setOnClickListener {
-                onItem.onClickedItem(item)
+                onItem.onClickedItem(item, true)
             }
 
             root.setOnLongClickListener {
@@ -109,17 +111,17 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
                 false
             }
 
-           // Log.d("RadioCountry","country = ${item.country}   code = ${item.countrycode}  name = ${item.name}")
+            // Log.d("RadioCountry","country = ${item.country}   code = ${item.countrycode}  name = ${item.name}")
 
-            val flagId =  FlagKit.getResId(context, item.countrycode)
+            val flagId = FlagKit.getResId(context, item.countrycode)
             ivCountry.setImageResource(flagId)
 
             ivCountry.setVisible(!item.countrycode.isNullOrEmpty())
 
-           // val drawable = FlagKit.getDrawable(this, "tr")
+            // val drawable = FlagKit.getDrawable(this, "tr")
 
             item.isFavorite?.let {
-                if(it == 1) {
+                if (it == 1) {
                     favoriteImgRes = R.drawable.ic_favorite
                 }
             }
@@ -127,40 +129,31 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
 
 
             var selected = false
-            var selectedColor = ContextCompat.getColor(context, R.color.transparent)
 
             var drawPlayingAnim = false
 
             var loadSuccess = true
 
-            station?.let {  selectedStation ->
-                    if (selectedStation.stationuuid == item.stationuuid) {
-                        selected = true
+            station?.let { selectedStation ->
+                if (selectedStation.stationuuid == item.stationuuid) {
+                    selected = true
 
-                        playAction?.let { playAction ->
-                            Log.d("Station", "+++2 $playAction")
-                            selectedColor = if(playAction is PlayAction.Resume) {
-                                ContextCompat.getColor(context, R.color.pink)
-                            }else{
-                                ContextCompat.getColor(context, R.color.pink_gray)
-                            }
-
-                            loadSuccess = !(playAction is PlayAction.Error)
-
-                            drawPlayingAnim = playAction is PlayAction.Resume
-                        }
+                    playAction?.let { playAction ->
+                        loadSuccess = !(playAction is PlayAction.Error)
+                        drawPlayingAnim = playAction is PlayAction.Resume
                     }
+                }
             }
 
             if (selected) {
-               // root.setBackgroundColor(selectedColor)
+                // root.setBackgroundColor(selectedColor)
 
                 root.background =
-                    if(loadSuccess) {
-                        ContextCompat.getDrawable(context, R.drawable.ripple_stroke_white)
-                    }else{
-                        ContextCompat.getDrawable(context, R.drawable.ripple_yellow_err)
-                    }
+                        // if(loadSuccess) {
+                    ContextCompat.getDrawable(context, R.drawable.ripple_stroke_white)
+                // }else{
+                //    ContextCompat.getDrawable(context, R.drawable.ripple_yellow_err)
+                // }
             } else {
                 root.addRipple().apply {
                     background = with(TypedValue()) {
@@ -175,7 +168,7 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
 
             tvName.text = "${item.name}"
 
-           // animationView.setVisible(drawPlayingAnim)
+            // animationView.setVisible(drawPlayingAnim)
 
             var imgUrl: String? = null
 
@@ -192,21 +185,61 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
                     .fit()
                     .centerCrop()
                     .into(ivCover)
+                ivCover.scaleType = ImageView.ScaleType.CENTER_INSIDE
             } else {
-                Picasso.get()
-                    .load(R.drawable.bg_music)
-                    .resize(120, 120)
-                    .centerCrop()
-                    .into(ivCover)
-                //val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_radio)
-                //ivCover.setImageDrawable(drawable)
 
-
+                val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_podcasts)
+                ivCover.setImageDrawable(drawable)
+                ivCover.scaleType = ImageView.ScaleType.CENTER_INSIDE
 
             }
 
         }
 
+    }
+
+    private var recyclerView: RecyclerView? = null
+
+    fun setRecyclerView(recyclerView: RecyclerView) {
+        this.recyclerView = recyclerView
+    }
+
+
+    fun nextStation(currentStation: Station?) {
+        if (differ.currentList.size == 0) return
+        currentStation?.let { station ->
+            val currentPosition = differ.currentList.indexOf(station)
+
+            val nextPosition = if (currentPosition == -1) {
+                0
+            } else {
+                (currentPosition + 1) % differ.currentList.size
+            }
+
+            val nextStation = differ.currentList[nextPosition]
+            onItem.onClickedItem(nextStation, false)
+            recyclerView?.scrollToPosition(nextPosition)
+        }
+    }
+
+    fun previousStation(currentStation: Station?) {
+        if (differ.currentList.size == 0) return
+        currentStation?.let { station ->
+            val currentPosition = differ.currentList.indexOf(station)
+            val previousPosition = if (currentPosition != -1) {
+                if (currentPosition - 1 >= 0) {
+                    currentPosition - 1
+                } else {
+                    differ.currentList.size - 1
+                }
+
+            } else {
+                0
+            }
+            val previousStation = differ.currentList[previousPosition]
+            onItem.onClickedItem(previousStation, false)
+            recyclerView?.scrollToPosition(previousPosition)
+        }
     }
 
 

@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/controlFragment"
-        android:name="com.maestrovs.radiocar.ui.control.ControlFragment"
+        android:name="com.maestrovs.radiocar.ui.control.CarFragment"
         android:label="fragment_control"
-        tools:layout="@layout/fragment_control" />
+        tools:layout="@layout/fragment_car" />
 </navigation>

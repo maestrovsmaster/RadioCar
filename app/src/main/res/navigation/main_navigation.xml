@@ -22,6 +22,9 @@
             app:destination="@id/chooseCountryFragment"
             app:popUpToInclusive="true"
             />
+        <action
+            android:id="@+id/action_splashFragment_to_magnitolaFragment"
+            app:destination="@id/magnitolaFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
@@ -87,6 +90,12 @@
         android:name="com.maestrovs.radiocar.ui.logos_fragment.LogosFragment"
         android:label="TestFragment"
         tools:layout="@layout/fragment_logos"
+        />
+    <fragment
+        android:id="@+id/magnitolaFragment"
+        android:name="com.maestrovs.radiocar.ui.splash_start_fragment.magnitola_style.MagnitolaFragment"
+        android:label="MagnitolaFragment"
+        tools:layout="@layout/content_magnitola"
         />
 
 

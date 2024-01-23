@@ -18,4 +18,6 @@ object Constants {
     const val PRIVACY_URL = "https://radiocartunes.wixsite.com/radiocar/privacy"
 
     const val CONTACT_EMAIL = "radiocar.tunes@gmail.com"
+
+    const val PLAY_MARKET_URL = "https://play.google.com/store/apps/details?id=com.maestrovs.radiocar"
 }

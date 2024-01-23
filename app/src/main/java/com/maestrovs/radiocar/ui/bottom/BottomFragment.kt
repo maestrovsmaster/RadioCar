@@ -8,6 +8,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.SeekBar
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.maestrovs.radiocar.R
@@ -17,7 +20,11 @@ import com.maestrovs.radiocar.databinding.FragmentBottomBinding
 import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.ui.components.PlayPauseView
 import com.maestrovs.radiocar.extensions.setVisible
+import com.maestrovs.radiocar.ui.main.WeatherManager
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.component_weather.progress
+import kotlinx.android.synthetic.main.fragment_bottom.seekBar
+import kotlinx.android.synthetic.main.item_radio.view.ivCover
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -53,6 +60,11 @@ class BottomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val savedVolume = WeatherManager.getVolume(requireContext())
+        updateVolumeIcon(savedVolume)
+        seekBar.setProgress(savedVolume, false)
+        mainViewModel.updateVolume(savedVolume)
+
         mainViewModel.selectedStation.observe(viewLifecycleOwner) { station ->
             Log.d("Orientation", "")
             station?.let { updateStation(station) } ?: run {
@@ -71,15 +83,56 @@ class BottomFragment : Fragment() {
             mainViewModel.switchCurrentStationState()
         }
 
-        binding.tvStation.setOnClickListener {
-            binding.playPause.switchState()
-            mainViewModel.switchCurrentStationState()
-        }
+        //binding.tvStation.setOnClickListener {
+        //    binding.playPause.switchState()
+       //     mainViewModel.switchCurrentStationState()
+       // }
 
         binding.btFavorite.setOnClickListener {
             mainViewModel.switchFavorite()
         }
 
+        binding.ivCover.setOnClickListener {
+            mainViewModel.switchFavorite()
+        }
+
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                updateVolumeIcon(progress)
+                mainViewModel.updateVolume(progress)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                val progress = binding.seekBar.progress
+                var newProgress = progress
+                if(binding.seekBar.progress in 90 .. 99){
+                    newProgress = 100
+
+                }
+                binding.seekBar.setProgress(newProgress, true)
+                WeatherManager.setVolume(requireContext(),newProgress)
+                mainViewModel.updateVolume(newProgress)
+            }
+
+        })
+    }
+
+    fun updateVolumeIcon(progress: Int){
+
+
+
+        val icResId = if(progress <= 5){
+            R.drawable.ic_volume_mute
+        }else if(progress in 6..80){
+            R.drawable.ic_volume_down
+        }else{
+            R.drawable.ic_volume_up
+        }
+
+        binding.icVolume.setImageDrawable(ContextCompat.getDrawable(requireContext(),icResId))
 
     }
 
@@ -117,11 +170,10 @@ class BottomFragment : Fragment() {
                 .centerCrop()
                 .into(binding.ivCover)
         } else {
-            Picasso.get()
-                .load(R.drawable.bg_music)
-                .resize(120, 120)
-                .centerCrop()
-                .into(binding.ivCover)
+
+            val drawable = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_podcasts)
+            binding.ivCover.setImageDrawable(drawable)
+           // ivCover.scaleType = ImageView.ScaleType.CENTER_INSIDE
         }
     }
 

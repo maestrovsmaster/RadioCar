@@ -38,7 +38,7 @@ import com.maestrovs.radiocar.ui.radio.utils.filterAll
 import com.maestrovs.radiocar.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Arrays
-
+import android.content.res.Configuration
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -129,15 +129,15 @@ class RadioFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         adapter = StationAdapter(object : StationAdapter.ItemListener {
 
-            override fun onClickedItem(station: Station?) {
+            override fun onClickedItem(station: Station?, mustUpdateList: Boolean) {
                 station?.let {
-                    mainViewModel.setStation(it)
+                    mainViewModel.setStation(it, mustUpdateList)
                 }
             }
 
             override fun onLongClickedItem(station: Station?) {
                 station?.let {
-                    if(currentListType == ListType.Recent) {
+                    if (currentListType == ListType.Recent) {
                         showDeleteStationDialog(requireContext(), station.name) {
                             mainViewModel.deleteRecent(it.stationuuid)
                         }
@@ -148,10 +148,19 @@ class RadioFragment : Fragment() {
 
         })
 
+        val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            3
+        } else if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            4
+        } else {
+            3
+        }
 
-        binding.recycler.layoutManager = GridLayoutManager(context, 3)
+
+        binding.recycler.layoutManager = GridLayoutManager(context, spanCount)
 
         binding.recycler.adapter = adapter
+        adapter.setRecyclerView(binding.recycler)
 
         mainViewModel.selectedStation.observe(viewLifecycleOwner) { it ->
             val station = it ?: return@observe
@@ -172,6 +181,20 @@ class RadioFragment : Fragment() {
                 is PlayAction.Error -> {
                     adapter.setPlayAction(playAction)
                     //TODO write to corrupt stations
+                }
+
+                is PlayAction.Next -> {
+                    Log.d("RadioFragment","Click ?Next .selectedStation = ${mainViewModel.selectedStation}");
+                    mainViewModel.selectedStation.let {
+                        adapter.nextStation(it.value)
+                    }
+                }
+
+                is PlayAction.Previous -> {
+                    Log.d("RadioFragment","Click ?Previous");
+                    mainViewModel.selectedStation.let {
+                        adapter.previousStation(it.value)
+                    }
                 }
 
                 else -> {
@@ -299,22 +322,62 @@ class RadioFragment : Fragment() {
 
     private fun updateButtons(listType: ListType) {
 
-        var colorRecent = R.drawable.ripple_gray_round
-        var colorFavorites = R.drawable.ripple_gray_round
-        var colorAll = R.drawable.ripple_gray_round
-        var colorSearched = R.drawable.ripple_gray_round
+        /* var colorRecent = R.drawable.ripple_gray_round
+         var colorFavorites = R.drawable.ripple_gray_round
+         var colorAll = R.drawable.ripple_gray_round
+         var colorSearched = R.drawable.ripple_gray_round
+
+         when (listType) {
+             ListType.Recent -> colorRecent = R.drawable.ripple_pink_round
+             ListType.Favorites -> colorFavorites = R.drawable.ripple_pink_round
+             ListType.All -> colorAll = R.drawable.ripple_pink_round
+             ListType.Searched -> colorSearched = R.drawable.ripple_pink_round
+         }*/
+
+        val inactiveColor = R.color.gray
+        val activeColor = R.color.blue
+        var colorRecent = inactiveColor
+        var colorFavorites = inactiveColor
+        var colorAll = inactiveColor
+        var colorSearched = inactiveColor
 
         when (listType) {
-            ListType.Recent -> colorRecent = R.drawable.ripple_pink_round
-            ListType.Favorites -> colorFavorites = R.drawable.ripple_pink_round
-            ListType.All -> colorAll = R.drawable.ripple_pink_round
-            ListType.Searched -> colorSearched = R.drawable.ripple_pink_round
+            ListType.Recent -> colorRecent = activeColor
+            ListType.Favorites -> colorFavorites = activeColor
+            ListType.All -> colorAll = activeColor
+            ListType.Searched -> colorSearched = activeColor
         }
 
-        binding.btRecent.setCardBackground(colorRecent)
-        binding.btFavorite.setCardBackground(colorFavorites)
-        binding.btAll.setCardBackground(colorAll)
-        binding.btSearch.setCardBackground(colorSearched)
+        // binding.btRecent.setCardBackground(colorRecent)
+        // binding.btFavorite.setCardBackground(colorFavorites)
+        // binding.btAll.setCardBackground(colorAll)
+        // binding.btSearch.setCardBackground(colorSearched)
+
+        binding.btRecent.setColorFilter(
+            ContextCompat.getColor(
+                requireContext(),
+                colorRecent
+            ), android.graphics.PorterDuff.Mode.SRC_IN
+        )
+        binding.btFavorite.setColorFilter(
+            ContextCompat.getColor(
+                requireContext(),
+                colorFavorites
+            ), android.graphics.PorterDuff.Mode.SRC_IN
+        )
+        binding.btAll.setColorFilter(
+            ContextCompat.getColor(
+                requireContext(),
+                colorAll
+            ), android.graphics.PorterDuff.Mode.SRC_IN
+        )
+        binding.btSearch.setColorFilter(
+            ContextCompat.getColor(
+                requireContext(),
+                colorSearched
+            ), android.graphics.PorterDuff.Mode.SRC_IN
+        )
+
 
         binding.etSearch.setVisible(listType == ListType.Searched)
 
@@ -394,7 +457,7 @@ class RadioFragment : Fragment() {
             if (currentListType == ListType.Recent && firstStart) {
                 if (filteredList.isNullOrEmpty()) {
                     currentListType = ListType.All
-                  //  layoutManager.justifyContent = JustifyContent.FLEX_START
+                    //  layoutManager.justifyContent = JustifyContent.FLEX_START
                     firstStart = false
                     radioViewModel.fetchStations(
                         CurrentCountryManager.readCountry(requireContext())?.alpha2
@@ -415,6 +478,9 @@ class RadioFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+
+
 }
 
 enum class ListType {

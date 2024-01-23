@@ -40,7 +40,11 @@ import org.greenrobot.eventbus.ThreadMode
 
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-
+import android.media.AudioManager
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import com.maestrovs.radiocar.events.PlayEvent
+import com.maestrovs.radiocar.events.PlayVolume
 
 const val NOTIFICATION_REQUEST_CODE = 56465
 
@@ -56,6 +60,9 @@ class AudioPlayerService : Service(), Player.Listener {
     private lateinit var playerNotificationManager: PlayerNotificationManager
 
     private lateinit var mediaSession: MediaSessionCompat //Class for controll bluetooth hardware buttons clicking
+
+    var lastPlayUrlEvent: PlayUrlEvent? = null
+    var lastVolume: Float = 100f
 
 
     override fun onPlaybackStateChanged(playbackState: Int) {
@@ -82,6 +89,8 @@ class AudioPlayerService : Service(), Player.Listener {
         initializePlayer()
         EventBus.getDefault().register(this)
 
+        setupAudioFocus()
+
 
         val channelId = 1231//"audio_player_channel"
         val channelName = "RadioCarChannel"//"getString(R.string.audio_player_channel_name)"
@@ -100,33 +109,20 @@ class AudioPlayerService : Service(), Player.Listener {
 
 
 
-        playerNotificationManager = PlayerNotificationManager.Builder(
-
-
-            this,
-            channelId,
-            channelId.toString(),
+        playerNotificationManager = PlayerNotificationManager.Builder(this,
+            channelId, channelId.toString(),
             object : PlayerNotificationManager.MediaDescriptionAdapter {
                 override fun getCurrentContentTitle(player: Player): CharSequence {
-
                     var title = ""
                     lastPlayUrlEvent?.let {
                         title = it.name ?: ""
                     }
-
                     return getString(R.string.symbol_radio) + " $title"
                 }
-
 
                 override fun createCurrentContentIntent(player: Player): PendingIntent? {
                     val notificationIntent =
                         Intent(this@AudioPlayerService, MainActivity::class.java)
-                    /*return PendingIntent.getActivity(
-                        this@AudioPlayerService,
-                        0,
-                        notificationIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                    )*/
 
                     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         PendingIntent.getActivity(
@@ -179,17 +175,13 @@ class AudioPlayerService : Service(), Player.Listener {
             }
         }).build()
 
-
-
-
         playerNotificationManager.setPlayer(exoPlayer)
-        // playerNotificationManager.setUsePlayPauseActions(true)
         playerNotificationManager.setUseStopAction(true)
 
         playerNotificationManager.setColor(
             ResourcesCompat.getColor(
                 this.resources,
-                R.color.pink_gray,
+                R.color.blue,
                 null
             )
         )
@@ -248,12 +240,10 @@ class AudioPlayerService : Service(), Player.Listener {
 
                 override fun onPlay() {
                     super.onPlay()
-                    // Play media
                     android.util.Log.d("BluetoothDevice", "Bluetooth play")
                     lastPlayUrlEvent?.url?.let {
                         playUrl(it)
                     }
-                    sendMessageToViewModel(PlayAction.Resume)
                 }
 
                 override fun onPause() {
@@ -261,7 +251,6 @@ class AudioPlayerService : Service(), Player.Listener {
                     // Pause media
                     android.util.Log.d("BluetoothDevice", "Bluetooth pause")
                     pausePlayer()
-                    sendMessageToViewModel(PlayAction.Pause)
                 }
 
 
@@ -269,12 +258,14 @@ class AudioPlayerService : Service(), Player.Listener {
                     super.onSkipToNext()
                     // Next media
                     android.util.Log.d("BluetoothDevice", "Bluetooth next")
+                    sendMessageToViewModel(PlayAction.Next)
                 }
 
                 override fun onSkipToPrevious() {
                     super.onSkipToPrevious()
                     // Previous media
                     android.util.Log.d("BluetoothDevice", "Bluetooth previous")
+                    sendMessageToViewModel(PlayAction.Previous)
                 }
             })
 
@@ -286,7 +277,11 @@ class AudioPlayerService : Service(), Player.Listener {
         mediaSession.setMediaButtonReceiver(pendingIntent)
 
         val playbackState = PlaybackStateCompat.Builder()
-            .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE)
+            .setActions(
+                PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE
+                        or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+                or PlaybackStateCompat.ACTION_SEEK_TO
+            )
             .build()
         mediaSession.setPlaybackState(playbackState)
     }
@@ -315,19 +310,18 @@ class AudioPlayerService : Service(), Player.Listener {
 
 
     fun playUrl(url: String) {
-
-
         Log.d("ASD", "Play exoPlayer = $exoPlayer")
-        val mediaItem = MediaItem.Builder()
-            .setUri(Uri.parse(url))
-            .build()
-
-
-        exoPlayer?.setMediaItem(mediaItem)
-        exoPlayer?.prepare()
-        exoPlayer?.play()
-
-
+        val gotFocus = requestAudioFocus()
+        if (gotFocus) {
+            // Почати медіа відтворення, оскільки ми отримали аудіо фокус
+            exoPlayer?.playWhenReady = true
+            val mediaItem = MediaItem.Builder()
+                .setUri(Uri.parse(url))
+                .build()
+            exoPlayer?.setMediaItem(mediaItem)
+            exoPlayer?.prepare()
+            exoPlayer?.play()
+        }
     }
 
 
@@ -337,6 +331,9 @@ class AudioPlayerService : Service(), Player.Listener {
 
     private fun stopPlayer() {
         exoPlayer?.stop()
+        exoPlayer?.playWhenReady = false
+        // Відпустити аудіо фокус, якщо існує
+        releaseAudioFocus()
     }
 
 
@@ -352,46 +349,55 @@ class AudioPlayerService : Service(), Player.Listener {
         mediaSession.release()
     }
 
-    var lastPlayUrlEvent: PlayUrlEvent? = null
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onPlayUrlEvent(event: PlayUrlEvent) {
-        event.url?.let { newUrl ->
-            val playAction = event.playAction
-            if (event.playAction != null) {
-                if (playAction is PlayAction.Resume) {
-                    playUrl(event.url)
-                } else pausePlayer()
-            } else {
-                if (newUrl == lastPlayUrlEvent?.url) {
-                    if (exoPlayer?.isPlaying == true) {
-                        pausePlayer()
+    fun onPlayUrlEvent(event: PlayEvent) {
+
+        when(event){
+            is PlayUrlEvent -> {
+                event.url?.let { newUrl ->
+                    val playAction = event.playAction
+                    if (event.playAction != null) {
+                        if (playAction is PlayAction.Resume) {
+                            playUrl(event.url)
+                        } else pausePlayer()
                     } else {
-                        playUrl(event.url)
+                        if (newUrl == lastPlayUrlEvent?.url) {
+                            if (exoPlayer?.isPlaying == true) {
+                                pausePlayer()
+                            } else {
+                                playUrl(event.url)
+                            }
+                        } else {
+                            playUrl(event.url)
+                        }
                     }
-                } else {
-                    playUrl(event.url)
+                } ?: kotlin.run {
+                    stopPlayer()
                 }
+                lastPlayUrlEvent = event
             }
-        } ?: kotlin.run {
-            stopPlayer()
+            is PlayVolume ->  {
+                var volume: Float = event.volume.toFloat()
+                if(volume > 100) volume = 100f;
+                if(volume < 0) volume = 0f;
+                lastVolume = volume/100f
+                exoPlayer?.volume = lastVolume
+            }
         }
-        lastPlayUrlEvent = event
+
     }
 
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         if (playbackState == Player.STATE_READY && playWhenReady) {
-            Log.d(TAG, "Player is playing")
             sendMessageToViewModel(PlayAction.Resume)
         } else if (playbackState == Player.STATE_READY) {
-            Log.d(TAG, "Player is paused")
             sendMessageToViewModel(PlayAction.Pause)
         } else if (playbackState == Player.STATE_BUFFERING) {
-            Log.d(TAG, "Player is buffering")
             sendMessageToViewModel(PlayAction.Buffering)
         } else if (playbackState == Player.STATE_IDLE) {
-            Log.d(TAG, "Player is idle")
             sendMessageToViewModel(PlayAction.Idle)
         }
     }
@@ -414,6 +420,62 @@ class AudioPlayerService : Service(), Player.Listener {
             else -> {
                 Log.e(TAG, "Unknown error: ", error)
             }
+        }
+    }
+
+
+    private lateinit var audioManager: AudioManager
+    private var audioFocusRequest: AudioFocusRequest? = null
+
+    private fun setupAudioFocus() {
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_MEDIA)
+            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+            .build()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setAudioAttributes(audioAttributes)
+                .setAcceptsDelayedFocusGain(true)
+                .setOnAudioFocusChangeListener { focusChange ->
+                    when (focusChange) {
+                        AudioManager.AUDIOFOCUS_LOSS -> {
+                            exoPlayer?.stop()
+                        }
+                        AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                            exoPlayer?.volume = 0.1f
+                        }
+                        AudioManager.AUDIOFOCUS_GAIN -> {
+                            exoPlayer?.volume = lastVolume
+                        }
+                    }
+                }
+                .build()
+        }
+    }
+
+    private fun requestAudioFocus(): Boolean {
+        val result: Int =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && audioFocusRequest != null) {
+                audioManager.requestAudioFocus(audioFocusRequest!!)
+            } else {
+                audioManager.requestAudioFocus({ focusChange ->
+                }, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
+            }
+
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            return true
+        }
+        return false
+    }
+
+
+    private fun releaseAudioFocus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && audioFocusRequest != null) {
+            audioManager.abandonAudioFocusRequest(audioFocusRequest!!)
+        } else {
+            audioManager.abandonAudioFocus(null)
         }
     }
 
