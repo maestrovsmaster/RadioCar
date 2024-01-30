@@ -15,6 +15,8 @@ import com.maestrovs.radiocar.data.remote.weather.WeatherRemoteDataSource
 import com.maestrovs.radiocar.data.remote.weather.WeatherService
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.data.repository.WeatherRepository
+import com.maestrovs.radiocar.service.player.ExoPlayerManager
+import com.maestrovs.radiocar.service.player.MediaSessionHelper2
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -129,4 +131,22 @@ object AppModule {
     ) =
         WeatherRepository(remoteDataSource)
 
+    @Singleton
+    @Provides
+    fun provideMediaSessionHelper1(
+        @ApplicationContext context: Context
+    ): MediaSessionHelper2 = MediaSessionHelper2(context)
+
+
+    @Singleton
+    @Provides
+    fun provideExoPlayerManager(
+        @ApplicationContext context: Context,
+        mediaSessionHelper: MediaSessionHelper2
+    ): ExoPlayerManager = ExoPlayerManager(context, mediaSessionHelper)
+
 }
+
+
+
+

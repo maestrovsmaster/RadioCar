@@ -87,12 +87,14 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     }
 
     fun playCurrentStationState() {
+        Log.d("AudioPlayerService","playCurrentStationState")
         _selectedStation.value?.let { station ->
             EventBus.getDefault().post(PlayUrlEvent(station.url, station.name, "", null, PlayAction.Resume))
         }
     }
 
     fun stopCurrentStationState() {
+        Log.d("AudioPlayerService","stopCurrentStationState")
         _selectedStation.value?.let { station ->
             EventBus.getDefault().post(PlayUrlEvent(station.url, station.name, "", null, PlayAction.Pause))
         }?:run{
@@ -101,6 +103,7 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     }
 
     fun switchCurrentStationState(){
+        Log.d("AudioPlayerService","switchCurrentStationState")
         _selectedStation.value?.let { station ->
             EventBus.getDefault().post(PlayUrlEvent(station.url, station.name, "", null))
         }?:run{

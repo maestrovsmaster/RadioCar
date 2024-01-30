@@ -55,10 +55,11 @@ class MainActivity : AppCompatActivity() {
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            Log.d("ASD", "onServiceConnected")
+            Log.d("AudioPlayerService", "onServiceConnected")
             val binder = service as AudioPlayerService.LocalBinder
             audioPlayerService = binder.getService()
             serviceBound = true
+           // audioPlayerService?.initializePlayer()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -99,7 +100,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        audioPlayerService?.initializePlayer()
 
 
         // Check for location permissions
