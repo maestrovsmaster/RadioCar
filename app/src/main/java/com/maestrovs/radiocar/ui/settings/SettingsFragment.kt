@@ -73,6 +73,11 @@ class SettingsFragment : Fragment() {
             SettingsManager.setAutoplay(requireContext(), isChecked)
         }
 
+        binding.swShowStation.isChecked = SettingsManager.getShowStationNameInBackground(requireContext())
+        binding.swShowStation.setOnCheckedChangeListener { _, isChecked ->
+            SettingsManager.setShowStationNameInBackground(requireContext(), isChecked)
+        }
+
         val speedUnit = SettingsManager.getSpeedUnit(requireContext())
 
         binding.rbKmh.isChecked = speedUnit == SpeedUnit.kmh

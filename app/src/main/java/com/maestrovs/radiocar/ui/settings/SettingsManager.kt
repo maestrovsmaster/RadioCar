@@ -10,6 +10,8 @@ object SettingsManager {
     private const val SPEED_UNIT = "SPEED_UNIT"
     private const val TEMPERATURE_UNIT = "TEMPERATURE_UNIT"
 
+    private const val SHOW_STATION_NAME_IN_BACKGROUND = "SHOW_STATION_NAME_IN_BACKGROUND"
+
     fun setDisplayActive(context: Context, isActive: Boolean) {
         SharedManager.writeBooleanOption(context, IS_DISPLAY_ACTIVE, isActive)
     }
@@ -38,6 +40,14 @@ object SettingsManager {
 
     fun getTemperatureUnit(context: Context): TemperatureUnit =
         TemperatureUnit.valueOf(SharedManager.readStringOptions(context, TEMPERATURE_UNIT) ?: "C")
+
+
+    fun setShowStationNameInBackground(context: Context, showStation: Boolean) {
+        SharedManager.writeBooleanOption(context, SHOW_STATION_NAME_IN_BACKGROUND, showStation)
+    }
+
+    fun getShowStationNameInBackground(context: Context) =
+        SharedManager.readBooleanOptions(context, SHOW_STATION_NAME_IN_BACKGROUND, false)
 
 
 }

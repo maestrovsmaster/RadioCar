@@ -124,6 +124,18 @@
                 app:thumbTint="@color/switch_thumb_tint"
                 app:trackTint="@color/switch_track_tint" />
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/swShowStation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/settings_show_station_in_back"
+                android:textColor="@color/white"
+                android:textSize="@dimen/settings_text_main_size"
+                android:theme="@style/ThemeOverlay.AppCompat"
+                app:thumbTint="@color/switch_thumb_tint"
+                app:trackTint="@color/switch_track_tint" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

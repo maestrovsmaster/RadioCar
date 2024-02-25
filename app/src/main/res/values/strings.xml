@@ -27,6 +27,7 @@
 
     <string name="settings_display_on">Keep display active</string>
     <string name="settings_autoplay">Play automatically when a Bluetooth device is connected</string>
+    <string name="settings_show_station_in_back">Display popup station name in background</string>
     <string name="settings_display_speed_units">Display speed in units:</string>
     <string name="km_h">km/h</string>
     <string name="mph">MPH</string>

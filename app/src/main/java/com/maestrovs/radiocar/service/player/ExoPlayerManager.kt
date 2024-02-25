@@ -1,12 +1,15 @@
 package com.maestrovs.radiocar.service.player
 
 import android.content.Context
-import android.content.Intent
+import android.graphics.Color
 import android.media.AudioManager
 import android.net.Uri
-import android.os.Bundle
-import android.os.ResultReceiver
 import android.support.v4.media.session.MediaSessionCompat
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.PlaybackException
@@ -14,14 +17,18 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.util.Log
+import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.enums.radio.PlayAction
+import com.maestrovs.radiocar.events.ActivityStatus
 import com.maestrovs.radiocar.events.PlayEvent
 import com.maestrovs.radiocar.events.PlayUrlEvent
 import com.maestrovs.radiocar.events.PlayVolume
 import com.maestrovs.radiocar.events.UIStatusEvent
+import com.maestrovs.radiocar.ui.settings.SettingsManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
+
 
 @Singleton
 class ExoPlayerManager @Inject constructor(@ApplicationContext private val context: Context,
@@ -39,6 +46,8 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
     var lastPlayUrlEvent: PlayUrlEvent? = null
 
     var listener: AudioPlayerListener? = null
+
+    var activityStatus: ActivityStatus = ActivityStatus.VISIBLE
 
 
 
@@ -114,7 +123,10 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
     fun playUrl(url: String) {
       //  val gotFocus = audioFocusManager.requestAudioFocus()
       //  if (gotFocus) {
-        Log.d("MainActivity22","playUrl = ${url}")
+        //Log.d("MainActivity22","playUrl = ${url}")
+
+
+
             exoPlayer?.playWhenReady = true
             val mediaItem = MediaItem.Builder()
                 .setUri(Uri.parse(url))
@@ -186,6 +198,7 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
                     if (event.playAction != null) {
                         if (playAction is PlayAction.Resume) {
                             playUrl(event.url)
+                             displayCurrentStation(event.name)
                         } else pausePlayer()
                     } else {
                         if (newUrl == lastPlayUrlEvent?.url) {
@@ -193,9 +206,12 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
                                 pausePlayer()
                             } else {
                                 playUrl(event.url)
+                                 displayCurrentStation(event.name)
                             }
                         } else {
                             playUrl(event.url)
+                              displayCurrentStation(event.name)
+
                         }
                     }
                 } ?: kotlin.run {
@@ -215,6 +231,15 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
         }
     }
 
+    private fun displayCurrentStation(name: String?){
+        if(name == null) return;
+        if(!SettingsManager.getShowStationNameInBackground(context)) return
+        if(activityStatus == ActivityStatus.VISIBLE) return
+        val radioSymbol = context.getString(R.string.symbol_radio)
+            Toast.makeText(context, "$radioSymbol  $name", Toast.LENGTH_SHORT).show()
+
+
+    }
 
 
 }

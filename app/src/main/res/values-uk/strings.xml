@@ -17,6 +17,7 @@
 
     <string name="settings_display_on">" Не вимикати екран"</string>
     <string name="settings_autoplay">Автоматично грати, коли Bluetooth пристрій під\'єднано</string>
+    <string name="settings_show_station_in_back">Відображати спливаючу назву станції у фоновому режимі</string>
     <string name="settings_display_speed_units">Показувати швидкість в:</string>
 
     <string name="km_h">км/год</string>

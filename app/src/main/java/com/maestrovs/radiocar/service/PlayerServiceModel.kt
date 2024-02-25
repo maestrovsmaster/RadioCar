@@ -90,7 +90,7 @@ class PlayerServiceModel @Inject constructor(
         lastStation = station
         this@PlayerServiceModel.listType = listType
 
-        Log.d("MainActivity22", "fetchStations...")
+        Log.d("CurrentStationFS", "fetchStations...")
 
 
         withContext(Dispatchers.IO) {
@@ -98,13 +98,19 @@ class PlayerServiceModel @Inject constructor(
             when (listType) {
                 ListType.Recent -> {
                     mainRepository.getCombinedRecentAndAllStationsFlow(countryCode).collect {
-                        Log.d("MainActivity22", "fetchStationsRecent...")
+                        Log.d("CurrentStationFS", "fetchStationsRecent...  ")
 
                         allList = it
+                        Log.d("CurrentStationFS", "station = ${station?.name}")
+
+
                         if (!allList.isNullOrEmpty()) {
-                            currentStationIndex = allList?.indexOf(station) ?: 0
+                            station?.let {  setCurrentItem(it)}
+
+
                         }
-                        Log.d("MainActivity22", "fetchStationsRecent = ${allList?.size}")
+
+
 
                     }
                 }
@@ -115,9 +121,10 @@ class PlayerServiceModel @Inject constructor(
 
                         allList = it
                         if (!allList.isNullOrEmpty()) {
-                            currentStationIndex = allList?.indexOf(station) ?: 0
+                            station?.let {  setCurrentItem(it)}
+
                         }
-                        Log.d("MainActivity22", "fetchStationsFavorites = ${allList?.size}")
+
 
                     }
 
@@ -125,14 +132,19 @@ class PlayerServiceModel @Inject constructor(
 
                 else -> {
                     mainRepository.getStationsFlow(countryCode).collect {
-                        Log.d("MainActivity22", "fetchStationsAll...")
+                        Log.d("CurrentStationFS", "fetchStationsAll...")
                         when (it.status) {
                             Resource.Status.SUCCESS -> {
+                                Log.d("CurrentStationFS", "currentStation = ${station?.name}")
                                 allList = it.data
                                 if (!allList.isNullOrEmpty() && listType == ListType.All) {
-                                    currentStationIndex = allList?.indexOf(station) ?: 0
+
+                                    station?.let {  setCurrentItem(it)}
+
+
                                 }
-                                Log.d("MainActivity22", "getAllStations = ${allList?.size}")
+                               // Log.d("CurrentStationFS", "getAllStations = ${allList?.size}")
+
                             }
 
                             else -> {}
@@ -145,6 +157,17 @@ class PlayerServiceModel @Inject constructor(
         }
 
 
+    }
+
+    fun setCurrentItem(station: Station){
+        allList?.let {lst ->
+            for(i in 0..allList!!.size) {
+                if(lst[i].name == station.name){
+                    currentStationIndex = i
+                    break
+                }
+            }
+        }
     }
 
 

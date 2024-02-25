@@ -17,6 +17,7 @@ import org.greenrobot.eventbus.ThreadMode
 
 
 import android.util.Log
+import android.widget.Toast
 import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.events.ActivityStatus
 import com.maestrovs.radiocar.events.PlayEvent
@@ -113,6 +114,7 @@ class AudioPlayerService : Service() {
     }//onCreate
 
 
+
     private fun processAutonumnActions(playAction: PlayAction){
       //  Log.d("MainActivity22","processAutonumnActions = ${playAction}")
         when(playAction){
@@ -120,6 +122,7 @@ class AudioPlayerService : Service() {
                 serviceModel.getNextStation()?.let {
                     exoPlayerManager.onPlayUrlEvent(PlayUrlEvent(it.url,
                         it.name, null, it.favicon, PlayAction.Resume))
+
                 }
 
             }
@@ -128,6 +131,7 @@ class AudioPlayerService : Service() {
                  serviceModel.getPrevStation()?.let {
                     exoPlayerManager.onPlayUrlEvent(PlayUrlEvent(it.url,
                         it.name, null, it.favicon, PlayAction.Resume))
+
                 }
             }
             PlayAction.Pause -> {
@@ -172,6 +176,8 @@ class AudioPlayerService : Service() {
             Log.d("MainActivity22", "event = ${event}")
             activityStatus = event.activityStatus
             serviceScope.launch {
+
+                exoPlayerManager.activityStatus = activityStatus
 
                 if(event.activityStatus == ActivityStatus.INVISIBLE) {
 
