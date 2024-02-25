@@ -17,7 +17,6 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
-import android.view.KeyEvent
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -32,8 +31,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.firebase.FirebaseApp
 import com.maestrovs.radiocar.databinding.ActivityMainBinding
 import com.maestrovs.radiocar.enums.bluetooth.BT_Status
+import com.maestrovs.radiocar.events.ActivityStatus
 import com.maestrovs.radiocar.service.AudioPlayerService
-import com.maestrovs.radiocar.ui.components.ExitDialog
 import com.maestrovs.radiocar.ui.settings.SettingsManager
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -85,6 +84,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.d("MainActivity22","MainActivity_onCreate")
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -149,6 +150,8 @@ class MainActivity : AppCompatActivity() {
             CurrentCountryManager.setAskedCountryTrue(this)
         }*/
     }
+
+
 
     private fun checkConnectedBluetoothDevices() {
 
@@ -252,9 +255,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("MainActivity22","MainActivity_onResume")
+        mainViewModel.updateActivityStatus(ActivityStatus.VISIBLE)
+    }
+
     override fun onStop() {
         super.onStop()
-
+        mainViewModel.updateActivityStatus(ActivityStatus.INVISIBLE)
     }
 
 
@@ -303,6 +312,10 @@ class MainActivity : AppCompatActivity() {
             Looper.getMainLooper()
         )
     }
+
+
+
+
 
 
     // Handling permissions request result

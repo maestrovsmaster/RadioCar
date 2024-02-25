@@ -17,11 +17,19 @@ import org.greenrobot.eventbus.ThreadMode
 
 
 import android.util.Log
+import com.maestrovs.radiocar.common.CurrentCountryManager
+import com.maestrovs.radiocar.events.ActivityStatus
 import com.maestrovs.radiocar.events.PlayEvent
+import com.maestrovs.radiocar.events.PlayUrlEvent
+import com.maestrovs.radiocar.events.UIStatusEvent
 import com.maestrovs.radiocar.service.network.NetworkHelper
 import com.maestrovs.radiocar.service.notifications.PlayerNotificationManagerHelper
 import com.maestrovs.radiocar.service.player.AudioPlayerListener
 import com.maestrovs.radiocar.service.player.ExoPlayerManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 const val NOTIFICATION_REQUEST_CODE = 56465
@@ -39,7 +47,11 @@ class AudioPlayerService : Service() {
     @Inject
     lateinit var serviceModel: PlayerServiceModel
 
+    private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     private val binder = LocalBinder()
+
+    private var activityStatus = ActivityStatus.VISIBLE
 
 
     override fun onCreate() {
@@ -47,11 +59,16 @@ class AudioPlayerService : Service() {
 
         EventBus.getDefault().register(this)
 
-        Log.d("AudioPlayerService","serviceModel = ${serviceModel}")
+        Log.d("AudioPlayerService", "serviceModel = ${serviceModel}")
 
         exoPlayerManager.initializePlayer(object : AudioPlayerListener {
             override fun onPlayEvent(playAction: PlayAction) {
+                Log.d("MainActivity22","onPlayEvent = ${playAction}")
                 sendMessageToViewModel(playAction)
+
+                if(activityStatus == ActivityStatus.INVISIBLE){
+                    processAutonumnActions(playAction)
+                }
             }
         })
 
@@ -96,7 +113,40 @@ class AudioPlayerService : Service() {
     }//onCreate
 
 
+    private fun processAutonumnActions(playAction: PlayAction){
+      //  Log.d("MainActivity22","processAutonumnActions = ${playAction}")
+        when(playAction){
+            PlayAction.Next -> {
+                serviceModel.getNextStation()?.let {
+                    exoPlayerManager.onPlayUrlEvent(PlayUrlEvent(it.url,
+                        it.name, null, it.favicon, PlayAction.Resume))
+                }
 
+            }
+
+            PlayAction.Previous -> {
+                 serviceModel.getPrevStation()?.let {
+                    exoPlayerManager.onPlayUrlEvent(PlayUrlEvent(it.url,
+                        it.name, null, it.favicon, PlayAction.Resume))
+                }
+            }
+            PlayAction.Pause -> {
+
+            }
+
+            PlayAction.Resume -> {
+
+            }
+            is PlayAction.Error -> {
+              Log.d("MainActivity22"," This is wrong station: find next!")
+                  serviceModel.getNextStation()?.let {
+                                    exoPlayerManager.onPlayUrlEvent(PlayUrlEvent(it.url,
+                                        it.name, null, it.favicon, PlayAction.Resume))
+                                }
+            }
+            else -> {}
+        }
+    }
 
 
     inner class LocalBinder : Binder() {
@@ -110,15 +160,42 @@ class AudioPlayerService : Service() {
 
     override fun onDestroy() {
         EventBus.getDefault().unregister(this)
-        super.onDestroy()
+        serviceModel.clear()
         exoPlayerManager.releasePlayer()
-
+        super.onDestroy()
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onPlayUrlEvent(event: PlayEvent) {
-        exoPlayerManager.onPlayUrlEvent(event)
+        if (event is UIStatusEvent) {
+            Log.d("MainActivity22", "event = ${event}")
+            activityStatus = event.activityStatus
+            serviceScope.launch {
+
+                if(event.activityStatus == ActivityStatus.INVISIBLE) {
+
+                    val country = CurrentCountryManager.readCountry(this@AudioPlayerService)?.alpha2
+                        ?: CurrentCountryManager.DEFAULT_COUNTRY
+                    serviceModel.fetchStations(country, event.listType, event.station)
+                }else{
+                    val station = serviceModel.getCurrentStation()
+
+                    station?.let {
+
+                        EventBus.getDefault().post(PlayUrlEvent(station.url, station.name, "", station.favicon,
+                            PlayAction.Resume))
+                    }?:run {
+                      //  EventBus.getDefault().post(PlayUrlEvent(null, null, "", null,
+                       //     PlayAction.Pause))
+                    }
+
+                }
+            }
+
+        } else {
+            exoPlayerManager.onPlayUrlEvent(event)
+        }
     }
 
     private fun sendMessageToViewModel(playAction: PlayAction) {

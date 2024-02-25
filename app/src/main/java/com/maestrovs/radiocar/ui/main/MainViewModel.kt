@@ -12,10 +12,13 @@ import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.enums.bluetooth.BT_Status
 import com.maestrovs.radiocar.enums.radio.PlayAction
+import com.maestrovs.radiocar.events.ActivityStatus
 import com.maestrovs.radiocar.events.PlayActionEvent
 import com.maestrovs.radiocar.events.PlayUrlEvent
 import com.maestrovs.radiocar.events.PlayVolume
+import com.maestrovs.radiocar.events.UIStatusEvent
 import com.maestrovs.radiocar.ui.control.SpeedManager
+import com.maestrovs.radiocar.ui.radio.ListType
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -32,6 +35,8 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     init {
         EventBus.getDefault().register(this);
     }
+
+    private var listType = ListType.All
 
 
     private var _bluetoothStatus =  MutableLiveData<BT_Status?>(null)
@@ -119,7 +124,7 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onCustomEvent(event: PlayActionEvent) {
 
-        com.google.android.exoplayer2.util.Log.d("MainViewModel",
+        com.google.android.exoplayer2.util.Log.d("MainActivity22",
             "MainViewModel: received event from service: ${event.playAction.toString()}" )
 
         var eventLast = event.playUrlEvent
@@ -201,8 +206,14 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
         EventBus.getDefault().post(PlayVolume(progress))
     }
 
+    fun setListType(listType: ListType){
+        this.listType = listType
+    }
 
 
+    fun updateActivityStatus(activityStatus: ActivityStatus){
+        EventBus.getDefault().post(UIStatusEvent(activityStatus, listType, selectedStation.value))
+    }
 
 
     override fun onCleared() {

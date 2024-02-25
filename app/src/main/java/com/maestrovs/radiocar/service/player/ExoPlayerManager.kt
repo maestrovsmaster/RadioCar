@@ -1,8 +1,11 @@
 package com.maestrovs.radiocar.service.player
 
 import android.content.Context
+import android.content.Intent
 import android.media.AudioManager
 import android.net.Uri
+import android.os.Bundle
+import android.os.ResultReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.MediaItem
@@ -15,6 +18,7 @@ import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.events.PlayEvent
 import com.maestrovs.radiocar.events.PlayUrlEvent
 import com.maestrovs.radiocar.events.PlayVolume
+import com.maestrovs.radiocar.events.UIStatusEvent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -61,24 +65,33 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
             object : MediaSessionCompat.Callback() {
                 override fun onPlay() {
                     super.onPlay()
+                    Log.d("ExoPlayerManager22","onPlay")
                     lastPlayUrlEvent?.url?.let {
                         playUrl(it)
                     }
                 }
                 override fun onPause() {
+                    Log.d("ExoPlayerManager22","onPause")
                     super.onPause()
                     pausePlayer()
                 }
                 override fun onSkipToNext() {
                     super.onSkipToNext()
+                    Log.d("ExoPlayerManager22","onSkipToNext")
                     // sendMessageToViewModel(PlayAction.Next)
                     listener?.onPlayEvent(PlayAction.Next)
                 }
                 override fun onSkipToPrevious() {
                     super.onSkipToPrevious()
+                    Log.d("ExoPlayerManager22","onSkipToPrevious")
                     // sendMessageToViewModel(PlayAction.Previous)
                     listener?.onPlayEvent(PlayAction.Previous)
                 }
+
+
+
+
+
             }
         )
 
@@ -101,6 +114,7 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
     fun playUrl(url: String) {
       //  val gotFocus = audioFocusManager.requestAudioFocus()
       //  if (gotFocus) {
+        Log.d("MainActivity22","playUrl = ${url}")
             exoPlayer?.playWhenReady = true
             val mediaItem = MediaItem.Builder()
                 .setUri(Uri.parse(url))
@@ -196,6 +210,8 @@ class ExoPlayerManager @Inject constructor(@ApplicationContext private val conte
                 lastVolume = volume/100f
                 exoPlayer?.volume = lastVolume
             }
+
+            is UIStatusEvent -> {}
         }
     }
 

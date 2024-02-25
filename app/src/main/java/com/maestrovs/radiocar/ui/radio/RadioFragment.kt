@@ -266,6 +266,7 @@ class RadioFragment : Fragment() {
                 CurrentCountryManager.readCountry(requireContext())?.alpha2
                     ?: CurrentCountryManager.DEFAULT_COUNTRY
             )
+            mainViewModel.setListType(ListType.All)
         }
 
         binding.btRecent.setOnClickListener {
@@ -273,6 +274,7 @@ class RadioFragment : Fragment() {
             // layoutManager.justifyContent = JustifyContent.FLEX_START
             updateButtons(ListType.Recent)
             radioViewModel.fetchRecent()
+            mainViewModel.setListType(ListType.Recent)
         }
 
         binding.btFavorite.setOnClickListener {
@@ -280,9 +282,11 @@ class RadioFragment : Fragment() {
             // layoutManager.justifyContent = JustifyContent.FLEX_START
             updateButtons(ListType.Favorites)
             radioViewModel.fetchFavorites()
+            mainViewModel.setListType(ListType.Favorites)
         }
 
         binding.btSearch.setOnClickListener {
+            mainViewModel.setListType(ListType.All)
             currentListType = ListType.Searched
             //   layoutManager.justifyContent = JustifyContent.FLEX_START
             updateButtons(ListType.Searched)
