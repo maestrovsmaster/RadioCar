@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.maestrovs.radiocar.ui.splash_start_fragment.SplashFragment"
+        android:label="SplashFragment"
+        tools:layout="@layout/fragment_splash"
+        >
+
+        <action
+            android:id="@+id/action_splashFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popUpToInclusive="true"
+            />
+        <action
+            android:id="@+id/action_splashFragment_to_chooseCountryFragment"
+            app:destination="@id/chooseCountryFragment"
+            app:popUpToInclusive="true"
+            />
+        <action
+            android:id="@+id/action_splashFragment_to_magnitolaFragment"
+            app:destination="@id/magnitolaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.maestrovs.radiocar.ui.splash_start_fragment.MainFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/content_main"
+        >
+        <action
+            android:id="@+id/action_mainFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseCountryFragment"
+        android:name="com.maestrovs.radiocar.ui.current_country.ChooseCountryFragment"
+        android:label="ChooseCountryFragment"
+        tools:layout="@layout/fragment_country"
+        >
+        <action
+            android:id="@+id/action_chooseCountryFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+        <argument
+            android:name="canBack"
+            app:argType="boolean"
+            android:defaultValue="true" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.maestrovs.radiocar.ui.settings.SettingsFragment"
+        android:label="fragment_settings_main"
+        tools:layout="@layout/fragment_settings_main" >
+        <action
+            android:id="@+id/action_settingsFragment_to_chooseCountryFragment"
+            app:destination="@id/chooseCountryFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+        <action
+            android:id="@+id/action_settingsFragment_to_carLogoFragment"
+            app:destination="@id/carLogoFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+
+    </fragment>
+    <fragment
+        android:id="@+id/carLogoFragment"
+        android:name="com.maestrovs.radiocar.ui.logos_fragment.LogosFragment"
+        android:label="TestFragment"
+        tools:layout="@layout/fragment_logos"
+        />
+    <fragment
+        android:id="@+id/magnitolaFragment"
+        android:name="com.maestrovs.radiocar.ui.splash_start_fragment.magnitola_style.MagnitolaFragment"
+        android:label="MagnitolaFragment"
+        tools:layout="@layout/content_magnitola"
+        />
+
+
+</navigation>

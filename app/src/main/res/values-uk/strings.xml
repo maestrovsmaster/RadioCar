@@ -17,6 +17,7 @@
 
     <string name="settings_display_on">" Не вимикати екран"</string>
     <string name="settings_autoplay">Автоматично грати, коли Bluetooth пристрій під\'єднано</string>
+    <string name="settings_show_station_in_back">Відображати спливаючу назву станції у фоновому режимі</string>
     <string name="settings_display_speed_units">Показувати швидкість в:</string>
 
     <string name="km_h">км/год</string>
@@ -34,10 +35,14 @@
     <string name="country">Країна</string>
     <string name="country_not_selected">Не вибрана</string>
 
+    <string name="car_logo">Логотип</string>
+    <string name="car_logo_not_selected">Не вибрано</string>
+
     <string name="privacy_policy">Політика конфіденційності</string>
     <string name="open_api">Open API</string>
 
     <string name="contact_us">"Зв'яжіться з нами"</string>
+    <string name="open_play_market">Залишити відгук</string>
 
     <string name="about_app">Про додаток</string>
 
@@ -51,5 +56,11 @@
 
     <string name="close">Закрити</string>
     <string name="choose_country">Обрати країну</string>
+
+    <string name="remove">Видалити</string>
+    <string name="cancel">Скасувати</string>
+    <string name="remove_ask">Видалити?</string>
+
+    <string name="done">Готово</string>
 
 </resources>

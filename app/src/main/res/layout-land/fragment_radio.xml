@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:background="@drawable/shape_main_bg_magnitola"
+    android:paddingBottom="0dp"
+    >
+
+
+
+
+    <LinearLayout
+        android:id="@+id/sortLn"
+        android:layout_width="70dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:weightSum="4"
+        android:paddingVertical="1dp"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+        <ImageView
+            android:id="@+id/btRecent"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_recent"
+            app:tint="@color/blue"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            />
+
+        <ImageView
+            android:id="@+id/btFavorite"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_favorite"
+            app:tint="@color/blue"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            />
+
+        <ImageView
+            android:id="@+id/btAll"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_all"
+            app:tint="@color/blue"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            />
+
+        <ImageView
+            android:id="@+id/btSearch"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_search"
+            app:tint="@color/blue"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            />
+
+
+
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/div"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/gray_dark"
+        android:visibility="visible"
+        app:layout_constraintStart_toEndOf="@id/sortLn"
+        />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="4dp"
+        app:layout_constraintStart_toEndOf="@id/div"
+        android:layout_marginTop="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        >
+
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/etSearch"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:foregroundTint="@color/white"
+            android:paddingHorizontal="4dp"
+            android:theme="@style/ThemeOverlay.SearchView"
+            android:visibility="gone"
+            tools:visibility="visible"
+            />
+
+        <TextView
+            android:id="@+id/tvError"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/etSearch"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@color/red"
+            android:visibility="gone"
+            android:gravity="center"
+            android:paddingHorizontal="10dp"
+            android:fontFamily="sans-serif-medium"
+            tools:text="Error message bgdfg dsfgdfg sdfgdfg dfgdfg defgsdfg dfgdfg sdfgdfg sdfgdfg dsgfdfg "
+            tools:visibility="visible"
+            />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/tvError"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:clipToPadding="false"
+            android:paddingTop="8dp"
+            android:paddingHorizontal="4dp"
+            tools:listitem="@layout/item_radio"
+            tools:itemCount="20"
+            android:layout_marginBottom="0dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            />
+
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            ads:layout_constraintBottom_toBottomOf="parent"
+            android:elevation="20dp"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-3109852779138325/6128284569"
+            android:visibility="gone"
+            android:alpha="0.0"
+            >
+        </com.google.android.gms.ads.AdView>
+
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:indeterminateTintMode="src_atop"
+            android:indeterminateTint="@color/pink"
+            />
+
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

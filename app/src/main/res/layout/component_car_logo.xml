@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.maestrovs.radiocar.ui.components.AutoResizeMaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardBackgroundColor="@color/transparent"
+    android:id="@+id/cardView"
+    app:strokeColor="#FBFBFB"
+    app:strokeWidth="3dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:elevation="0dp"
+    android:visibility="visible">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/icImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/ripple_green_round"
+        android:clickable="true"
+        android:elevation="4dp"
+        android:focusable="true"
+        android:padding="2dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/logo_renault1"
+        android:importantForAccessibility="no"
+        />
+
+</com.maestrovs.radiocar.ui.components.AutoResizeMaterialCardView>
+

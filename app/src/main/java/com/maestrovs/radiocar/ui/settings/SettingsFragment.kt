@@ -1,31 +1,33 @@
-package com.maestrovs.radiocar.ui.settings.ui.main
+package com.maestrovs.radiocar.ui.settings
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.hbb20.countrypicker.dialog.launchCountryPickerDialog
-import com.hbb20.countrypicker.models.CPCountry
+import androidx.navigation.fragment.findNavController
 import com.maestrovs.radiocar.R
+import com.maestrovs.radiocar.common.CarLogoManager
 import com.maestrovs.radiocar.common.Constants.ABOUT_RADIO_URL
 import com.maestrovs.radiocar.common.Constants.CONTACT_EMAIL
+import com.maestrovs.radiocar.common.Constants.PLAY_MARKET_URL
 import com.maestrovs.radiocar.common.Constants.PRIVACY_URL
 import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.databinding.FragmentSettingsMainBinding
-import com.maestrovs.radiocar.ui.settings.KEY_SETTINGS_RESULT_MESSAGE
+import com.maestrovs.radiocar.ui.main.MainViewModel
 
 
 class SettingsFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = SettingsFragment()
+
+
+    private val mainViewModel by lazy {
+        ViewModelProvider(requireActivity())[MainViewModel::class.java].apply {
+
+        }
     }
 
     private var _binding: FragmentSettingsMainBinding? = null
@@ -52,11 +54,9 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btClose.setOnClickListener {
-            val resultIntent = Intent().apply {
-                putExtra(KEY_SETTINGS_RESULT_MESSAGE, "Save")
-            }
-            requireActivity().setResult(Activity.RESULT_OK, resultIntent)
-            requireActivity().finish()
+
+            mainViewModel.setMustRefreshStatus()
+            findNavController().popBackStack()
         }
 
 
@@ -71,6 +71,11 @@ class SettingsFragment : Fragment() {
         binding.swAutoplay.isChecked = SettingsManager.isAutoplay(requireContext())
         binding.swAutoplay.setOnCheckedChangeListener { _, isChecked ->
             SettingsManager.setAutoplay(requireContext(), isChecked)
+        }
+
+        binding.swShowStation.isChecked = SettingsManager.getShowStationNameInBackground(requireContext())
+        binding.swShowStation.setOnCheckedChangeListener { _, isChecked ->
+            SettingsManager.setShowStationNameInBackground(requireContext(), isChecked)
         }
 
         val speedUnit = SettingsManager.getSpeedUnit(requireContext())
@@ -115,16 +120,26 @@ class SettingsFragment : Fragment() {
             ?: run { getString(R.string.country_not_selected) })
 
         binding.tvSelectedCountry.setOnClickListener {
-            requireContext().launchCountryPickerDialog { country: CPCountry? ->
-                val newSelectedCountry = country ?: return@launchCountryPickerDialog
-                Log.d("Country", "CountryCode = $newSelectedCountry")
-                binding.tvSelectedCountry.setTitle("${newSelectedCountry.flagEmoji} ${newSelectedCountry.name}")
-                CurrentCountryManager.writeCountry(requireContext(), newSelectedCountry)
-            }
+
+            //findNavController().navigate(R.id.action_settingsFragment_to_chooseCountryFragment)
+            //val action = ChooseCountryFragmentDirections.actionChooseCountryFragmentToMainFragment(true)
+            findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToChooseCountryFragment(true))
+        }
+
+        binding.ivCarLogo.setImageResource(
+            CarLogoManager.readLogoResId(requireContext()) ?: R.drawable.ic_empty
+        )
+
+        binding.tvSelectedLogo.setOnClickListener {
+            findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToCarLogoFragment())
         }
 
         binding.tvVersion.text = "${getString(R.string.app_version)}: ${viewModel.versionDisplay}"
 
+
+        binding.tvPlayMarket.setOnClickListener {
+            startPlayMarketIntent()
+        }
 
 
         binding.tvPrivacyPolicy.setOnClickListener {
@@ -142,7 +157,7 @@ class SettingsFragment : Fragment() {
 
     }
 
-    fun startPrivacyIntent() {
+    private fun startPrivacyIntent() {
         try {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_URL))
             startActivity(browserIntent)
@@ -150,7 +165,15 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    fun startOpenApiIntent() {
+    private fun startPlayMarketIntent() {
+        try {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_MARKET_URL))
+            startActivity(browserIntent)
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun startOpenApiIntent() {
         try {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(ABOUT_RADIO_URL))
             startActivity(browserIntent)

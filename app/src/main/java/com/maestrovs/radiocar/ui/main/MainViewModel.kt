@@ -12,9 +12,13 @@ import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.enums.bluetooth.BT_Status
 import com.maestrovs.radiocar.enums.radio.PlayAction
+import com.maestrovs.radiocar.events.ActivityStatus
 import com.maestrovs.radiocar.events.PlayActionEvent
 import com.maestrovs.radiocar.events.PlayUrlEvent
+import com.maestrovs.radiocar.events.PlayVolume
+import com.maestrovs.radiocar.events.UIStatusEvent
 import com.maestrovs.radiocar.ui.control.SpeedManager
+import com.maestrovs.radiocar.ui.radio.ListType
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -32,6 +36,8 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
         EventBus.getDefault().register(this);
     }
 
+    private var listType = ListType.All
+
 
     private var _bluetoothStatus =  MutableLiveData<BT_Status?>(null)
     val bluetoothStatus get() = _bluetoothStatus
@@ -46,6 +52,13 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     fun setMustRefreshStatus(){
         _mustRefreshStatus.value = true
         _mustRefreshStatus.value = false
+    }
+
+    private var _mustNavToSettings =  MutableLiveData<Boolean?>(null)
+    val mustNavToSettings get() = _mustNavToSettings
+    fun setMustNavToSettings(){
+        _mustNavToSettings.value = true
+        _mustNavToSettings.value = false
     }
 
 
@@ -69,22 +82,24 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     private var _selectedStation = MutableLiveData<Station?>(null)
     val selectedStation: LiveData<Station?> = _selectedStation
 
-    fun setStation(station: Station){
+    fun setStation(station: Station, updateRecent: Boolean){
         _selectedStation.value = station
 
         EventBus.getDefault().post(PlayUrlEvent(station.url, station.name, "", null))
        // dismissLastPlayerUrlEvent()
 
-        setRecent(station.stationuuid, true)
+        if(updateRecent) setRecent(station.stationuuid, true)
     }
 
     fun playCurrentStationState() {
+        Log.d("AudioPlayerService","playCurrentStationState")
         _selectedStation.value?.let { station ->
             EventBus.getDefault().post(PlayUrlEvent(station.url, station.name, "", null, PlayAction.Resume))
         }
     }
 
     fun stopCurrentStationState() {
+        Log.d("AudioPlayerService","stopCurrentStationState")
         _selectedStation.value?.let { station ->
             EventBus.getDefault().post(PlayUrlEvent(station.url, station.name, "", null, PlayAction.Pause))
         }?:run{
@@ -93,6 +108,7 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     }
 
     fun switchCurrentStationState(){
+        Log.d("AudioPlayerService","switchCurrentStationState")
         _selectedStation.value?.let { station ->
             EventBus.getDefault().post(PlayUrlEvent(station.url, station.name, "", null))
         }?:run{
@@ -108,8 +124,8 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onCustomEvent(event: PlayActionEvent) {
 
-        com.google.android.exoplayer2.util.Log.d("MainViewModel",
-            "MainViewModel: received event from service: ${event.toString()}" )
+        com.google.android.exoplayer2.util.Log.d("MainActivity22",
+            "MainViewModel: received event from service: ${event.playAction.toString()}" )
 
         var eventLast = event.playUrlEvent
         _playAction.value = event.playAction
@@ -170,6 +186,13 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
         }
     }
 
+     fun deleteRecent(stationuuid: String) {
+         stopCurrentStationState()
+        viewModelScope.launch {
+            mainRepository.deleteRecent(stationuuid)
+        }
+    }
+
 
     fun setRecent(stationuuid: String, isRecent: Boolean) {
         Log.d("Database",">>recentStations setRecent1")
@@ -179,6 +202,18 @@ class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     }
 
 
+    fun updateVolume(progress: Int){
+        EventBus.getDefault().post(PlayVolume(progress))
+    }
+
+    fun setListType(listType: ListType){
+        this.listType = listType
+    }
+
+
+    fun updateActivityStatus(activityStatus: ActivityStatus){
+        EventBus.getDefault().post(UIStatusEvent(activityStatus, listType, selectedStation.value))
+    }
 
 
     override fun onCleared() {

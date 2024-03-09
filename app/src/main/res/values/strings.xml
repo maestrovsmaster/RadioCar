@@ -27,6 +27,7 @@
 
     <string name="settings_display_on">Keep display active</string>
     <string name="settings_autoplay">Play automatically when a Bluetooth device is connected</string>
+    <string name="settings_show_station_in_back">Display popup station name in background</string>
     <string name="settings_display_speed_units">Display speed in units:</string>
     <string name="km_h">km/h</string>
     <string name="mph">MPH</string>
@@ -43,8 +44,12 @@
     <string name="country">Country</string>
     <string name="country_not_selected">Not selected</string>
 
+    <string name="car_logo">Logo</string>
+    <string name="car_logo_not_selected">Not selected</string>
+
     <string name="privacy_policy">Privacy Policy</string>
     <string name="open_api">Open API</string>
+    <string name="open_play_market">Leave a review</string>
 
     <string name="contact_us">Contact Us</string>
 
@@ -61,5 +66,13 @@
 
     <string name="close">Close</string>
     <string name="choose_country">Choose country</string>
+
+    <string name="remove">Remove</string>
+    <string name="cancel">Cancel</string>
+    <string name="remove_ask">Remove?</string>
+
+    <string name="done">Done</string>
+
+    <string name="mock_date">07 jul 2024 \n Friday</string>
 
 </resources>

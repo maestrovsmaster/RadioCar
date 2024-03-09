@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.ui.settings.ui.main
+package com.maestrovs.radiocar.ui.settings
 
 import androidx.lifecycle.ViewModel
 import com.maestrovs.radiocar.BuildConfig

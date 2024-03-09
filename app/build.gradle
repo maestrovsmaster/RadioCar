@@ -7,6 +7,7 @@ plugins {
     id 'kotlin-android-extensions'
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
+    id 'androidx.navigation.safeargs.kotlin'
 
 
 }
@@ -22,8 +23,8 @@ android {
         applicationId "com.maestrovs.radiocar"
         minSdk 23
         targetSdk 33
-        versionCode 6
-        versionName "0.0.6"
+        versionCode 13
+        versionName "1.0.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -64,6 +65,10 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    testImplementation 'org.mockito:mockito-core:4.3.1' // Додайте цю лінію для Mockito
+    // Якщо вам потрібно мокувати final класи, то ви також можете додати:
+    testImplementation 'org.mockito:mockito-inline:4.3.1'
 
 
     // Import the Firebase BoM
@@ -138,8 +143,12 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.6'
 
 
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.18.6' // Опційно, для HLS потрібно
+
+
+
     //Eventbus
-    implementation 'org.greenrobot:eventbus:3.2.0'
+    implementation 'org.greenrobot:eventbus:3.3.1'
 
 
     //Flags
@@ -158,7 +167,7 @@ dependencies {
 
     // optional - Jetpack Compose integration
     // implementation("androidx.paging:paging-compose:1.0.0-alpha19")
-
+    //Country picker
     implementation 'com.hbb20:android-country-picker:0.0.7'
 
     // Import the Firebase BoM
@@ -175,6 +184,13 @@ dependencies {
 
     //ADV
     implementation 'com.google.android.gms:play-services-ads:22.2.0'
+
+    //Bluetooth hardware media control
+    implementation 'androidx.media:media:1.4.3'
+
+    //Country detect
+    implementation 'com.github.kittinunf.fuel:fuel:2.1.0'
+    implementation 'com.github.kittinunf.fuel:fuel-gson:2.1.0'
 
 
 }

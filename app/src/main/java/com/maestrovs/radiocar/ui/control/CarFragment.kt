@@ -1,6 +1,5 @@
 package com.maestrovs.radiocar.ui.control
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,37 +8,34 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.maestrovs.radiocar.R
+import com.maestrovs.radiocar.common.CarLogoManager
 import com.maestrovs.radiocar.common.Constants.CHECK_WEATHER_MINUTES_DELAY
 import com.maestrovs.radiocar.common.CurrentCountryManager
-import com.maestrovs.radiocar.databinding.FragmentControlBinding
+import com.maestrovs.radiocar.databinding.FragmentCarBinding
 import com.maestrovs.radiocar.enums.bluetooth.BT_Status
 import com.maestrovs.radiocar.enums.radio.PlayAction
+import com.maestrovs.radiocar.extensions.setVisible
 import com.maestrovs.radiocar.ui.main.MainViewModel
-import com.maestrovs.radiocar.ui.settings.KEY_SETTINGS_INPUT_MESSAGE
-import com.maestrovs.radiocar.ui.settings.KEY_SETTINGS_RESULT_MESSAGE
-import com.maestrovs.radiocar.ui.settings.SettingsActivity
-import com.maestrovs.radiocar.ui.settings.ui.main.SettingsManager
-import com.maestrovs.radiocar.ui.settings.ui.main.SpeedUnit
+import com.maestrovs.radiocar.ui.settings.SettingsManager
+import com.maestrovs.radiocar.ui.settings.SpeedUnit
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_control.speedView
-import kotlinx.android.synthetic.main.fragment_control.weatherWidget
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.Math.round
+import kotlin.system.exitProcess
 
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
 @AndroidEntryPoint
-class ControlFragment : Fragment() {
+class CarFragment : Fragment() {
 
-    private var _binding: FragmentControlBinding? = null
+    private var _binding: FragmentCarBinding? = null
 
 
     private val mainViewModel by lazy {
@@ -55,26 +51,16 @@ class ControlFragment : Fragment() {
     }
 
 
-    private val launcher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            Log.d("SettingsActivity", "On result ...")
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data = result.data
-                val resultMessage = data?.getStringExtra(KEY_SETTINGS_RESULT_MESSAGE)
-                Log.d("SettingsActivity", "On result = $resultMessage")
-                mainViewModel.setMustRefreshStatus()
-                refreshMeasures()
-            }
-        }
+
 
     private fun refreshMeasures() {
-        speedView.setUnit(
+        binding.speedView.setUnit(
             when (SettingsManager.getSpeedUnit(requireContext())) {
                 SpeedUnit.kmh -> getString(R.string.km_h)
                 SpeedUnit.mph -> getString(R.string.mph)
             }
         )
-        weatherWidget.changeTemperatureUnit(SettingsManager.getTemperatureUnit(requireContext()))
+        binding.weatherWidget.changeTemperatureUnit(SettingsManager.getTemperatureUnit(requireContext()))
     }
 
 
@@ -99,7 +85,7 @@ class ControlFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        _binding = FragmentControlBinding.inflate(inflater, container, false)
+        _binding = FragmentCarBinding.inflate(inflater, container, false)
         return binding.root
 
 
@@ -109,36 +95,6 @@ class ControlFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-
-        binding.btNavigation.setOnClickListener {
-            launchMapIntent()
-        }
-
-        binding.btPhone.setOnClickListener {
-            launchPhoneIntent()
-        }
-
-        binding.btBluetooth.setOnClickListener {
-            launchBluetoothIntent()
-        }
-
-        binding.btSettings.setOnClickListener {
-            launchSettingsIntent()
-        }
-
-
-
-        mainViewModel.bluetoothStatus.observe(viewLifecycleOwner) { bt_Status ->
-            bt_Status ?: return@observe
-
-            val icon = when (bt_Status) {
-                BT_Status.Enabled -> R.drawable.ic_bt_on
-                BT_Status.ConnectedDevice -> R.drawable.ic_bluetooth_connected
-                BT_Status.Disable -> R.drawable.ic_bt_off
-                BT_Status.DisconnectedDevice -> R.drawable.ic_bt_on
-            }
-            binding.btBluetooth.setIconResource(icon)
-        }
 
         mainViewModel.mustRefreshStatus.observe(viewLifecycleOwner) {
             val currentCountry = CurrentCountryManager.readCountry(requireContext())
@@ -208,6 +164,13 @@ class ControlFragment : Fragment() {
             binding.weatherWidget.setWeatherError(msg)
         }
 
+        CarLogoManager.readLogoResId(requireContext())?.let {
+            binding.ivCarLogo?.setIconResource(it)
+            binding.ivCarLogo?.setVisible(true)
+        }?: kotlin.run {
+            binding.ivCarLogo?.setVisible(false)
+        }
+
         refreshMeasures()
 
 
@@ -220,6 +183,11 @@ class ControlFragment : Fragment() {
                 delay(CHECK_WEATHER_MINUTES_DELAY * 60 * 1000L) // Delay for CHECK_WEATHER_MINUTES_DELAY minutes
 
             }
+        }
+
+        binding.icExit.setOnClickListener {
+            requireActivity().finish()
+            exitProcess(0)
         }
 
 
@@ -237,37 +205,7 @@ class ControlFragment : Fragment() {
         }
     }
 
-    private fun launchMapIntent() {
-        var gmmIntentUri = Uri.parse("geo:0,0")
-        //     Uri.parse("geo:0,0?q=?")
 
-        mainViewModel.location.value?.let {
-            gmmIntentUri = Uri.parse("geo:${it.latitude},${it.longitude}")
-        }
-        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-        mapIntent.setPackage("com.google.android.apps.maps")
-        startActivity(mapIntent)
-    }
-
-    private fun launchPhoneIntent() {
-        val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", "", null))
-        startActivity(intent)
-    }
-
-
-    private fun launchBluetoothIntent() {
-        val intentOpenBluetoothSettings = Intent()
-        intentOpenBluetoothSettings.action = Settings.ACTION_BLUETOOTH_SETTINGS
-        startActivity(intentOpenBluetoothSettings)
-    }
-
-
-    private fun launchSettingsIntent() {
-        val intent = SettingsActivity.newIntent(requireContext()).apply {
-            putExtra(KEY_SETTINGS_INPUT_MESSAGE, "")
-        }
-        launcher.launch(intent)
-    }
 
 
     fun customRound(number: Double): Double {

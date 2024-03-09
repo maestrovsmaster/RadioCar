@@ -8,8 +8,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
-import com.maestrovs.radiocar.ui.settings.ui.main.SpeedUnit
+import com.maestrovs.radiocar.ui.settings.SpeedUnit
 import kotlin.math.round
 
 

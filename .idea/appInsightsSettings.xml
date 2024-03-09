@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AppInsightsSettings">
+    <option name="tabSettings">
+      <map>
+        <entry key="Android Vitals">
+          <value>
+            <InsightsFilterSettings>
+              <option name="connection">
+                <ConnectionSetting>
+                  <option name="appId" value="com.maestrovs.radiocar" />
+                </ConnectionSetting>
+              </option>
+              <option name="failureTypes">
+                <list>
+                  <option value="FATAL" />
+                </list>
+              </option>
+              <option name="signal" value="SIGNAL_UNSPECIFIED" />
+              <option name="timeIntervalDays" value="SEVEN_DAYS" />
+              <option name="visibilityType" value="ALL" />
+            </InsightsFilterSettings>
+          </value>
+        </entry>
+        <entry key="Firebase Crashlytics">
+          <value>
+            <InsightsFilterSettings>
+              <option name="connection">
+                <ConnectionSetting>
+                  <option name="appId" value="com.maestrovs.radiocar" />
+                  <option name="mobileSdkAppId" value="1:926698682974:android:7e8c4e78ec3b9ab93b52cf" />
+                  <option name="projectId" value="radiocar-eba2e" />
+                  <option name="projectNumber" value="926698682974" />
+                </ConnectionSetting>
+              </option>
+              <option name="signal" value="SIGNAL_UNSPECIFIED" />
+              <option name="timeIntervalDays" value="THIRTY_DAYS" />
+              <option name="visibilityType" value="ALL" />
+            </InsightsFilterSettings>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

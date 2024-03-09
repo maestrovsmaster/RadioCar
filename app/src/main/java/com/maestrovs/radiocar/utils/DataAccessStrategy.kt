@@ -6,6 +6,10 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import com.maestrovs.radiocar.utils.Resource.Status.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 fun <T, A> performGetOperation(
     databaseQuery: () -> LiveData<T>,
@@ -28,6 +32,39 @@ fun <T, A> performGetOperation(
             //  emitSource(source)
         }
     }
+
+fun <T, A> performGetOperationFlow(
+    databaseQuery: () -> Flow<T>,
+    networkCall: suspend () -> Resource<A>,
+    saveCallResult: suspend (A) -> Unit
+): Flow<Resource<T>> = flow {
+    emit(Resource.loading<T>()) // Emit loading state
+
+    // Emit database items initially.
+    val initialData = databaseQuery.invoke().first()
+    emit(Resource.success(initialData))
+
+    // Perform the network call.
+    try {
+        val responseStatus = networkCall.invoke()
+
+        if (responseStatus.status == SUCCESS) {
+            // Save the result of the call and fetch & emit from DB again.
+            responseStatus.data?.let { data ->
+                saveCallResult(data)
+
+                // Emit new data from the database after saving.
+                databaseQuery.invoke().collect { newlyFetchedData ->
+                    emit(Resource.success(newlyFetchedData))
+                }
+            }
+        } else if (responseStatus.status == ERROR) {
+            emit(Resource.error<T>(responseStatus.message ?: "Unknown Error"))
+        }
+    } catch (e: Exception) {
+        emit(Resource.error<T>("Network call failed: ${e.message}"))
+    }
+}.flowOn(Dispatchers.IO)
 
 fun <A> performNetworkOperation(
     networkCall: suspend () -> Resource<A>,
@@ -63,3 +100,16 @@ fun performLocalSetOperation(databaseQuery: () -> (Unit)): LiveData<Resource<Uni
         databaseQuery.invoke()
         emit(Resource.success(Unit))
     }
+
+
+fun <T> performLocalGetOperationFlow(databaseQuery: () -> Flow<T>): Flow<Resource<T>> =
+    flow {
+        emit(Resource.loading())
+        try {
+            databaseQuery.invoke().collect { data ->
+                emit(Resource.success(data))
+            }
+        } catch (e: Exception) {
+            emit(Resource.error(e.localizedMessage ?: "An error occurred"))
+        }
+    }.flowOn(Dispatchers.IO) // Perform the operation in the IO context
