@@ -26,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.Math.round
+import kotlin.system.exitProcess
 
 
 /**
@@ -92,12 +93,6 @@ class CarFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-
-
-
-
 
 
 
@@ -190,7 +185,10 @@ class CarFragment : Fragment() {
             }
         }
 
-
+        binding.icExit.setOnClickListener {
+            requireActivity().finish()
+            exitProcess(0)
+        }
 
 
     }
