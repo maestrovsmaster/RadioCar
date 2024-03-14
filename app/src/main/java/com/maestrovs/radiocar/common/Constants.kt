@@ -6,7 +6,7 @@ object Constants {
 
     const val ABOUT_RADIO_URL =  "http://de1.api.radio-browser.info/#General"
 
-    const val PAGE_SIZE = 200
+    const val PAGE_SIZE = 50
 
 
     const val BASE_WEATHER_URL = "https://api.openweathermap.org/"

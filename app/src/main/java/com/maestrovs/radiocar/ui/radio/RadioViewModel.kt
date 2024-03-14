@@ -18,13 +18,13 @@ class RadioViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
 
 
 
-    private val _fetchStationsTrigger = MutableLiveData<String>()
-    val stations: LiveData<Resource<List<Station>>> = _fetchStationsTrigger.switchMap {countryCode->
+    private val _fetchStationsTrigger = MutableLiveData<StationQuery>()
+    val stations: LiveData<Resource<List<Station>>> = _fetchStationsTrigger.switchMap {stationQuery->
 
-        if(countryCode == "RU"){
+        if(stationQuery.countryCode == "RU"){
             mainRepository.getStationsByName("байрактар")
         }else {
-            mainRepository.getStations(countryCode)
+            mainRepository.getStations(stationQuery.countryCode, stationQuery.offset, stationQuery.limit)
         }
     }
 
@@ -32,8 +32,8 @@ class RadioViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
        // fetchStations("sdf")
     }
 
-    fun fetchStations(countryCode: String) {
-        _fetchStationsTrigger.value = countryCode
+    fun fetchStations(stationQuery: StationQuery) {
+        _fetchStationsTrigger.value = stationQuery
     }
 
 
@@ -81,3 +81,5 @@ class RadioViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     }
 
 }
+
+data class StationQuery(val countryCode: String, val offset: Int, val limit: Int)

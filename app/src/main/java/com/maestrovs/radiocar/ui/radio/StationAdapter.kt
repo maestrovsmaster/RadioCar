@@ -70,6 +70,7 @@ class StationAdapter(val onItem: ItemListener) :
     }
 
 
+
     /**
      * Set station event about last selected Station
      */

@@ -11,11 +11,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.JustifyContent
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
@@ -30,7 +27,6 @@ import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.databinding.FragmentRadioBinding
 import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.extensions.setVisible
-import com.maestrovs.radiocar.ui.components.WrapFlexboxLayoutManager
 import com.maestrovs.radiocar.ui.components.showDeleteStationDialog
 import com.maestrovs.radiocar.ui.radio.utils.RadioErrorType
 import com.maestrovs.radiocar.ui.radio.utils.errorMapper
@@ -39,6 +35,8 @@ import com.maestrovs.radiocar.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Arrays
 import android.content.res.Configuration
+import com.maestrovs.radiocar.common.Constants.PAGE_SIZE
+import com.maestrovs.radiocar.ui.components.PaginationScrollListener
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -73,6 +71,11 @@ class RadioFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private var currentPage = 0
+    private var isLastPage = false
+
+    private var isLoading = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -156,11 +159,39 @@ class RadioFragment : Fragment() {
             3
         }
 
+        val gridLayoutManager = GridLayoutManager(context, spanCount)
 
-        binding.recycler.layoutManager = GridLayoutManager(context, spanCount)
+        binding.recycler.layoutManager = gridLayoutManager
 
         binding.recycler.adapter = adapter
         adapter.setRecyclerView(binding.recycler)
+
+        binding.recycler.addOnScrollListener(object :
+            PaginationScrollListener(gridLayoutManager) {
+            override fun isLastPage(): Boolean {
+                return this@RadioFragment.isLastPage
+            }
+
+            override fun loadMoreItems() {
+                this@RadioFragment.isLoading = true
+              //  mustReplaceTransactionsList = false
+
+             //   mainViewModel.getTransactions(this@RadioFragment.currentPage)
+
+               // Log.d("RadioFragment","LoadMoreItems page = $currentPage")
+                if(currentListType == ListType.All){
+                    fetchAllStations(false)
+                    this@RadioFragment.currentPage += 1
+                }
+
+            }
+
+            override fun isLoading(): Boolean {
+                return this@RadioFragment.isLoading
+            }
+        })
+
+
 
         mainViewModel.selectedStation.observe(viewLifecycleOwner) { it ->
             val station = it ?: return@observe
@@ -246,10 +277,7 @@ class RadioFragment : Fragment() {
 
 
         mainViewModel.mustRefreshStatus.observe(viewLifecycleOwner) {
-            radioViewModel.fetchStations(
-                CurrentCountryManager.readCountry(requireContext())?.alpha2
-                    ?: CurrentCountryManager.DEFAULT_COUNTRY
-            )
+            fetchAllStations(true)
         }
 
 
@@ -262,10 +290,7 @@ class RadioFragment : Fragment() {
             currentListType = ListType.All
             //   layoutManager.justifyContent = JustifyContent.SPACE_AROUND
             updateButtons(ListType.All)
-            radioViewModel.fetchStations(
-                CurrentCountryManager.readCountry(requireContext())?.alpha2
-                    ?: CurrentCountryManager.DEFAULT_COUNTRY
-            )
+            fetchAllStations(true)
             mainViewModel.setListType(ListType.All)
         }
 
@@ -388,13 +413,20 @@ class RadioFragment : Fragment() {
     }
 
 
-    private fun processResources(response: Resource<List<Station>>) {
 
+    private fun processResources(response: Resource<List<Station>>) {
+        this@RadioFragment.isLoading = false
         when (response.status) {
             Resource.Status.SUCCESS -> {
                 binding.progressBar.visibility = View.GONE
                 binding.tvError.setVisible(false)
                 showList(response.data)
+                /*if(response.data.isNullOrEmpty()){
+                    lastPageCount+=1
+                    if(lastPageCount>=5) {
+                        isLastPage = true
+                    }
+                }*/
             }
 
             Resource.Status.ERROR -> {
@@ -452,21 +484,30 @@ class RadioFragment : Fragment() {
         }
     }
 
+    private var lastSubmitSize = 0
+
     private fun showList(list: List<Station>?) {
         if (list != null) {
 
             val filteredList = filterAll(list)
 
+            Log.d("RadioFragment","submitList size = ${list.size} page = $currentPage  ")
+            if(list.size == lastSubmitSize && list.isNotEmpty()){
+                lastPageCount += 1
+                if(lastPageCount>5) {
+                    isLastPage = true
+                }
+            }else {
+                lastSubmitSize = list.size
+            }
             adapter.submitList(filteredList)
             if (currentListType == ListType.Recent && firstStart) {
                 if (filteredList.isNullOrEmpty()) {
                     currentListType = ListType.All
                     //  layoutManager.justifyContent = JustifyContent.FLEX_START
                     firstStart = false
-                    radioViewModel.fetchStations(
-                        CurrentCountryManager.readCountry(requireContext())?.alpha2
-                            ?: CurrentCountryManager.DEFAULT_COUNTRY
-                    )
+                    currentPage = 0
+                    fetchAllStations(true)
                     updateButtons(ListType.All)
                 } else if (filteredList.isNotEmpty()) {
                     mainViewModel.setIfNeedInitStation(filteredList[0])
@@ -475,6 +516,25 @@ class RadioFragment : Fragment() {
         } else {
             adapter.submitList(listOf())
         }
+    }
+
+    private var lastPageCount = 0
+    fun fetchAllStations(fromFirstPage: Boolean){
+
+        if(fromFirstPage) {
+            currentPage = 0
+            lastPageCount = 0
+            isLastPage = false
+        }
+       val query = StationQuery(CurrentCountryManager.readCountry(requireContext())?.alpha2
+            ?: CurrentCountryManager.DEFAULT_COUNTRY,
+           currentPage * PAGE_SIZE,
+           PAGE_SIZE
+            )
+        Log.d("RadioFragment","fetchAllStations isLast = $isLastPage  ** = $query")
+        radioViewModel.fetchStations(
+            query
+        )
     }
 
 

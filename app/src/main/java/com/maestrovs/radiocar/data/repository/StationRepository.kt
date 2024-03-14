@@ -18,6 +18,7 @@ import com.maestrovs.radiocar.utils.performNetworkOperation
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 import androidx.lifecycle.liveData
+import com.maestrovs.radiocar.common.Constants
 import com.maestrovs.radiocar.utils.performGetOperationFlow
 import com.maestrovs.radiocar.utils.performLocalGetOperationFlow
 import kotlinx.coroutines.GlobalScope
@@ -33,10 +34,12 @@ class StationRepository @Inject constructor(
 ) {
 
 
-    fun getStations(countryCode: String) = performGetOperation(
-        databaseQuery = { localDataSource.getStationsByCountryCode(countryCode) //getAllStationsWithFavouriteStatus()/
+    fun getStations(countryCode: String,
+                    offset: Int = 0,limit: Int = Constants.PAGE_SIZE
+    ) = performGetOperation(
+        databaseQuery = { localDataSource.getStationsByCountryCode(countryCode,) //getAllStationsWithFavouriteStatus()/
                         },
-        networkCall = { remoteDataSource.getStations(countryCode) },
+        networkCall = { remoteDataSource.getStations(countryCode, offset, limit) },
         saveCallResult = { localDataSource.insertAll(it) }
     )
 
