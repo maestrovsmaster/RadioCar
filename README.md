@@ -7,7 +7,10 @@
 
 
 ## Overview
-RadioCar is a user-friendly hybrid application that not only streams radio but also provides the latest weather updates. It is accessible via the [Google Play Store](https://play.google.com/store/apps/details?id=com.maestrovs.radiocar). 
+RadioCar is a user-friendly hybrid application that not only streams radio but also provides the latest weather updates.
+
+[![Play Market](https://play.google.com/intl/uk/badges/static/images/badges/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.maestrovs.radiocar)
+
 
 ## Features
 - **Radio Streaming:** Utilizes an open API ([Radio Browser API DE](http://de1.api.radio-browser.info)) to stream various radio stations.
