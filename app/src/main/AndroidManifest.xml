@@ -55,9 +55,9 @@
             android:value="ca-app-pub-3109852779138325~2311177105" />
 
 
-        <activity
+        <!--activity
             android:name=".ui.settings.SettingsActivity"
-            android:exported="false" />
+            android:exported="false" /-->
 
         <service
             android:name=".service.AudioPlayerService"

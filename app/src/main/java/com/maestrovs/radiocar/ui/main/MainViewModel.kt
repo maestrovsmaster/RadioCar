@@ -19,13 +19,15 @@ import com.maestrovs.radiocar.events.PlayVolume
 import com.maestrovs.radiocar.events.UIStatusEvent
 import com.maestrovs.radiocar.ui.control.SpeedManager
 import com.maestrovs.radiocar.ui.radio.ListType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import javax.inject.Inject
 
-
-class MainViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
+@HiltViewModel
+class MainViewModel @Inject constructor(
     private val mainRepository: StationRepository,
 
 ) : ViewModel() {

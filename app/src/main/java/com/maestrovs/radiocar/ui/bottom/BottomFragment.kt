@@ -1,5 +1,6 @@
 package com.maestrovs.radiocar.ui.bottom
 
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -22,9 +23,7 @@ import com.maestrovs.radiocar.ui.components.PlayPauseView
 import com.maestrovs.radiocar.extensions.setVisible
 import com.maestrovs.radiocar.ui.main.WeatherManager
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.component_weather.progress
-import kotlinx.android.synthetic.main.fragment_bottom.seekBar
-import kotlinx.android.synthetic.main.item_radio.view.ivCover
+
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -50,7 +49,7 @@ class BottomFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentBottomBinding.inflate(inflater, container, false)
         return binding.root
@@ -62,7 +61,9 @@ class BottomFragment : Fragment() {
 
         val savedVolume = WeatherManager.getVolume(requireContext())
         updateVolumeIcon(savedVolume)
-        seekBar.setProgress(savedVolume, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            _binding?.seekBar?.setProgress(savedVolume, false)
+        }
         mainViewModel.updateVolume(savedVolume)
 
         mainViewModel.selectedStation.observe(viewLifecycleOwner) { station ->
@@ -112,7 +113,9 @@ class BottomFragment : Fragment() {
                     newProgress = 100
 
                 }
-                binding.seekBar.setProgress(newProgress, true)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    binding.seekBar.setProgress(newProgress, true)
+                }
                 WeatherManager.setVolume(requireContext(),newProgress)
                 mainViewModel.updateVolume(newProgress)
             }

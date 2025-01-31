@@ -1,20 +1,12 @@
 package com.maestrovs.radiocar.ui.current_country
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.ResponseDeserializable
 import com.google.gson.Gson
-import com.maestrovs.radiocar.data.entities.radio.Station
-import com.maestrovs.radiocar.data.repository.StationRepository
-import com.maestrovs.radiocar.utils.Resource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.io.Reader
 
 

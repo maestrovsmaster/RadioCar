@@ -8,11 +8,14 @@ import androidx.lifecycle.switchMap
 import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.utils.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RadioViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
+@HiltViewModel
+class RadioViewModel @Inject constructor(
     private val mainRepository: StationRepository,)
 : ViewModel() {
 

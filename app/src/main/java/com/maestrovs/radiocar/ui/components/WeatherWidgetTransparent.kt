@@ -16,10 +16,7 @@ import com.maestrovs.radiocar.extensions.setVisible
 import com.maestrovs.radiocar.ui.settings.TemperatureUnit
 import com.squareup.picasso.Picasso
 
-import kotlinx.android.synthetic.main.component_weather.view.rootCard
-import kotlinx.android.synthetic.main.component_weather.view.tvErrText
-import kotlinx.android.synthetic.main.component_weather_transparent.view.layWeather
-import kotlinx.android.synthetic.main.component_weather_transparent.view.progress
+
 import kotlin.math.roundToInt
 
 
@@ -113,7 +110,7 @@ open class WeatherWidgetTransparent : FrameLayout {
     )
 
     fun setWeatherELoading() {
-        progress.setVisible(true)
+        mRootView?.findViewById<View>(R.id.progress)?.setVisible(true)
 
 
         val colors = intArrayOf(
@@ -124,15 +121,15 @@ open class WeatherWidgetTransparent : FrameLayout {
         )
 
         val myList = ColorStateList(states, colors)
-        rootCard.setCardBackgroundColor(myList)
+       // mRootView?.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.rootCard)?.setBackgroundColor(R.color.white) //etCardBackgroundColor(myList)
     }
 
     private fun refreshUI(weatherResponse: WeatherResponse?, errorMessage: String? = null) {
 
-        layWeather.setVisible(weatherResponse != null)
-        tvErrText.setVisible(weatherResponse == null)
+        mRootView?.findViewById<View>(R.id.layWeather)?.setVisible(weatherResponse != null)
+        mRootView?.findViewById<View>(R.id.tvErrText)?.setVisible(weatherResponse == null)
 
-        progress.setVisible(false)
+        mRootView?.findViewById<View>(R.id.progress)?.setVisible(false)
 
         weatherResponse?.let {
 
@@ -189,7 +186,7 @@ open class WeatherWidgetTransparent : FrameLayout {
                     .into(ivWeatherIcon)
             }
         } ?: kotlin.run {
-            tvErrText.text = errorMessage ?: "Weather service isn't available"
+            mRootView?.findViewById<TextView>(R.id.tvErrText)?.text = errorMessage ?: "Weather service isn't available"
         }
     }
 

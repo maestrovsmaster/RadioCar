@@ -11,9 +11,12 @@ import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
 import com.maestrovs.radiocar.data.remote.weather.WeatherService
 import com.maestrovs.radiocar.data.repository.WeatherRepository
 import com.maestrovs.radiocar.utils.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ControlViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
+@HiltViewModel
+class ControlViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository,)
 : ViewModel() {
 
