@@ -75,27 +75,23 @@ class ExoPlayerManager @Inject constructor(
             object : MediaSessionCompat.Callback() {
                 override fun onPlay() {
                     super.onPlay()
-                    Log.d("ExoPlayerManager22", "onPlay")
                     lastPlayUrlEvent?.url?.let {
                         playUrl(it)
                     }
                 }
 
                 override fun onPause() {
-                    Log.d("ExoPlayerManager22", "onPause")
                     super.onPause()
                     pausePlayer()
                 }
 
                 override fun onSkipToNext() {
                     super.onSkipToNext()
-                    Log.d("ExoPlayerManager22", "onSkipToNext")
                     listener?.onPlayEvent(PlayAction.Next)
                 }
 
                 override fun onSkipToPrevious() {
                     super.onSkipToPrevious()
-                    Log.d("ExoPlayerManager22", "onSkipToPrevious")
                     listener?.onPlayEvent(PlayAction.Previous)
                 }
             }
@@ -119,8 +115,6 @@ class ExoPlayerManager @Inject constructor(
     fun playUrl(url: String) {
         val gotFocus = audioFocusManager.requestAudioFocus()
         if (gotFocus) {
-            //Log.d("MainActivity22","playUrl = ${url}")
-
 
             exoPlayer?.playWhenReady = true
             val mediaItem = MediaItem.Builder()

@@ -132,10 +132,8 @@ class PlayerServiceModel @Inject constructor(
 
                 else -> {
                     mainRepository.getStationsFlow(countryCode).collect {
-                        Log.d("CurrentStationFS", "fetchStationsAll...")
                         when (it.status) {
                             Resource.Status.SUCCESS -> {
-                                Log.d("CurrentStationFS", "currentStation = ${station?.name}")
                                 allList = it.data
                                 if (!allList.isNullOrEmpty() && listType == ListType.All) {
 
@@ -143,7 +141,6 @@ class PlayerServiceModel @Inject constructor(
 
 
                                 }
-                               // Log.d("CurrentStationFS", "getAllStations = ${allList?.size}")
 
                             }
 

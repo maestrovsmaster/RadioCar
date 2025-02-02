@@ -28,7 +28,6 @@ class StationRemoteMediator(
                 LoadType.APPEND -> state.lastItemOrNull()?.let {1// it.id
                 } ?: return MediatorResult.Success(endOfPaginationReached = true)
             }
-            Log.d("PagingPage","StationRemoteMediator loadKey = $loadKey")
             // Get the data from the API.
            // val response = stationService.getStations1(country = countryCode, offset = loadKey ?: 0, state.config.pageSize)
 
@@ -36,17 +35,13 @@ class StationRemoteMediator(
 
             // Save the data to the database.
           //  stationDao.insertAll(response)
-            Log.d("PagingPage","insertAlle")
             MediatorResult.Success(endOfPaginationReached = false)
 
         } catch (exception: IOException) {
-            Log.d("PagingPage","exception1  = $exception")
             MediatorResult.Error(exception)
         } catch (exception: HttpException) {
-            Log.d("PagingPage","exception2  = $exception")
             MediatorResult.Error(exception)
         }
-        Log.d("PagingPage","medResult $medResult")
         return medResult
     }
 }

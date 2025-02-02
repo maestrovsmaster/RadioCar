@@ -94,14 +94,12 @@ class MainViewModel @Inject constructor(
     }
 
     fun playCurrentStationState() {
-        Log.d("AudioPlayerService","playCurrentStationState")
         _selectedStation.value?.let { station ->
             EventBus.getDefault().post(PlayUrlEvent(station.url, station.name, "", null, PlayAction.Resume))
         }
     }
 
     fun stopCurrentStationState() {
-        Log.d("AudioPlayerService","stopCurrentStationState")
         _selectedStation.value?.let { station ->
             EventBus.getDefault().post(PlayUrlEvent(station.url, station.name, "", null, PlayAction.Pause))
         }?:run{
@@ -110,7 +108,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun switchCurrentStationState(){
-        Log.d("AudioPlayerService","switchCurrentStationState")
         _selectedStation.value?.let { station ->
             EventBus.getDefault().post(PlayUrlEvent(station.url, station.name, "", null))
         }?:run{
@@ -126,8 +123,6 @@ class MainViewModel @Inject constructor(
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onCustomEvent(event: PlayActionEvent) {
 
-        com.google.android.exoplayer2.util.Log.d("MainActivity22",
-            "MainViewModel: received event from service: ${event.playAction.toString()}" )
 
         var eventLast = event.playUrlEvent
         _playAction.value = event.playAction
@@ -197,7 +192,6 @@ class MainViewModel @Inject constructor(
 
 
     fun setRecent(stationuuid: String, isRecent: Boolean) {
-        Log.d("Database",">>recentStations setRecent1")
         viewModelScope.launch {
             mainRepository.setRecent(stationuuid)
         }

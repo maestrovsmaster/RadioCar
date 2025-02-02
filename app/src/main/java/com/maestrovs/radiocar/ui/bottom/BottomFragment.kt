@@ -67,14 +67,12 @@ class BottomFragment : Fragment() {
         mainViewModel.updateVolume(savedVolume)
 
         mainViewModel.selectedStation.observe(viewLifecycleOwner) { station ->
-            Log.d("Orientation", "")
             station?.let { updateStation(station) } ?: run {
                 showPlaceHolder()
             }
         }
 
         mainViewModel.playAction.observe(viewLifecycleOwner) { playAction ->
-            Log.d("Orientation", "playAction = $playAction")
             updatePlayAction(playAction)
         }
 
