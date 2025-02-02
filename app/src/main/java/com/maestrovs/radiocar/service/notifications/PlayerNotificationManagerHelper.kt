@@ -1,17 +1,113 @@
 package com.maestrovs.radiocar.service.notifications
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.Notification
+import android.app.PendingIntent
 import android.content.Context
-import android.os.Build
-import androidx.core.content.res.ResourcesCompat
-import com.google.android.exoplayer2.ui.PlayerNotificationManager
+import android.content.Intent
+import android.support.v4.media.session.MediaSessionCompat
+import androidx.core.app.NotificationCompat
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.offline.DownloadService.startForeground
+
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.service.player.ExoPlayerManager
+import com.maestrovs.radiocar.service.AudioPlayerService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
+class PlayerNotificationManagerHelper @Inject constructor(
+    @ApplicationContext private val context: Context,
+) {
+    private val mediaSession: MediaSessionCompat = MediaSessionCompat(context, "AudioService")
+
+    @UnstableApi
+    fun showNotification(isPlaying: Boolean): Notification {
+        // Правильний `PendingIntent` для Play
+        val playIntent = Intent(context, AudioPlayerService::class.java).apply {
+            action = "ACTION_PLAY"
+        }
+        val playPendingIntent = PendingIntent.getService(
+            context, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Правильний `PendingIntent` для Pause
+        val pauseIntent = Intent(context, AudioPlayerService::class.java).apply {
+            action = "ACTION_PAUSE"
+        }
+        val pausePendingIntent = PendingIntent.getService(
+            context, 1, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Вибір іконки в залежності від стану плеєра
+        val playPauseIcon = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play_xml
+        val playPauseAction = if (isPlaying) pausePendingIntent else playPendingIntent
+
+        return NotificationCompat.Builder(context, "audio_player_channel")
+            .setSmallIcon(R.drawable.ic_play_png) // Використовуй коректну іконку!
+            .setContentTitle("Now Playing")
+            .setContentText("")//Track name here
+            .setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle()
+                    .setMediaSession(mediaSession.sessionToken) // ✅ Обов’язково
+                    .setShowActionsInCompactView(0)
+            )
+            .addAction(
+                NotificationCompat.Action(
+                    playPauseIcon, "Play/Pause", playPauseAction
+                )
+            )
+            .setPriority(NotificationCompat.PRIORITY_HIGH) // ✅ Щоб кнопки точно не ховалися
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC) // ✅ Дозволяє показувати медіаконтролери
+            .setOngoing(true)
+            .build()
+    }
+}
+
+
+
+    /*fun showNotification() {
+        val mediaSession = MediaSessionCompat(context, "AudioService")
+        val builder = NotificationCompat.Builder(context, "audio_player_channel")
+            //.setSmallIcon(R.drawable.ic_music_note)
+            .setContentTitle("Now Playing")
+            .setContentText(player.currentMediaItem?.mediaMetadata?.title ?: "Unknown Track")
+            .setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle()
+                    .setMediaSession(mediaSession.sessionToken)
+                    .setShowActionsInCompactView(0)
+            )
+            .addAction(
+                NotificationCompat.Action(
+                    R.drawable.pause_to_play,
+                    "Pause",
+                    MediaButtonReceiver.buildMediaButtonPendingIntent(
+                        context, PlaybackStateCompat.ACTION_PAUSE
+                    )
+                )
+            )
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setOngoing(true)
+
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        notificationManager?.notify(1, builder.build())
+    }*/
+//}
+
+
+
+/*
 @Singleton
 class PlayerNotificationManagerHelper @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -58,4 +154,4 @@ class PlayerNotificationManagerHelper @Inject constructor(
         playerNotificationManager.setUseNextAction(false)
         playerNotificationManager.setUsePreviousAction(false)
     }
-}
+}*/

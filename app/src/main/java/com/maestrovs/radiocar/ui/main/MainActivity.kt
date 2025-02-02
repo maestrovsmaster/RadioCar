@@ -1,5 +1,6 @@
 package com.maestrovs.radiocar.ui.main
 
+import android.Manifest
 import android.Manifest.permission.BLUETOOTH_CONNECT
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -117,6 +118,15 @@ class MainActivity : AppCompatActivity() {
             )
         } else {
             startLocationUpdates()
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
         }
 
 

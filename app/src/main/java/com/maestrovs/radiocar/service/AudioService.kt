@@ -3,11 +3,12 @@ package com.maestrovs.radiocar.service
 import android.app.Notification
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
-import com.google.android.exoplayer2.ui.PlayerNotificationManager.NotificationListener
 import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.events.PlayActionEvent
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,6 +19,8 @@ import org.greenrobot.eventbus.ThreadMode
 
 import android.util.Log
 import android.widget.Toast
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.offline.DownloadService
 import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.events.ActivityStatus
 import com.maestrovs.radiocar.events.PlayEvent
@@ -35,6 +38,7 @@ import javax.inject.Inject
 
 const val NOTIFICATION_REQUEST_CODE = 56465
 
+@UnstableApi
 @AndroidEntryPoint
 class AudioPlayerService : Service() {
     val TAG = "AudioPlayerService"
@@ -53,6 +57,36 @@ class AudioPlayerService : Service() {
     private val binder = LocalBinder()
 
     private var activityStatus = ActivityStatus.VISIBLE
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            "ACTION_PLAY" -> {
+                exoPlayerManager.playUrl(exoPlayerManager.lastPlayUrlEvent?.url ?: "")
+                Log.d("AudioPlayerService","Play!!!!")//
+             updateNotification(true) // Оновлюємо нотифікацію
+
+            }
+            "ACTION_PAUSE" -> {
+                exoPlayerManager.pausePlayer()
+                updateNotification(false) // Оновлюємо нотифікацію
+                Log.d("AudioPlayerService","Pause!!!!")
+            }
+        }
+        return START_STICKY
+    }
+
+    fun updateNotification(isPlaying: Boolean) {
+        //val notification = playerNotificationManagerHelper.showNotification(isPlaying)
+       // DownloadService.startForeground(1, notification) // Оновлюємо нотифікацію
+
+        val notification = playerNotificationManagerHelper.showNotification(isPlaying) //startForeground(1, playerNotificationManagerHelper.showNotification())
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
+            startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+        } else {
+            startForeground(1, notification)
+        }
+    }
 
 
     override fun onCreate() {
@@ -73,7 +107,7 @@ class AudioPlayerService : Service() {
             }
         })
 
-        playerNotificationManagerHelper.initialize(exoPlayerManager,
+       /* playerNotificationManagerHelper.initialize(exoPlayerManager,
             object : NotificationListener {
                 override fun onNotificationCancelled(
                     notificationId: Int,
@@ -94,7 +128,18 @@ class AudioPlayerService : Service() {
                     }
                 }
             }
-        )
+        )*/
+
+        //playerNotificationManagerHelper.initialize(exoPlayerManager)
+       /* val notification = playerNotificationManagerHelper.showNotification(true) //startForeground(1, playerNotificationManagerHelper.showNotification())
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
+            startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+        } else {
+            startForeground(1, notification)
+        }*/
+
+        updateNotification(true)
 
 
 
@@ -116,7 +161,7 @@ class AudioPlayerService : Service() {
 
 
     private fun processAutonumnActions(playAction: PlayAction){
-      //  Log.d("MainActivity22","processAutonumnActions = ${playAction}")
+        Log.d("AudioPlayerService","processAutonumnActions = ${playAction}")
         when(playAction){
             PlayAction.Next -> {
                 serviceModel.getNextStation()?.let {
@@ -172,8 +217,9 @@ class AudioPlayerService : Service() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onPlayUrlEvent(event: PlayEvent) {
+       // Log.d("AudioPlayerService", "SERVICE: event = ${event}")
         if (event is UIStatusEvent) {
-            Log.d("MainActivity22", "event = ${event}")
+           // Log.d("AudioPlayerService", "event = ${event}")
             activityStatus = event.activityStatus
             serviceScope.launch {
 
@@ -200,7 +246,9 @@ class AudioPlayerService : Service() {
             }
 
         } else {
+            //Log.d("AudioPlayerService", "OnPLAY url event = ${event}")
             exoPlayerManager.onPlayUrlEvent(event)
+           // updateNotification(isPlaying: Boolean)
         }
     }
 

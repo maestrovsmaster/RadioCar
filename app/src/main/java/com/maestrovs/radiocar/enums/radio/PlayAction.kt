@@ -1,6 +1,7 @@
 package com.maestrovs.radiocar.enums.radio
 
-import com.google.android.exoplayer2.PlaybackException
+import androidx.media3.common.PlaybackException
+
 
 sealed class PlayAction {
     object Resume : PlayAction()

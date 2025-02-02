@@ -17,6 +17,9 @@
     <!-- Needed only if your app communicates with already-paired Bluetooth
            devices. -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+
     <!--bibo01 : hardware option-->
     <uses-feature
         android:name="android.hardware.bluetooth"
