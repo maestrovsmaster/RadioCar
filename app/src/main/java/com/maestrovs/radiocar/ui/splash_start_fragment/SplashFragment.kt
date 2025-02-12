@@ -58,13 +58,15 @@ class SplashFragment : Fragment() {
 
         val currentCountry = CurrentCountryManager.readCountry(requireContext())
 
-        if (currentCountry != null) {
+        /*if (currentCountry != null) { //UNCOMMENT IT
             findNavController().navigate(R.id.action_splashFragment_to_mainFragment)
         } else {
             findNavController().navigate(
                 SplashFragmentDirections.actionSplashFragmentToChooseCountryFragment(false)
             )
-        }
+        }*/
+
+        findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToRadioFragment())
 
         // findNavController().navigate(R.id.action_splashFragment_to_carLogoFragment)
         //

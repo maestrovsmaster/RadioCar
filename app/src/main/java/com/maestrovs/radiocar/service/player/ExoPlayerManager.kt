@@ -6,21 +6,19 @@ import android.net.Uri
 import android.support.v4.media.session.MediaSessionCompat
 import android.widget.Toast
 import androidx.annotation.OptIn
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.util.Util
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.enums.radio.PlayAction
-import com.maestrovs.radiocar.events.ActivityStatus
-import com.maestrovs.radiocar.events.PlayEvent
-import com.maestrovs.radiocar.events.PlayUrlEvent
-import com.maestrovs.radiocar.events.PlayVolume
-import com.maestrovs.radiocar.events.UIStatusEvent
-import com.maestrovs.radiocar.ui.settings.SettingsManager
+import com.maestrovs.radiocar.utils.isPlayableStream
+
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,17 +32,14 @@ class ExoPlayerManager @Inject constructor(
 
     val TAG = "ExoPlayerManager"
 
-    var exoPlayer: ExoPlayer? = null
+    private var exoPlayer: ExoPlayer? = null
 
-    val audioFocusManager: AudioFocusManager = AudioFocusManager(context)
+    private val audioFocusManager: AudioFocusManager = AudioFocusManager(context)
 
-    var lastVolume: Float = 100f
-
-    var lastPlayUrlEvent: PlayUrlEvent? = null
+    private var lastVolume: Float = 100f
 
     var listener: AudioPlayerListener? = null
 
-    var activityStatus: ActivityStatus = ActivityStatus.VISIBLE
 
     init {
         audioFocusManager.setupAudioFocus { focusChange ->
@@ -55,27 +50,26 @@ class ExoPlayerManager @Inject constructor(
             }
         }
 
+        //Receiver commands from Bluetooth
         mediaSessionHelper.initializeMediaButtonsPlayStopSession(
             object : MediaSessionCompat.Callback() {
                 override fun onPlay() {
                     super.onPlay()
-                    lastPlayUrlEvent?.url?.let {
-                        playUrl(it)
-                    }
+                    //Log.d("AudioPlayerService","Bluetooth play ")
+                    listener?.onPlayEvent(PlayAction.Resume)
                 }
 
                 override fun onPause() {
                     super.onPause()
-                    pausePlayer()
+                   // Log.d("AudioPlayerService","Bluetooth pause ")
+                    listener?.onPlayEvent(PlayAction.Pause)
                 }
 
                 override fun onSkipToNext() {
-                    super.onSkipToNext()
                     listener?.onPlayEvent(PlayAction.Next)
                 }
 
                 override fun onSkipToPrevious() {
-                    super.onSkipToPrevious()
                     listener?.onPlayEvent(PlayAction.Previous)
                 }
             }
@@ -95,15 +89,25 @@ class ExoPlayerManager @Inject constructor(
     }
 
     fun playUrl(url: String) {
+
+
+        val isPlayableStream = isPlayableStream(url)
+       if(!isPlayableStream){
+           listener?.onPlayEvent(PlayAction.Error("Invalid stream", null))
+           return
+       }
+
         val gotFocus = audioFocusManager.requestAudioFocus()
         if (gotFocus) {
             exoPlayer?.playWhenReady = true
-            val mediaItem = MediaItem.Builder()
-                .setUri(Uri.parse(url))
-                .build()
-            exoPlayer?.setMediaItem(mediaItem)
-            exoPlayer?.prepare()
-            exoPlayer?.play()
+
+                val mediaItem = MediaItem.Builder()
+                    .setUri(Uri.parse(url))
+                    .build()
+                exoPlayer?.setMediaItem(mediaItem)
+                exoPlayer?.prepare()
+                exoPlayer?.play()
+
         }
     }
 
@@ -129,54 +133,22 @@ class ExoPlayerManager @Inject constructor(
         Log.e(TAG, "Player error: ${error.errorCode}", error)
     }
 
-    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        when (playbackState) {
+    override fun onPlaybackStateChanged(state: Int) {
+        when (state) {
+            Player.STATE_BUFFERING -> {
+                listener?.onPlayEvent(PlayAction.Buffering(true))
+            }
             Player.STATE_READY -> {
-                if (playWhenReady) {
-                    listener?.onPlayEvent(PlayAction.Resume)
-                } else {
-                    listener?.onPlayEvent(PlayAction.Pause)
-                }
+                listener?.onPlayEvent(PlayAction.Buffering(false))
             }
-            Player.STATE_BUFFERING -> listener?.onPlayEvent(PlayAction.Buffering)
-            Player.STATE_IDLE -> listener?.onPlayEvent(PlayAction.Idle)
+            Player.STATE_ENDED -> {
+                //Log.d("ExoPlayerManager", "Playback ended")
+            }
+            Player.STATE_IDLE -> {
+                //Log.d("ExoPlayerManager", "Player is idle")
+            }
         }
     }
 
-    fun onPlayUrlEvent(event: PlayEvent) {
-        when (event) {
-            is PlayUrlEvent -> {
-                event.url?.let { newUrl ->
-                    if (newUrl == lastPlayUrlEvent?.url) {
-                        if (exoPlayer?.isPlaying == true) {
-                            pausePlayer()
-                        } else {
-                            playUrl(newUrl)
-                            displayCurrentStation(event.name)
-                        }
-                    } else {
-                        playUrl(newUrl)
-                        displayCurrentStation(event.name)
-                    }
-                } ?: stopPlayer()
 
-                lastPlayUrlEvent = event
-            }
-
-            is PlayVolume -> {
-                var volume: Float = event.volume.toFloat()
-                volume = volume.coerceIn(0f, 100f) / 100f
-                lastVolume = volume
-                exoPlayer?.volume = lastVolume
-            }
-
-            is UIStatusEvent -> {}
-        }
-    }
-
-    private fun displayCurrentStation(name: String?) {
-        if (name == null || !SettingsManager.getShowStationNameInBackground(context) || activityStatus == ActivityStatus.VISIBLE) return
-        val radioSymbol = context.getString(R.string.symbol_radio)
-        Toast.makeText(context, "$radioSymbol  $name", Toast.LENGTH_SHORT).show()
-    }
 }

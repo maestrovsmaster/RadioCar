@@ -8,7 +8,7 @@ sealed class PlayAction {
     object Pause : PlayAction()
     object Previous : PlayAction()
     object Next : PlayAction()
-    object Buffering : PlayAction()
+    data class Buffering(val isBuffering: Boolean) : PlayAction()
     object Idle : PlayAction()
     data class Error(val description: String?, val error: PlaybackException?) : PlayAction()
 }

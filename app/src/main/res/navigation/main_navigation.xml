@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_splashFragment_to_magnitolaFragment"
             app:destination="@id/magnitolaFragment" />
+        <action
+            android:id="@+id/action_splashFragment_to_radioFragment"
+            app:destination="@id/radioFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
@@ -97,6 +100,10 @@
         android:label="MagnitolaFragment"
         tools:layout="@layout/content_magnitola"
         />
+    <fragment
+        android:id="@+id/radioFragment"
+        android:name="com.maestrovs.radiocar.ui.app.radio_fragment.RadioFragment"
+        android:label="RadioFragment" />
 
 
 </navigation>

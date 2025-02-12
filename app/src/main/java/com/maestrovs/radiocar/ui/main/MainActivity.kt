@@ -1,15 +1,11 @@
 package com.maestrovs.radiocar.ui.main
 
-import android.Manifest
 import android.Manifest.permission.BLUETOOTH_CONNECT
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothProfile
-import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Build
@@ -20,9 +16,11 @@ import android.os.Looper
 import android.util.Log
 import android.view.WindowManager
 import androidx.activity.viewModels
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.media3.common.util.UnstableApi
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -30,6 +28,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.FirebaseApp
+import com.maestrovs.radiocar.bluetooth.BluetoothStatusReceiver
 import com.maestrovs.radiocar.databinding.ActivityMainBinding
 import com.maestrovs.radiocar.enums.bluetooth.BT_Status
 import com.maestrovs.radiocar.events.ActivityStatus
@@ -38,11 +37,9 @@ import com.maestrovs.radiocar.ui.settings.SettingsManager
 import dagger.hilt.android.AndroidEntryPoint
 
 
+@UnstableApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    val TAG = "MainActivity"
-
 
     private var audioPlayerService: AudioPlayerService? = null
     private var serviceBound = false
@@ -50,7 +47,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
 
-    private lateinit var bluetoothStatusReceiver: BroadcastReceiver
+    private  var bluetoothStatusReceiver: BluetoothStatusReceiver? = null
 
 
     private val serviceConnection = object : ServiceConnection {
@@ -101,9 +98,6 @@ class MainActivity : AppCompatActivity() {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
 
-
-
-
         // Check for location permissions
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -120,15 +114,6 @@ class MainActivity : AppCompatActivity() {
             startLocationUpdates()
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
-            }
-        }
-
 
         if (bluetoothAdapter != null) {
 
@@ -137,30 +122,15 @@ class MainActivity : AppCompatActivity() {
                 true -> mainViewModel.setBluetoothStatus(BT_Status.Enabled)
                 false -> mainViewModel.setBluetoothStatus(BT_Status.Disable)
             }
-            registerBluetoothStatusReceiver()
+            bluetoothStatusReceiver = BluetoothStatusReceiver()
 
             checkConnectedBluetoothDevices()
-
         }
-
 
         mainViewModel.mustRefreshStatus.observe(this) {
             applySettingsChanges()
         }
-
-            /*
-        if (!CurrentCountryManager.isAskCountry(this)) {
-            launchCountryPickerDialog { country: CPCountry? ->
-                val newSelectedCountry = country ?: return@launchCountryPickerDialog
-                Log.d("Country", "CountryCode = $newSelectedCountry")
-                // binding.tvSelectedCountry.text =  "${newSelectedCountry.flagEmoji} ${newSelectedCountry.name}"
-                CurrentCountryManager.writeCountry(this, newSelectedCountry)
-                mainViewModel.setMustRefreshStatus()
-            }
-            CurrentCountryManager.setAskedCountryTrue(this)
-        }*/
     }
-
 
 
     private fun checkConnectedBluetoothDevices() {
@@ -211,53 +181,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun registerBluetoothStatusReceiver() {
-        bluetoothStatusReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                Log.d("BluetoothDevice", "onReceive intent?.action = ${intent?.action}")
-
-                val action = intent?.action ?: return
-                when (action) {
-                    BluetoothAdapter.ACTION_STATE_CHANGED -> {
-                        when (intent.getIntExtra(
-                            BluetoothAdapter.EXTRA_STATE,
-                            BluetoothAdapter.ERROR
-                        )) {
-                            BluetoothAdapter.STATE_ON -> mainViewModel.setBluetoothStatus(BT_Status.Enabled)
-                            BluetoothAdapter.STATE_OFF -> mainViewModel.setBluetoothStatus(BT_Status.Disable)
-                        }
-                    }
-
-                    BluetoothDevice.ACTION_ACL_CONNECTED -> {
-                        val device: BluetoothDevice? =
-                            intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                        mainViewModel.setBluetoothStatus(BT_Status.ConnectedDevice)
-                        if (SettingsManager.isAutoplay(this@MainActivity)) {
-                            //   mainViewModel.playCurrentStationState()
-                        }
-                    }
-
-                    BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
-                        val device: BluetoothDevice? =
-                            intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                        mainViewModel.setBluetoothStatus(BT_Status.DisconnectedDevice)
-                        mainViewModel.stopCurrentStationState()
-                    }
-                }
-            }
-        }
-
-        // Register the broadcast receiver
-        // val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
-        val intentFilter = IntentFilter().apply {
-            addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
-            addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
-            addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
-        }
-        registerReceiver(bluetoothStatusReceiver, intentFilter)
-    }
-
-
+    @OptIn(UnstableApi::class)
     override fun onStart() {
         super.onStart()
         Intent(this, AudioPlayerService::class.java).also { intent ->
@@ -323,11 +247,6 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-
-
-
-
-
     // Handling permissions request result
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -345,17 +264,10 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == PERMISSIONS_REQUEST_BLUETOOTH) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                registerBluetoothStatusReceiver()
+                bluetoothStatusReceiver = BluetoothStatusReceiver()
             }
         }
     }
-
-    /*override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        return if (keyCode == KeyEvent.KEYCODE_BACK) {
-            ExitDialog(this).show()
-            false
-        } else super.onKeyDown(keyCode, event)
-    }*/
 
 
     private fun applySettingsChanges() {

@@ -1,6 +1,8 @@
 package com.maestrovs.radiocar.di
 
 import android.content.Context
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.maestrovs.radiocar.common.Constants.BASE_RADIO_URL
@@ -14,6 +16,7 @@ import com.maestrovs.radiocar.data.remote.radio.StationService
 import com.maestrovs.radiocar.data.remote.weather.WeatherRemoteDataSource
 import com.maestrovs.radiocar.data.remote.weather.WeatherService
 import com.maestrovs.radiocar.data.repository.StationRepository
+import com.maestrovs.radiocar.data.repository.StationRepositoryIml
 import com.maestrovs.radiocar.data.repository.WeatherRepository
 import com.maestrovs.radiocar.service.player.ExoPlayerManager
 import com.maestrovs.radiocar.service.player.MediaSessionHelper2
@@ -92,8 +95,8 @@ object AppModule {
     fun provideRadioRepository(
         remoteDataSource: StationRemoteDataSource,
         localDataSource: StationDao, recentSource: RecentDao, favoritesSource: FavoritesDao
-    ) =
-        StationRepository(remoteDataSource, localDataSource, recentSource, favoritesSource)
+    ) : StationRepository =
+        StationRepositoryIml(remoteDataSource, localDataSource, recentSource, favoritesSource)
 
 
 
@@ -138,6 +141,7 @@ object AppModule {
     ): MediaSessionHelper2 = MediaSessionHelper2(context)
 
 
+    @OptIn(UnstableApi::class)
     @Singleton
     @Provides
     fun provideExoPlayerManager(

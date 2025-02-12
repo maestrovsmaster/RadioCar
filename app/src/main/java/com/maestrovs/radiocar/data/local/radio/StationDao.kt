@@ -21,6 +21,11 @@ interface StationDao {
     fun getStationsByCountryCodeFlow(countryCode: String) : Flow<List<Station>>
 
 
+    @Query("SELECT * FROM stations WHERE name LIKE '%' || :searchterm || '%'")
+    fun getStationsByNameFlow(searchterm: String): Flow<List<Station>>
+
+
+
     //     SELECT Item.id, Item.name, (Favourite.id IS NOT NULL) as isFavorite
     @Query("""
         SELECT stations.*, (favorites.stationuuid IS NOT NULL) as isFavorite

@@ -2,25 +2,31 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <!-- for start foreground service -->
-    <!--BLUETOOTH PERMISSION-->
+    <!-- BLUETOOTH PERMISSION -->
     <!-- Request legacy Bluetooth permissions on older devices. -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <!-- Needed only if your app looks for Bluetooth devices.
+    <!--
+ Needed only if your app looks for Bluetooth devices.
              If your app doesn't use Bluetooth scan results to derive physical
              location information, you can strongly assert that your app
-             doesn't derive physical location. -->
+             doesn't derive physical location.
+    -->
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-    <!-- Needed only if your app makes the device discoverable to Bluetooth
-      devices. -->
+    <!--
+ Needed only if your app makes the device discoverable to Bluetooth
+      devices.
+    -->
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
-    <!-- Needed only if your app communicates with already-paired Bluetooth
-           devices. -->
+    <!--
+ Needed only if your app communicates with already-paired Bluetooth
+           devices.
+    -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
-
-    <!--bibo01 : hardware option-->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" /> <!-- for play in the background -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" /> <!-- bibo01 : hardware option -->
     <uses-feature
         android:name="android.hardware.bluetooth"
         android:required="false" />
@@ -28,9 +34,7 @@
         android:name="android.hardware.bluetooth_le"
         android:required="false" />
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- for play in the background -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- Optional: for play local music -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission
@@ -41,8 +45,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-
 
     <application xmlns:tools="http://schemas.android.com/tools"
         android:name=".MainApplication"
@@ -55,16 +57,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RadioCar">
+        <activity
+            android:name=".ui.app.MainActivityV2"
+            android:exported="true"
+            android:label="@string/title_activity_main_v2"
+            android:theme="@style/Theme.RadioCar" >
+
+        </activity>
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3109852779138325~2311177105" />
-
-
-        <!--activity
+        <!--
+activity
             android:name=".ui.settings.SettingsActivity"
-            android:exported="false" /-->
-
+            android:exported="false" /
+        -->
         <service
             android:name=".service.AudioPlayerService"
             android:enabled="true"
@@ -74,7 +82,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
-
         </service>
 
         <activity

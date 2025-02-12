@@ -8,7 +8,6 @@
     <style name="Theme.RadioCar" parent="Base.Theme.RadioCar" />
 
 
-
     <style name="AppTheme.Translucent" parent="Theme.MaterialComponents.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>

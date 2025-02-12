@@ -5,6 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.util.Log
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import com.maestrovs.radiocar.service.AudioPlayerService
 import javax.inject.Inject
 
@@ -16,10 +19,13 @@ constructor(
     lateinit var mediaSession: MediaSessionCompat
         private set
 
+    @OptIn(UnstableApi::class)
     fun initializeMediaButtonsPlayStopSession(callback: MediaSessionCompat.Callback) {
         val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON).apply {
             setClass(context, AudioPlayerService::class.java)
+
         }
+
 
         val pendingIntent = PendingIntent.getService(
             context,
@@ -40,10 +46,12 @@ constructor(
                 )
                 .build()
             setPlaybackState(playbackState)
+            isActive = true
         }
     }
 
     fun release() {
+        Log.d("AudioPlayerService", "================Releasing MediaSession")
         mediaSession.release()
     }
 

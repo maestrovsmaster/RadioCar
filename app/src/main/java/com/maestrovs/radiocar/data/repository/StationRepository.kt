@@ -19,23 +19,67 @@ import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 import androidx.lifecycle.liveData
 import com.maestrovs.radiocar.common.Constants
+import com.maestrovs.radiocar.data.entities.radio.StationGroup
+import com.maestrovs.radiocar.data.repository.mapper.toGroupedStations
 import com.maestrovs.radiocar.utils.performGetOperationFlow
 import com.maestrovs.radiocar.utils.performLocalGetOperationFlow
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class StationRepository @Inject constructor(
+
+abstract class StationRepository(){
+    abstract fun getStationsByName(searchterm: String):  LiveData<Resource<List<Station>>>
+    abstract fun getGroupedStationsFlow(countryCode: String, offset: Int = 0, limit: Int = Constants.PAGE_SIZE): Flow<Resource<List<StationGroup>>>
+    abstract fun getStationsByNameGroup(searchterm: String): Flow<Resource<List<StationGroup>>>
+    abstract fun getStationsFlow(countryCode: String): Flow<Resource<List<Station>>>
+    abstract fun getCombinedRecentAndAllStationsFlow(countryCode: String): Flow<List<Station>>
+    abstract fun getCombinedFavoritesAndAllStationsFlow(countryCode: String): Flow<List<Station>>
+    abstract suspend fun setRecent(stationuuid: String)
+    abstract suspend fun deleteRecent(stationuuid: String)
+    abstract suspend fun setFavorite(stationuuid: String)
+    abstract suspend fun deleteFavorite(stationuuid: String)
+    abstract fun getStations(countryCode: String, offset: Int = 0,limit: Int = Constants.PAGE_SIZE): LiveData<Resource<List<Station>>>
+    abstract fun getRecentStations(): LiveData<Resource<List<Station>>>
+    abstract fun getFavoritesStations(): LiveData<Resource<List<Station>>>
+    abstract suspend fun insertStations(list: List<Station>)
+}
+
+ class StationRepositoryIml @Inject constructor(
     private val remoteDataSource: StationRemoteDataSource,
     private val localDataSource: StationDao,
     private val recentSource: RecentDao,
     private val favoritesSource: FavoritesDao
-) {
+) : StationRepository() {
+
+    override fun getGroupedStationsFlow(countryCode: String, offset: Int, limit: Int): Flow<Resource<List<StationGroup>>> {
+        return performGetOperationFlow(
+            databaseQuery = { localDataSource.getStationsByCountryCodeFlow(countryCode).map { it.toGroupedStations() } },
+            networkCall = { remoteDataSource.getStations(countryCode) },
+            saveCallResult = { localDataSource.insertAll(it) }
+        )
+    }
+
+     override fun getStationsByNameGroup(searchterm: String): Flow<Resource<List<StationGroup>>> {
+         return performGetOperationFlow(
+             databaseQuery = { localDataSource.getStationsByNameFlow(searchterm).map { it.toGroupedStations() } },
+             networkCall = { remoteDataSource.getStationsByName(searchterm) },
+             saveCallResult = { localDataSource.insertAll(it) }
+         )
+     }
+
+     override fun getStationsByName(searchterm: String) = performNetworkOperation(
+
+         networkCall = { remoteDataSource.getStationsByName(searchterm) },
+         saveCallResult = { localDataSource.insertAll(it) }
+     )
 
 
-    fun getStations(countryCode: String,
-                    offset: Int = 0,limit: Int = Constants.PAGE_SIZE
+
+     override fun getStations(countryCode: String,
+                    offset: Int ,limit: Int
     ) = performGetOperation(
         databaseQuery = { localDataSource.getStationsByCountryCode(countryCode,) //getAllStationsWithFavouriteStatus()/
                         },
@@ -43,7 +87,7 @@ class StationRepository @Inject constructor(
         saveCallResult = { localDataSource.insertAll(it) }
     )
 
-    fun getStationsFlow(countryCode: String) = performGetOperationFlow(
+     override  fun getStationsFlow(countryCode: String) = performGetOperationFlow(
         databaseQuery = { localDataSource.getStationsByCountryCodeFlow(countryCode) //getAllStationsWithFavouriteStatus()/
         },
         networkCall = { remoteDataSource.getStations(countryCode) },
@@ -51,51 +95,47 @@ class StationRepository @Inject constructor(
     )
 
 
-    fun getStationsByName(searchterm: String) = performNetworkOperation(
 
-        networkCall = { remoteDataSource.getStationsByName(searchterm) },
-        saveCallResult = { localDataSource.insertAll(it) }
-    )
 
-    suspend fun insertStations(list: List<Station>){
+     override suspend fun insertStations(list: List<Station>){
 
        localDataSource.insertAll(list)
 
     }
 
-    fun getRecentStations() = performLocalGetOperation(databaseQuery = {
+     override fun getRecentStations() = performLocalGetOperation(databaseQuery = {
         localDataSource.getRecentStations() })
 
     fun getRecentStationsFlow() = performLocalGetOperationFlow(databaseQuery = {
         localDataSource.getRecentStationsFlow() })
 
-    fun getFavoritesStations() = performLocalGetOperation(databaseQuery = {
+     override fun getFavoritesStations() = performLocalGetOperation(databaseQuery = {
         localDataSource.getFavoritesStations() })
 
     fun getFavoritesStationsFlow(): Flow<Resource<List<Station>>> =
         performLocalGetOperationFlow(databaseQuery = { localDataSource.getFavoritesStationsFlow() })
 
 
-    suspend fun setRecent(stationuuid: String) {
+     override suspend fun setRecent(stationuuid: String) {
         recentSource.insert(Recent(stationuuid = stationuuid))
     }
 
-    suspend fun deleteRecent(stationuuid: String) {
+     override suspend fun deleteRecent(stationuuid: String) {
         recentSource.delete( stationuuid)
     }
 
 
-    suspend fun setFavorite(stationuuid: String) {
+     override suspend fun setFavorite(stationuuid: String) {
         favoritesSource.insert(Favorites(stationuuid = stationuuid))
     }
 
-    suspend fun deleteFavorite(stationuuid: String) {
+     override suspend fun deleteFavorite(stationuuid: String) {
         favoritesSource.delete(stationuuid)
     }
 
 
 
-    fun getCombinedRecentAndAllStationsFlow(countryCode: String): Flow<List<Station>> {
+     override fun getCombinedRecentAndAllStationsFlow(countryCode: String): Flow<List<Station>> {
         val recentStationsFlow = localDataSource.getRecentStationsFlow()
             //getRecentStationsFlow()
         val allStationsFlow = getStationsFlow(countryCode)
@@ -116,7 +156,7 @@ class StationRepository @Inject constructor(
         }
     }
 
-    fun getCombinedFavoritesAndAllStationsFlow(countryCode: String): Flow<List<Station>> {
+     override fun getCombinedFavoritesAndAllStationsFlow(countryCode: String): Flow<List<Station>> {
         val favoritesStationsFlow = localDataSource.getFavoritesStationsFlow()
             //getFavoritesStationsFlow()
         val allStationsFlow = getStationsFlow(countryCode)

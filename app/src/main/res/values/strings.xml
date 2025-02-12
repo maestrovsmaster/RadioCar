@@ -24,7 +24,6 @@
     <string name="disconnected">Disconnected</string>
 
 
-
     <string name="settings_display_on">Keep display active</string>
     <string name="settings_autoplay">Play automatically when a Bluetooth device is connected</string>
     <string name="settings_show_station_in_back">Display popup station name in background</string>
@@ -74,5 +73,6 @@
     <string name="done">Done</string>
 
     <string name="mock_date">07 jul 2024 \n Friday</string>
+    <string name="title_activity_main_v2">MainActivityV2</string>
 
 </resources>

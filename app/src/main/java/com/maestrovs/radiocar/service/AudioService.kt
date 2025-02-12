@@ -1,39 +1,37 @@
 package com.maestrovs.radiocar.service
 
-import android.app.Notification
+
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.net.ConnectivityManager
-import android.net.Network
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import com.maestrovs.radiocar.enums.radio.PlayAction
-import com.maestrovs.radiocar.events.PlayActionEvent
-import dagger.hilt.android.AndroidEntryPoint
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
-
-
+import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
-import android.widget.Toast
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.offline.DownloadService
-import com.maestrovs.radiocar.common.CurrentCountryManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
+import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.events.ActivityStatus
-import com.maestrovs.radiocar.events.PlayEvent
-import com.maestrovs.radiocar.events.PlayUrlEvent
-import com.maestrovs.radiocar.events.UIStatusEvent
-import com.maestrovs.radiocar.service.network.NetworkHelper
 import com.maestrovs.radiocar.service.notifications.PlayerNotificationManagerHelper
 import com.maestrovs.radiocar.service.player.AudioPlayerListener
 import com.maestrovs.radiocar.service.player.ExoPlayerManager
+import com.maestrovs.radiocar.service.player.MediaSessionHelper2
+import com.maestrovs.radiocar.manager.PlayerState
+import com.maestrovs.radiocar.manager.PlayerStateManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 const val NOTIFICATION_REQUEST_CODE = 56465
@@ -41,7 +39,7 @@ const val NOTIFICATION_REQUEST_CODE = 56465
 @UnstableApi
 @AndroidEntryPoint
 class AudioPlayerService : Service() {
-    val TAG = "AudioPlayerService"
+    private val TAG = "AudioPlayerService"
 
     @Inject
     lateinit var exoPlayerManager: ExoPlayerManager
@@ -53,148 +51,195 @@ class AudioPlayerService : Service() {
     lateinit var serviceModel: PlayerServiceModel
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-
     private val binder = LocalBinder()
+    private var isForegroundService = false
 
-    private var activityStatus = ActivityStatus.VISIBLE
+    override fun onCreate() {
+        super.onCreate()
+        createNotificationChannel()
+
+        observePlayerState()
+        observeBufferingState()
+
+        Log.d(TAG, "Service created, serviceModel = $serviceModel")
+
+        exoPlayerManager.initializePlayer(object : AudioPlayerListener {
+            override fun onPlayEvent(playAction: PlayAction) {
+
+                when (playAction) {
+                    is PlayAction.Buffering -> {
+                        PlayerStateManager.setBuffering(playAction.isBuffering)
+                    }
+
+                    is PlayAction.Error -> {}
+                    PlayAction.Idle -> {}
+                    PlayAction.Next -> PlayerStateManager.next()
+                    PlayAction.Pause -> PlayerStateManager.pause()//Receiver commands from Bluetooth
+
+                    PlayAction.Previous -> PlayerStateManager.prev()
+                    PlayAction.Resume -> PlayerStateManager.play()//Receiver commands from Bluetooth
+                }
+            }
+        })
+
+        // Запускаємо Foreground Service одразу
+        startForegroundService()
+    }
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        //There are commands from Notification bar
         when (intent?.action) {
-            "ACTION_PLAY" -> {
-                exoPlayerManager.playUrl(exoPlayerManager.lastPlayUrlEvent?.url ?: "")
-                Log.d("AudioPlayerService","Play!!!!")//
-             updateNotification(true) // Оновлюємо нотифікацію
+            ACTION_PLAY -> {
+                PlayerStateManager.play()
+            }
+
+            ACTION_PAUSE -> {
+                PlayerStateManager.pause()
 
             }
-            "ACTION_PAUSE" -> {
-                exoPlayerManager.pausePlayer()
-                updateNotification(false) // Оновлюємо нотифікацію
-                Log.d("AudioPlayerService","Pause!!!!")
+
+            ACTION_NEXT -> {
+                PlayerStateManager.next()
+
+            }
+
+            ACTION_PREV -> {
+                PlayerStateManager.prev()
             }
         }
         return START_STICKY
     }
 
-    fun updateNotification(isPlaying: Boolean) {
-        //val notification = playerNotificationManagerHelper.showNotification(isPlaying)
-       // DownloadService.startForeground(1, notification) // Оновлюємо нотифікацію
 
-        val notification = playerNotificationManagerHelper.showNotification(isPlaying) //startForeground(1, playerNotificationManagerHelper.showNotification())
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
+    private fun startForegroundService() {
+        Log.d(TAG, "Calling startForeground()...")
+        val notification =
+            playerNotificationManagerHelper.showNotification(NotificationStatus.Pause, null, null)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
         } else {
             startForeground(1, notification)
+        }
+        isForegroundService = true
+        Log.d(TAG, "startForeground() called successfully")
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "audio_player_channel",
+                "Audio Playback",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = "Controls media playback"
+                setShowBadge(false)
+                enableLights(false)
+                enableVibration(false)
+            }
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
         }
     }
 
 
-    override fun onCreate() {
-        super.onCreate()
+    private fun updateNotification(isPlaying: Boolean, stationName: String?, imageBitmap: Bitmap?) {
 
-        EventBus.getDefault().register(this)
-
-        Log.d("AudioPlayerService", "serviceModel = ${serviceModel}")
-
-        exoPlayerManager.initializePlayer(object : AudioPlayerListener {
-            override fun onPlayEvent(playAction: PlayAction) {
-                Log.d("MainActivity22","onPlayEvent = ${playAction}")
-                sendMessageToViewModel(playAction)
-
-                if(activityStatus == ActivityStatus.INVISIBLE){
-                    processAutonumnActions(playAction)
-                }
-            }
-        })
-
-       /* playerNotificationManagerHelper.initialize(exoPlayerManager,
-            object : NotificationListener {
-                override fun onNotificationCancelled(
-                    notificationId: Int,
-                    dismissedByUser: Boolean
-                ) {
-                    stopSelf()
-                }
-
-                override fun onNotificationPosted(
-                    notificationId: Int,
-                    notification: Notification,
-                    ongoing: Boolean
-                ) {
-                    if (ongoing) {
-                        startForeground(notificationId, notification)
-                    } else {
-                        stopForeground(false)
-                    }
-                }
-            }
-        )*/
-
-        //playerNotificationManagerHelper.initialize(exoPlayerManager)
-       /* val notification = playerNotificationManagerHelper.showNotification(true) //startForeground(1, playerNotificationManagerHelper.showNotification())
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
-            startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+        val status = if (isPlaying) {
+            NotificationStatus.Play
         } else {
-            startForeground(1, notification)
-        }*/
-
-        updateNotification(true)
-
-
-
-        NetworkHelper(this@AudioPlayerService, object : ConnectivityManager.NetworkCallback() {
-            override fun onLost(network: Network) {
-                super.onLost(network)
-                Log.e(TAG, "Lost network connection")
-            }
-
-            override fun onAvailable(network: Network) {
-                super.onAvailable(network)
-                Log.e(TAG, "Network connection available again")
-            }
-        })
-
-
-    }//onCreate
-
-
-
-    private fun processAutonumnActions(playAction: PlayAction){
-        Log.d("AudioPlayerService","processAutonumnActions = ${playAction}")
-        when(playAction){
-            PlayAction.Next -> {
-                serviceModel.getNextStation()?.let {
-                    exoPlayerManager.onPlayUrlEvent(PlayUrlEvent(it.url,
-                        it.name, null, it.favicon, PlayAction.Resume))
-
-                }
-
-            }
-
-            PlayAction.Previous -> {
-                 serviceModel.getPrevStation()?.let {
-                    exoPlayerManager.onPlayUrlEvent(PlayUrlEvent(it.url,
-                        it.name, null, it.favicon, PlayAction.Resume))
-
-                }
-            }
-            PlayAction.Pause -> {
-
-            }
-
-            PlayAction.Resume -> {
-
-            }
-            is PlayAction.Error -> {
-              Log.d("MainActivity22"," This is wrong station: find next!")
-                  serviceModel.getNextStation()?.let {
-                                    exoPlayerManager.onPlayUrlEvent(PlayUrlEvent(it.url,
-                                        it.name, null, it.favicon, PlayAction.Resume))
-                                }
-            }
-            else -> {}
+            NotificationStatus.Pause
         }
+        val notification =
+            playerNotificationManagerHelper.showNotification(status, stationName, imageBitmap)
+        Log.d(TAG, "Updating notification, isPlaying: $isPlaying")
+
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.notify(1, notification) // ✅ Оновлення нотифікації без `startForeground()`
+
+        Log.d(TAG, "Notification updated successfully")
+    }
+
+    override fun onDestroy() {
+        EventBus.getDefault().unregister(this)
+        serviceModel.clear()
+        // mediaSessionHelper.release()
+        exoPlayerManager.releasePlayer()
+        stopForeground(true)
+        super.onDestroy()
+    }
+
+    private fun observeBufferingState() {
+        serviceScope.launch {
+            PlayerStateManager.isBufferingFlow.collect { isBuffering ->
+                Log.d("AudioPlayerService", "Buffering: $isBuffering")
+                if (isBuffering) {
+                    // Показати індикатор буферизації
+                } else {
+                    // Сховати індикатор
+                }
+            }
+        }
+    }
+
+
+    private fun observePlayerState() {
+        serviceScope.launch {
+            PlayerStateManager.isPlayingFlow.collect { isPlaying ->
+                Log.d("AudioPlayerService", "isPlaying changed: $isPlaying")
+                if (isPlaying.first) {
+                    startPlaying(PlayerStateManager.playerState.value)
+                } else {
+                    stopPlaying(PlayerStateManager.playerState.value)
+                }
+            }
+        }
+    }
+
+    private fun startPlaying(state: PlayerState) {
+        val group = state.stationGroups.getOrNull(state.currentGroupIndex) ?: return
+        val stream = group.streams.getOrNull(state.currentStationIndex)
+
+        stream?.let {
+
+            serviceScope.launch(Dispatchers.Main) {
+                //val problemUrl = "https://765211.live.tvstitch.com/stream.m3u8?&m=aHR0cHM6Ly9zdHJlYW12aWRlby5sdXhuZXQudWEvbHV4X2Fkdi9tYXN0ZXIubTN1OA==&u=&channel=luxfm"
+                exoPlayerManager.playUrl(it.url)
+            }
+            updateNotification(true, group.name, null)
+
+
+            if (group.favicon != null) {
+                Glide.with(this)
+                    .asBitmap()
+                    .load(group.favicon)
+                    .into(object : CustomTarget<Bitmap>() {
+                        override fun onResourceReady(
+                            resource: Bitmap,
+                            transition: Transition<in Bitmap>?
+                        ) {
+                            //builder.setLargeIcon(resource)
+                            //  notificationManager.notify(notificationId, builder.build())
+                            updateNotification(true, group.name, resource)
+                        }
+
+                        override fun onLoadCleared(placeholder: Drawable?) {}
+                    })
+            }
+
+
+        }
+    }
+
+
+    private fun stopPlaying(state: PlayerState) {
+        val group = state.stationGroups.getOrNull(state.currentGroupIndex) ?: return
+        Log.d("AudioPlayerService", "Stopping playback")
+        serviceScope.launch(Dispatchers.Main) {
+            exoPlayerManager.stopPlayer()
+        }
+        updateNotification(false, group.name, null)
     }
 
 
@@ -202,59 +247,7 @@ class AudioPlayerService : Service() {
         fun getService(): AudioPlayerService = this@AudioPlayerService
     }
 
-    override fun onBind(intent: Intent?): IBinder {
-        return binder
-    }
+    override fun onBind(intent: Intent?): IBinder = binder
 
 
-    override fun onDestroy() {
-        EventBus.getDefault().unregister(this)
-        serviceModel.clear()
-        exoPlayerManager.releasePlayer()
-        super.onDestroy()
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onPlayUrlEvent(event: PlayEvent) {
-       // Log.d("AudioPlayerService", "SERVICE: event = ${event}")
-        if (event is UIStatusEvent) {
-           // Log.d("AudioPlayerService", "event = ${event}")
-            activityStatus = event.activityStatus
-            serviceScope.launch {
-
-                exoPlayerManager.activityStatus = activityStatus
-
-                if(event.activityStatus == ActivityStatus.INVISIBLE) {
-
-                    val country = CurrentCountryManager.readCountry(this@AudioPlayerService)?.alpha2
-                        ?: CurrentCountryManager.DEFAULT_COUNTRY
-                    serviceModel.fetchStations(country, event.listType, event.station)
-                }else{
-                    val station = serviceModel.getCurrentStation()
-
-                    station?.let {
-
-                        EventBus.getDefault().post(PlayUrlEvent(station.url, station.name, "", station.favicon,
-                            PlayAction.Resume))
-                    }?:run {
-                      //  EventBus.getDefault().post(PlayUrlEvent(null, null, "", null,
-                       //     PlayAction.Pause))
-                    }
-
-                }
-            }
-
-        } else {
-            //Log.d("AudioPlayerService", "OnPLAY url event = ${event}")
-            exoPlayerManager.onPlayUrlEvent(event)
-           // updateNotification(isPlaying: Boolean)
-        }
-    }
-
-    private fun sendMessageToViewModel(playAction: PlayAction) {
-        EventBus.getDefault().post(PlayActionEvent(playAction, exoPlayerManager.lastPlayUrlEvent))
-    }
 }
-
-
