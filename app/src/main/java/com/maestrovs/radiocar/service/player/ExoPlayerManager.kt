@@ -8,6 +8,8 @@ import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Metadata
+import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.Log
@@ -15,6 +17,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.extractor.metadata.icy.IcyInfo
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.utils.isPlayableStream
@@ -61,7 +64,7 @@ class ExoPlayerManager @Inject constructor(
 
                 override fun onPause() {
                     super.onPause()
-                   // Log.d("AudioPlayerService","Bluetooth pause ")
+                    // Log.d("AudioPlayerService","Bluetooth pause ")
                     listener?.onPlayEvent(PlayAction.Pause)
                 }
 
@@ -77,36 +80,45 @@ class ExoPlayerManager @Inject constructor(
     }
 
     @OptIn(UnstableApi::class)
-    fun initializePlayer(listener: AudioPlayerListener) {
+    fun initializePlayer(listen: AudioPlayerListener) {
         if (exoPlayer == null) {
             val trackSelector = DefaultTrackSelector(context)
+
+
+
             exoPlayer = ExoPlayer.Builder(context) // ✅ Використовуємо новий Builder
                 .setTrackSelector(trackSelector)
                 .build()
+
         }
-        this.listener = listener
+        this.listener = listen
         exoPlayer?.addListener(this)
+        exoPlayer?.audioSessionId?.let { audioSessionId ->
+            listener?.onSetAudioPlayerSessionId(audioSessionId)
+        }
+
     }
 
     fun playUrl(url: String) {
 
 
         val isPlayableStream = isPlayableStream(url)
-       if(!isPlayableStream){
-           listener?.onPlayEvent(PlayAction.Error("Invalid stream", null))
-           return
-       }
+        if (!isPlayableStream) {
+            listener?.onPlayEvent(PlayAction.Error("Invalid stream", null))
+            return
+        }
 
         val gotFocus = audioFocusManager.requestAudioFocus()
         if (gotFocus) {
             exoPlayer?.playWhenReady = true
 
-                val mediaItem = MediaItem.Builder()
-                    .setUri(Uri.parse(url))
-                    .build()
-                exoPlayer?.setMediaItem(mediaItem)
-                exoPlayer?.prepare()
-                exoPlayer?.play()
+            val mediaItem = MediaItem.Builder()
+                .setUri(Uri.parse(url))
+                .setMimeType(MimeTypes.AUDIO_MPEG)
+                .build()
+            exoPlayer?.setMediaItem(mediaItem)
+            exoPlayer?.prepare()
+            exoPlayer?.play()
 
         }
     }
@@ -138,17 +150,41 @@ class ExoPlayerManager @Inject constructor(
             Player.STATE_BUFFERING -> {
                 listener?.onPlayEvent(PlayAction.Buffering(true))
             }
+
             Player.STATE_READY -> {
                 listener?.onPlayEvent(PlayAction.Buffering(false))
             }
+
             Player.STATE_ENDED -> {
                 //Log.d("ExoPlayerManager", "Playback ended")
             }
+
             Player.STATE_IDLE -> {
                 //Log.d("ExoPlayerManager", "Player is idle")
             }
         }
     }
+
+    override fun onAudioSessionIdChanged(sessionId: Int) {
+        if (sessionId != C.AUDIO_SESSION_ID_UNSET) {
+            listener?.onSetAudioPlayerSessionId(sessionId)
+        }
+    }
+
+
+
+    override fun onMetadata(metadata: Metadata) {
+        super.onMetadata(metadata)
+        for (i in 0 until metadata.length()) {
+            val entry = metadata[i]
+            if (entry is IcyInfo) {
+                val songTitle = entry.title
+                //Log.d("METADATA", "Now Playing: $songTitle ")
+                listener?.onSongMetadata(songTitle?:"UNKNOWN SONG")
+            }
+        }
+    }
+
 
 
 }

@@ -59,9 +59,10 @@ class AudioPlayerService : Service() {
         createNotificationChannel()
 
         observePlayerState()
-        observeBufferingState()
+        //observeBufferingState()
+        observeSongMetadata()
 
-        Log.d(TAG, "Service created, serviceModel = $serviceModel")
+       // Log.d(TAG, "Service created, serviceModel = $serviceModel")
 
         exoPlayerManager.initializePlayer(object : AudioPlayerListener {
             override fun onPlayEvent(playAction: PlayAction) {
@@ -80,7 +81,17 @@ class AudioPlayerService : Service() {
                     PlayAction.Resume -> PlayerStateManager.play()//Receiver commands from Bluetooth
                 }
             }
+
+            override fun onSetAudioPlayerSessionId(sessionId: Int) {
+                PlayerStateManager.setAudioSessionId(sessionId)
+            }
+
+            override fun onSongMetadata(metadata: String) {
+                PlayerStateManager.setSongMetadata(metadata)
+            }
         })
+
+
 
         // Запускаємо Foreground Service одразу
         startForegroundService()
@@ -144,7 +155,7 @@ class AudioPlayerService : Service() {
     }
 
 
-    private fun updateNotification(isPlaying: Boolean, stationName: String?, imageBitmap: Bitmap?) {
+    private fun updateNotification(isPlaying: Boolean, stationName: String?, imageBitmap: Bitmap?, songMetadata: String? = null) {
 
         val status = if (isPlaying) {
             NotificationStatus.Play
@@ -152,7 +163,7 @@ class AudioPlayerService : Service() {
             NotificationStatus.Pause
         }
         val notification =
-            playerNotificationManagerHelper.showNotification(status, stationName, imageBitmap)
+            playerNotificationManagerHelper.showNotification(status, stationName, imageBitmap, songMetadata)
         Log.d(TAG, "Updating notification, isPlaying: $isPlaying")
 
         val manager = getSystemService(NotificationManager::class.java)
@@ -170,19 +181,25 @@ class AudioPlayerService : Service() {
         super.onDestroy()
     }
 
-    private fun observeBufferingState() {
+    private fun observeGroupBitmap() {
+
         serviceScope.launch {
-            PlayerStateManager.isBufferingFlow.collect { isBuffering ->
-                Log.d("AudioPlayerService", "Buffering: $isBuffering")
-                if (isBuffering) {
-                    // Показати індикатор буферизації
-                } else {
-                    // Сховати індикатор
-                }
+            PlayerStateManager.bitmapFlow.collect { bitmap ->
+                val state = PlayerStateManager.playerState.value
+                updateNotification(state.isPlaying, state.currentGroup?.name, bitmap, state.songMetadata)
             }
         }
     }
 
+    private fun observeSongMetadata() {
+
+        serviceScope.launch {
+            PlayerStateManager.songMetadataFlow.collect { metadata ->
+                val state = PlayerStateManager.playerState.value
+                updateNotification(state.isPlaying, state.currentGroup?.name, state.bitmap, state.songMetadata)
+            }
+        }
+    }
 
     private fun observePlayerState() {
         serviceScope.launch {
@@ -207,7 +224,8 @@ class AudioPlayerService : Service() {
                 //val problemUrl = "https://765211.live.tvstitch.com/stream.m3u8?&m=aHR0cHM6Ly9zdHJlYW12aWRlby5sdXhuZXQudWEvbHV4X2Fkdi9tYXN0ZXIubTN1OA==&u=&channel=luxfm"
                 exoPlayerManager.playUrl(it.url)
             }
-            updateNotification(true, group.name, null)
+            //val state = PlayerStateManager.playerState.value
+            updateNotification(state.isPlaying, state.currentGroup?.name, state.bitmap, state.songMetadata)
 
 
             if (group.favicon != null) {
@@ -219,9 +237,7 @@ class AudioPlayerService : Service() {
                             resource: Bitmap,
                             transition: Transition<in Bitmap>?
                         ) {
-                            //builder.setLargeIcon(resource)
-                            //  notificationManager.notify(notificationId, builder.build())
-                            updateNotification(true, group.name, resource)
+                            PlayerStateManager.setBitmap(resource)
                         }
 
                         override fun onLoadCleared(placeholder: Drawable?) {}
@@ -239,7 +255,8 @@ class AudioPlayerService : Service() {
         serviceScope.launch(Dispatchers.Main) {
             exoPlayerManager.stopPlayer()
         }
-        updateNotification(false, group.name, null)
+        //val state = PlayerStateManager.playerState.value
+        updateNotification(state.isPlaying, state.currentGroup?.name, state.bitmap, state.songMetadata)
     }
 
 

@@ -1,5 +1,6 @@
 package com.maestrovs.radiocar.ui.main
 
+import android.Manifest
 import android.Manifest.permission.BLUETOOTH_CONNECT
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothProfile
@@ -112,6 +113,18 @@ class MainActivity : AppCompatActivity() {
             )
         } else {
             startLocationUpdates()
+        }
+
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.RECORD_AUDIO),
+                556//RECORD_AUDIO_PERMISSION_REQUEST_CODE
+            )
         }
 
 

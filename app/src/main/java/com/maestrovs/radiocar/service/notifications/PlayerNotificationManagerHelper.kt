@@ -44,7 +44,8 @@ class PlayerNotificationManagerHelper @Inject constructor(
     fun showNotification(
         notificationStatus: NotificationStatus,
         stationName: String?,
-        imageBitmap: Bitmap?
+        imageBitmap: Bitmap?,
+        songMetadata: String? = null
     ): Notification {
 
         val stopIntent =
@@ -109,11 +110,14 @@ class PlayerNotificationManagerHelper @Inject constructor(
             NotificationStatus.Pause -> "Play"
         }
 
+        val title = "Radio Car ${stationName ?: ""}"
+        val subtitle = songMetadata ?: ""
+
 
         val builder = NotificationCompat.Builder(context, "audio_player_channel")
             .setSmallIcon(R.drawable.ic_play_png)
-            .setContentTitle("Radio Car")
-            .setContentText(stationName ?: "")
+            .setContentTitle(title)
+            .setContentText(subtitle)
 
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

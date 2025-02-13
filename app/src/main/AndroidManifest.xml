@@ -6,6 +6,8 @@
     <!-- Request legacy Bluetooth permissions on older devices. -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
     <!--
  Needed only if your app looks for Bluetooth devices.
              If your app doesn't use Bluetooth scan results to derive physical

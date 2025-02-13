@@ -1,5 +1,7 @@
 package com.maestrovs.radiocar.manager
 
+import android.graphics.Bitmap
+import com.maestrovs.radiocar.data.entities.radio.BitrateOption
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.entities.radio.StationStream
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +22,13 @@ object PlayerStateManager {
             currentGroupIndex = 0,
             currentStationIndex = 0,
             stationGroups = emptyList(),
-            volume = 50
+            volume = 50,
+            isBuffering = false,
+            audioSessionId = null,
+            songMetadata = null,
+            preferredBitrateOption = BitrateOption.STANDARD,
+            bitmap = null,
+            error = null
         )
     )
     val playerState: StateFlow<PlayerState> = _playerState.asStateFlow()
@@ -35,6 +43,13 @@ object PlayerStateManager {
 
     val isBufferingFlow = playerState.map { it.isBuffering }.distinctUntilChanged()
     val volumeFlow = playerState.map { it.volume }.distinctUntilChanged()
+    val audioSessionIdFlow = playerState.map { it.audioSessionId }.distinctUntilChanged()
+    val songMetadataFlow = playerState.map { it.songMetadata }.distinctUntilChanged()
+
+    val bitmapFlow = playerState.map { it.bitmap }.distinctUntilChanged()
+    val errorFlow = playerState.map { it.error }.distinctUntilChanged()
+
+    val preferredBitrateOptionFlow = playerState.map { it.preferredBitrateOption }.distinctUntilChanged()
 
     fun updateStation(stationStream: StationStream) {
         val state = _playerState.value
@@ -59,7 +74,9 @@ object PlayerStateManager {
         if (groupIndex != -1) {
             _playerState.value = state.copy(
                 currentGroupIndex = groupIndex,
-                currentStationIndex = 0 // Завжди починаємо з першого потоку у групі
+                currentStationIndex = 0, // Завжди починаємо з першого потоку у групі
+                //bitmap = null,
+
             )
         }
     }
@@ -79,6 +96,8 @@ object PlayerStateManager {
             )
         }
     }
+
+
 
    /* fun nextStationStream() {
         val state = _playerState.value
@@ -110,14 +129,14 @@ object PlayerStateManager {
         val state = _playerState.value
         val newIndex = state.currentGroupIndex + 1
         if (newIndex < state.stationGroups.size) {
-            _playerState.value = state.copy(currentGroupIndex = newIndex, currentStationIndex = 0)
+            _playerState.value = state.copy(currentGroupIndex = newIndex, currentStationIndex = 0, bitmap = null,)
         }
     }
 
     fun prev() {
         val state = _playerState.value
         if (state.currentGroupIndex > 0) {
-            _playerState.value = state.copy(currentGroupIndex = state.currentGroupIndex - 1, currentStationIndex = 0)
+            _playerState.value = state.copy(currentGroupIndex = state.currentGroupIndex - 1, currentStationIndex = 0, bitmap = null,)
         }
     }
 
@@ -142,4 +161,25 @@ object PlayerStateManager {
     fun setBuffering(isBuffering: Boolean) {
         _playerState.value = _playerState.value.copy(isBuffering = isBuffering)
     }
+
+    fun setAudioSessionId(audioSessionId: Int?) {
+        _playerState.value = _playerState.value.copy(audioSessionId = audioSessionId)
+    }
+
+    fun setSongMetadata(metadata: String?) {
+        _playerState.value = _playerState.value.copy(songMetadata = metadata)
+    }
+
+    fun setBitmap(bitmap: Bitmap?) {
+        _playerState.value = _playerState.value.copy(bitmap = bitmap)
+    }
+
+    fun setError(error: String?) {
+        _playerState.value = _playerState.value.copy(error = error)
+    }
+
+    fun setPreferredBitrateOption(bitrateOption: BitrateOption) {
+        _playerState.value = _playerState.value.copy(preferredBitrateOption = bitrateOption)
+    }
+
 }

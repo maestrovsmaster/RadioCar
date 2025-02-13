@@ -62,6 +62,8 @@ class RadioViewModel @Inject constructor(
     }
 
 
+
+
     private fun processResources(response: Resource<List<StationGroup>>) {
         _isLoading.value = false
         when (response.status) {
@@ -80,12 +82,12 @@ class RadioViewModel @Inject constructor(
         }
     }
 
-    fun playStream(stationGroup: StationGroup) {
+   /* fun playStream(stationGroup: StationGroup) {
         if (stationGroup.streams.isNotEmpty()) {
             PlayerStateManager.updateStation(stationGroup.streams.first())
             PlayerStateManager.play()
         }
-    }
+    }*/
 
     fun playGroup(stationGroup: StationGroup) {
         if (stationGroup.streams.isNotEmpty()) {
