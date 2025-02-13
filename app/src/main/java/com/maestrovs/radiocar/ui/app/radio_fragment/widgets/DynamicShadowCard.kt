@@ -34,7 +34,7 @@ fun DynamicShadowCard(modifier: Modifier = Modifier,
                 spotColor = shadowColor
             )
             .background(backgroundColor, shape = RoundedCornerShape(16.dp))
-            .padding(16.dp)
+
     ) {
         content()
     }

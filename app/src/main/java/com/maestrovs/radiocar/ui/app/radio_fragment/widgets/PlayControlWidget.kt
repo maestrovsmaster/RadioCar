@@ -32,6 +32,7 @@ import com.maestrovs.radiocar.ui.app.ui.theme.baseBlueLight
 
 @Composable
 fun PlayControlWidget(
+    modifier: Modifier = Modifier,
     isPlaying: Boolean,
     isLoading: Boolean = false,
     onPrevClick: () -> Unit,
@@ -41,7 +42,7 @@ fun PlayControlWidget(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
 
         val tintColor = baseBlueLight.copy(alpha = 0.95f)

@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,6 +25,7 @@ import com.maestrovs.radiocar.manager.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.MediumPlayerWidget
 
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.MiniPlayerWidget
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.StationsListWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreen
 import com.maestrovs.radiocar.ui.app.ui.theme.primary
@@ -42,7 +44,8 @@ fun RadioScreen(
 
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Compose Fragment") }) }
+        containerColor = Color.Black,
+     //   topBar = { TopAppBar(title = { Text("Compose Fragment") }) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -51,20 +54,21 @@ fun RadioScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Hello from Compose!", fontSize = 24.sp)
 
-            if(playerState.audioSessionId != null){
-                Log.d("RadioScreen","AudioSessionId = ${playerState.audioSessionId}")
-             //   AudioVisualizerScreen(audioSessionId = playerState.audioSessionId!!)
-            }
+            // Плеєр внизу
+            MediumPlayerWidget(viewModel = viewModel)
 
-            Box(modifier = Modifier.fillMaxSize().background(color = primary)) {
+            StationsListWidget(RadioViewModel(
+                FakeStationRepository()
+            ))
+
                 // Основний UI
               //  AudioVisualizerScreen(audioSessionId: Int)
 
-                // Плеєр внизу
-                MediumPlayerWidget(viewModel = viewModel)
-            }
+
+
+
+
         }
     }
 }

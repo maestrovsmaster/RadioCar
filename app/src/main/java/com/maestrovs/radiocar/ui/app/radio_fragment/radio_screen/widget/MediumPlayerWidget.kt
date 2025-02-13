@@ -36,6 +36,8 @@ import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
 import com.maestrovs.radiocar.manager.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.RadioScreen
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.widgets.BackgroundCover
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.widgets.ControlBackground
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreen
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
@@ -53,10 +55,10 @@ fun MediumPlayerWidget(
 ) {
     val playerState by PlayerStateManager.playerState.collectAsStateWithLifecycle()
 
-   // if (playerState.currentStation == null) return // Не показуємо, якщо станції нема
+    // if (playerState.currentStation == null) return // Не показуємо, якщо станції нема
 
 
-    Log.d("MiniPlayerWidget","MiniPlayerWidget stationGroup = ${playerState.currentGroup}")
+    Log.d("MiniPlayerWidget", "MiniPlayerWidget stationGroup = ${playerState.currentGroup}")
 
     Box(
         modifier = Modifier
@@ -67,16 +69,32 @@ fun MediumPlayerWidget(
         //contentAlignment = Alignment.Center
     ) {
 
-        DynamicShadowCard(modifier = Modifier
-           // .padding(16.dp)
-            .fillMaxSize(), contentColor = Color.White, backgroundColor = primary ) {
+        DynamicShadowCard(
+            modifier = Modifier
+                // .padding(16.dp)
+                .fillMaxSize(), contentColor = primary, backgroundColor = primary
+        ) {
+
+             playerState.currentGroup?.favicon?.let{ imgUrl ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    //.background(Color.Green)
+                    //.padding(bottom = 40.dp, top = 0.dp, )
+            ) {
+                 BackgroundCover(imageUrl = imgUrl)
+            }
 
 
+             }
 
+            ControlBackground()
 
             // Назва станції (внизу від кнопок)
             Column(
-                modifier = Modifier.align(Alignment.TopStart),
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
@@ -93,33 +111,38 @@ fun MediumPlayerWidget(
                 )
             }
 
-            if(playerState.audioSessionId != null){
-                Box(modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 66.dp)
+            if (playerState.audioSessionId != null) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 50.dp)
+                        .padding(16.dp)
                 ) {
                     AudioVisualizerScreen(audioSessionId = playerState.audioSessionId!!)
                 }
             }
 
 
-            Box(modifier = Modifier.align(Alignment.BottomCenter)
-            ) {
-                PlayControlWidget(
-                    isPlaying = playerState.isPlaying,
-                    isLoading = playerState.isBuffering,
-                    onPrevClick = {
-                        viewModel.prev()
-                    },
-                    onPlayPauseClick = {
-                        if (playerState.isPlaying) viewModel.stop() else viewModel.playGroup(
-                            playerState.currentGroup!!
-                        )
-                    },
-                    onNextClick = {
-                        viewModel.next()
-                    })
-            }
-        }
 
+            PlayControlWidget(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp),
+                isPlaying = playerState.isPlaying,
+                isLoading = playerState.isBuffering,
+                onPrevClick = {
+                    viewModel.prev()
+                },
+                onPlayPauseClick = {
+                    if (playerState.isPlaying) viewModel.stop() else viewModel.playGroup(
+                        playerState.currentGroup!!
+                    )
+                },
+                onNextClick = {
+                    viewModel.next()
+                })
+
+        }
 
 
     }
@@ -127,7 +150,7 @@ fun MediumPlayerWidget(
 
 @Composable
 @Preview
-fun MediumPlayerWidgetPreview(){
+fun MediumPlayerWidgetPreview() {
 
     MediumPlayerWidget(
         RadioViewModel(

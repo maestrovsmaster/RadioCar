@@ -37,15 +37,28 @@ fun AudioSpectrumBarGraphMini(
     Canvas(modifier = modifier.fillMaxSize()) {
         val barWidth = size.width / fftData.size
         val maxHeight = size.height
-        val segmentHeight = maxHeight / 20  // Discrets
+
+        val barHeight = 0.73f * maxHeight
+
+        val shadowHeight = 0.27f * maxHeight
+
+        //First draw main bar
+
+        val segmentHeight = barHeight / 20  // Discrets
+
+       /* drawRect(
+            color = Color.DarkGray,
+            topLeft = Offset(0f, 0f),
+            size = Size(size.width, maxHeight) // Додаємо зазор між сегментами
+        )*/
 
         animatedValues.forEachIndexed { index, animatable ->
 
-            val height = (animatable.value / fftData.maxOrNull()!! * maxHeight).coerceIn(0f, maxHeight)
+            val height = (animatable.value / fftData.maxOrNull()!! * barHeight).coerceIn(0f, barHeight)
             val segmentCount = (height / segmentHeight).toInt()
                 // Log.d("AudioSpectrumBarGraphMini", "animatable = ${animatable.value}  segmentCount = ${segmentCount}   fftData.maxOrNull()!! = ${fftData.maxOrNull()!!}")
             repeat(segmentCount) { segmentIndex ->
-                val yOffset = maxHeight - (segmentIndex + 1) * segmentHeight
+                val yOffset = barHeight - (segmentIndex + 1) * segmentHeight
 
                 val colorRatio = segmentIndex.toFloat() / segmentCount.toFloat()
                 val segmentColor = Color(
@@ -61,6 +74,35 @@ fun AudioSpectrumBarGraphMini(
                 )
             }
         }
+
+
+        //Then we draw a shadow bar
+
+        val shadowSegmentHeight = shadowHeight / 20  // Discrets
+
+        animatedValues.forEachIndexed { index, animatable ->
+
+            val height = (animatable.value / fftData.maxOrNull()!! * shadowHeight).coerceIn(0f, shadowHeight)
+            val segmentCount = (height / shadowSegmentHeight).toInt()
+            // Log.d("AudioSpectrumBarGraphMini", "animatable = ${animatable.value}  segmentCount = ${segmentCount}   fftData.maxOrNull()!! = ${fftData.maxOrNull()!!}")
+            repeat(segmentCount) { segmentIndex ->
+                val yOffset = barHeight + (segmentIndex + 1) * shadowSegmentHeight
+
+                val colorRatio = segmentIndex.toFloat() / segmentCount.toFloat()
+                val segmentColor = Color(
+                    red = (0f + (1f - colorRatio) * 0.3f),  // Менше червоного (зеленіє)
+                    green = (0.5f + (1f - colorRatio) * 0.5f),  // Спад зеленого
+                    blue = (1f - (1f - colorRatio) * 0.3f),  // Більше синього
+                    alpha = 1f - colorRatio * 0.6f // Прозорість з висотою
+                )
+                drawRect(
+                    color = segmentColor,
+                    topLeft = Offset(index * barWidth, yOffset),
+                    size = Size(barWidth - 2, shadowSegmentHeight - 2) // Додаємо зазор між сегментами
+                )
+            }
+        }
+
     }
 }
 
