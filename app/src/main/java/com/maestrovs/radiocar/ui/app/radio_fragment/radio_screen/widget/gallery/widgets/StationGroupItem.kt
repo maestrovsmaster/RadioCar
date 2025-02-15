@@ -18,10 +18,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.entities.radio.StationStream
-import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.widgets.BackgroundCover
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
 import com.maestrovs.radiocar.ui.app.ui.theme.primary
-import kotlinx.coroutines.launch
 
 /**
  * Created by maestromaster$ on 13/02/2025$.

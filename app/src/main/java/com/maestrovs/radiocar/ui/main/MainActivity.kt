@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothProfile
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Build
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var locationCallback: LocationCallback
 
     private  var bluetoothStatusReceiver: BluetoothStatusReceiver? = null
-
+    private var isReceiverRegistered = false
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -70,7 +71,7 @@ class MainActivity : AppCompatActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
-    val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+    val bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
 
     companion object {
@@ -206,6 +207,10 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         Log.d("MainActivity22","MainActivity_onResume")
         mainViewModel.updateActivityStatus(ActivityStatus.VISIBLE)
+
+        val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
+        registerReceiver(bluetoothStatusReceiver, filter)
+        isReceiverRegistered = true
     }
 
     override fun onStop() {
@@ -213,10 +218,23 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.updateActivityStatus(ActivityStatus.INVISIBLE)
     }
 
+    override fun onPause() {
+        super.onPause()
+        // Unregister the receiver
+        if (isReceiverRegistered) {
+            unregisterReceiver(bluetoothStatusReceiver)
+            isReceiverRegistered = false
+        }
+    }
+
+
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(bluetoothStatusReceiver)
+        if (isReceiverRegistered) {
+            unregisterReceiver(bluetoothStatusReceiver)
+            isReceiverRegistered = false
+        }
     }
 
 

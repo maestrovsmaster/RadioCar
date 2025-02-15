@@ -29,7 +29,7 @@ class AudioVisualizer(private val audioSessionId: Int, private val  step: Int = 
                     ) {
                         fft?.let { processFFT(it) }
                     }
-                }, Visualizer.getMaxCaptureRate(), false, true)
+                }, Visualizer.getMaxCaptureRate() / 3, false, true)
                 enabled = true
             }
             visualizer?.enabled = true
@@ -42,16 +42,7 @@ class AudioVisualizer(private val audioSessionId: Int, private val  step: Int = 
     private val _spectrumData = mutableStateOf<List<Float>>(emptyList())
     val spectrumData: State<List<Float>> = _spectrumData
 
-   /* private fun processFFT(fft: ByteArray) {
-        val magnitudes = mutableListOf<Float>()
-        for (i in 0 until fft.size / 2 step step) {
-            val real = fft[i].toFloat()
-            val imaginary = fft[i + 1].toFloat()
-            val magnitude = sqrt(real * real + imaginary * imaginary)
-            magnitudes.add(magnitude)
-        }
-        _spectrumData.value = magnitudes
-    }*/
+
 
     private fun processFFT(fft: ByteArray, smoothFactor: Float = 0.5f) {
         val magnitudes = mutableListOf<Float>()

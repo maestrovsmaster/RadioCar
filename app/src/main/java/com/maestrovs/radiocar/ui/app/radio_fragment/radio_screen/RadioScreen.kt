@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -18,14 +21,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
 import com.maestrovs.radiocar.manager.PlayerStateManager
-import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.MediumPlayerWidget
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.StationsListWidget
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.MediumPlayerWidget
 
-import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.MiniPlayerWidget
-import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.StationsListWidget
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.RadioDriverWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreen
 import com.maestrovs.radiocar.ui.app.ui.theme.primary
@@ -37,7 +41,7 @@ import com.maestrovs.radiocar.ui.app.ui.theme.primary
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RadioScreen(
-    viewModel: RadioViewModel
+    viewModel: RadioViewModel,
 ) {
 
     val playerState by PlayerStateManager.playerState.collectAsStateWithLifecycle()
@@ -51,21 +55,22 @@ fun RadioScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+
         ) {
 
-            // Плеєр внизу
+
+           // RadioDriverWidget(viewModel = viewModel)
+
+
+
             MediumPlayerWidget(viewModel = viewModel)
 
-            StationsListWidget(RadioViewModel(
+            StationsListWidget(modifier = Modifier//align(Alignment.BottomCenter),
+                ,
+
+                RadioViewModel(
                 FakeStationRepository()
             ))
-
-                // Основний UI
-              //  AudioVisualizerScreen(audioSessionId: Int)
-
-
 
 
 

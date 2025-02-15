@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.widgets
+package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget
 
 /**
  * Created by maestromaster$ on 13/02/2025$.
@@ -14,7 +14,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
