@@ -4,6 +4,9 @@ import android.media.audiofx.Visualizer
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
+import com.maestrovs.radiocar.manager.audio_visual.AudioVisualizerStateManager
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.lang.Math.log1p
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -12,7 +15,7 @@ import kotlin.math.sqrt
  * Created by maestromaster$ on 12/02/2025$.
  */
 
-class AudioVisualizer(private val audioSessionId: Int, private val  step: Int = 2) {
+class AudioVisualizer(val audioSessionId: Int, private val  step: Int = 2) {
     private var visualizer: Visualizer? = null
 
     init {
@@ -39,8 +42,11 @@ class AudioVisualizer(private val audioSessionId: Int, private val  step: Int = 
 
     }
 
-    private val _spectrumData = mutableStateOf<List<Float>>(emptyList())
-    val spectrumData: State<List<Float>> = _spectrumData
+  // private val _spectrumData = mutableStateOf<List<Float>>(emptyList())
+   // val spectrumData: State<List<Float>> = _spectrumData
+
+    //private val _spectrumData = MutableStateFlow<List<Float>>(emptyList())
+   // val spectrumData: StateFlow<List<Float>> = _spectrumData
 
 
 
@@ -69,7 +75,9 @@ class AudioVisualizer(private val audioSessionId: Int, private val  step: Int = 
 
             magnitudes.add(magnitude)
         }
-        _spectrumData.value = magnitudes
+        //_spectrumData.value = magnitudes
+
+        AudioVisualizerStateManager.updateSpectrumData(magnitudes)
     }
 
 }

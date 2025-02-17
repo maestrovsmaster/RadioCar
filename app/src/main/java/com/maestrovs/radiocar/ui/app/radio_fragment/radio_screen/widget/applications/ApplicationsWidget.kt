@@ -64,9 +64,9 @@ fun ApplicationsWidget(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(320.dp)
+            //.height(320.dp)
             //.background(Color.Black)
-            .padding(16.dp),
+           // .padding(16.dp),
         //contentAlignment = Alignment.Center
     ) {
 

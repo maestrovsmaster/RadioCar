@@ -17,10 +17,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.CenteredCarousel
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.ListTypeSelector
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
 import com.maestrovs.radiocar.ui.app.ui.theme.primary
 import com.maestrovs.radiocar.ui.app.ui.theme.primaryDark
+import com.maestrovs.radiocar.ui.radio.ListType
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.ExtendSearchButtonWidget
+
 
 /**
  * Created by maestromaster$ on 13/02/2025$.
@@ -28,18 +34,20 @@ import com.maestrovs.radiocar.ui.app.ui.theme.primaryDark
 
 @Composable
 fun StationsListWidget(
+    viewModel: RadioViewModel,
     modifier: Modifier = Modifier,
-    viewModel: RadioViewModel
-    ) {
+) {
+
+    val currentListType by viewModel.currentListType.collectAsState() // або by viewModel.currentListType.value
 
     val playerState by PlayerStateManager.playerState.collectAsStateWithLifecycle()
     Box(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             //.width(250.dp)
-            .height(150.dp)
-           // .background(Color.Black)
-            .padding(16.dp)
-            ,
+            .height(150.dp),
+        // .background(Color.Black)
+        //.padding(16.dp)
         //contentAlignment = Alignment.Center
     ) {
 
@@ -50,16 +58,19 @@ fun StationsListWidget(
         ) {
 
 
+            CenteredCarousel(
+                items = playerState.stationGroups,
+                modifier = Modifier.fillMaxWidth(),
+                onItemClick = {
+                    viewModel.playGroup(it)
 
-            CenteredCarousel(items = playerState.stationGroups, modifier = Modifier.fillMaxWidth(), onItemClick = {
-                viewModel.playGroup(it)
+                })
 
-            })
 
-        
 
-            Box(
-                modifier = Modifier.fillMaxSize()
+           /* Box(
+                modifier = Modifier
+                    .fillMaxSize()
                     .background(
                         brush = Brush.horizontalGradient(
                             colors = listOf(
@@ -68,14 +79,21 @@ fun StationsListWidget(
                                 Color(0x90182325)
                             ),
                             //startY = 0f,
-                           // endY = 800f
+                            // endY = 800f
                         )
                     )
+            )*/
+
+            ListTypeSelector(
+                currentListType = currentListType,
+                onChangeType = {
+                    viewModel.setListType(it)
+                }
             )
 
-
-
-
+            ExtendSearchButtonWidget(modifier = Modifier.align(Alignment.CenterEnd),
+                onClick = { }
+            )
 
 
         }
@@ -88,9 +106,11 @@ fun StationsListWidget(
 @Preview
 fun StationsListWidgetPreview() {
 
-    StationsListWidget(modifier = Modifier,
+    StationsListWidget(
         RadioViewModel(
-        FakeStationRepository()
-    ))
+            FakeStationRepository()
+        ),
+        modifier = Modifier,
+    )
 
 }

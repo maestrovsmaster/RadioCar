@@ -20,9 +20,9 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun DigitalWeatherWidget(temperature: Double, unit: String, color: Color = Color.Cyan) {
     Box(
-        modifier = Modifier
+        modifier = Modifier,
             //.background(Color.Black)
-            .padding(8.dp),
+            //.padding(8.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(

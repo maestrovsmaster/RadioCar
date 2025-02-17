@@ -49,7 +49,8 @@ fun StationGroupItem(
         DynamicShadowCard(
             modifier = Modifier
                 // .padding(16.dp)
-                .fillMaxSize(), contentColor = Color.White, backgroundColor = primary
+                .fillMaxSize(), contentColor = primary, backgroundColor = primary,
+            elevation = 5
         ) {
 
             item.favicon?.let{ imgUrl ->

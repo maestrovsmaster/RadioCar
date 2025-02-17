@@ -21,6 +21,7 @@ data class PlayerState(
     val bitmap: Bitmap? = null,
     val preferredBitrateOption: BitrateOption = BitrateOption.STANDARD,
     val error: String? = null,
+    val isLiked: Boolean = false
 ) {
     val currentGroup: StationGroup?
         get() = stationGroups.getOrNull(currentGroupIndex)

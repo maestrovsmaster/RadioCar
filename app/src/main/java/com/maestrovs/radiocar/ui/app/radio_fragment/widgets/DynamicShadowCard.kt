@@ -22,13 +22,16 @@ import androidx.compose.ui.unit.dp
 fun DynamicShadowCard(modifier: Modifier = Modifier,
     contentColor: Color,
                       backgroundColor: Color = Color.White,
-                      content: @Composable () -> Unit) {
+                      elevation: Int = 10,
+                      content: @Composable () -> Unit,
+
+) {
     val shadowColor = contentColor.copy(alpha = 1.0f)
 
     Box(
         modifier = modifier
             .shadow(
-                elevation = 10.dp,
+                elevation = elevation.dp,
                 shape = RoundedCornerShape(16.dp),
                 ambientColor = shadowColor,
                 spotColor = shadowColor

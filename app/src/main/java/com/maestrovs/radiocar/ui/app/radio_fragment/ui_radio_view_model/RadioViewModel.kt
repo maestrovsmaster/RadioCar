@@ -4,6 +4,7 @@ package com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model
  * Created by maestromaster$ on 10/02/2025$.
  */
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
+import com.maestrovs.radiocar.ui.radio.ListType
 import com.maestrovs.radiocar.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -21,6 +23,15 @@ import javax.inject.Inject
 class RadioViewModel @Inject constructor(
     private val repository: StationRepository
 ) : ViewModel() {
+
+    private val _currentListType = MutableStateFlow<ListType>(ListType.All)
+    val currentListType: StateFlow<ListType> = _currentListType
+
+
+    fun setListType(type: ListType) {
+        _currentListType.value = type
+        fetchStations()
+    }
 
     private val _stations = MutableLiveData<List<StationGroup>>()
     val stations: LiveData<List<StationGroup>> = _stations
@@ -38,9 +49,19 @@ class RadioViewModel @Inject constructor(
 
 
     fun fetchStations() {
+       // Log.d("RadioViewModel", "fetchStations() called")
+        _errorMessage.value = null
+        _isLoading.value = true
         viewModelScope.launch {
-            repository.getGroupedStationsFlow(offset = 0, limit = 100, countryCode = "UA") //getStationsByNameGroup("хіт фм")
-                .collectLatest { resource ->
+
+            val flow = when (_currentListType.value) {
+                ListType.All -> repository.getGroupedStationsFlow(offset = 0, limit = 100, countryCode = "UA")
+                ListType.Recent -> repository.getRecentGroupedStationsFlow()
+                ListType.Favorites -> repository.getFavoritesGroupedStationsFlow()
+                else -> repository.getGroupedStationsFlow(offset = 0, limit = 100, countryCode = "UA")
+            }
+
+            flow.collectLatest { resource ->
                     processResources(resource)
                 }
         }

@@ -31,12 +31,12 @@ fun AudioSpectrumBarGraphMini(
             transition.animateFloat(
                 transitionSpec = { tween(durationMillis = 180) },
                 label = "bar_$index"
-            ) { it.getOrNull(index) ?: 0f } // Захист від OutOfBounds
+            ) { it.getOrNull(index) ?: 0f }
         }
     } else {
         emptyList()
     }
-
+    //Log.d("MediumPlayerWidget", "playerState.AudioVisualizerScreen  animatedValues= ${animatedValues.size}")
 
     val maxFft = remember(fftData) { fftData.maxOrNull() ?: 1f }
 
@@ -44,7 +44,7 @@ fun AudioSpectrumBarGraphMini(
         val barWidth = size.width / fftData.size
         val barHeight = size.height * 0.73f
         val shadowHeight = size.height * 0.27f
-        val segmentHeight = barHeight / 10  // Дискретні рівні
+        val segmentHeight = barHeight / 10
         val shadowSegmentHeight = shadowHeight / 10
 
         animatedValues.forEachIndexed { index, animatable ->
@@ -53,32 +53,32 @@ fun AudioSpectrumBarGraphMini(
 
             val segmentCount = (height / segmentHeight).toInt()
 
-            // 🎨 Малюємо головний бар, сегментами
+
             repeat(segmentCount) { segmentIndex ->
                 val yOffset = barHeight - (segmentIndex + 1) * segmentHeight
 
                 val colorRatio = segmentIndex.toFloat() / segmentCount.toFloat()
                 val segmentColor = Color(
-                    red = (0f + (1f - colorRatio) * 0.3f),  // Менше червоного (зеленіє)
-                    green = (0.5f + (1f - colorRatio) * 0.5f),  // Спад зеленого
-                    blue = (1f - (1f - colorRatio) * 0.3f),  // Більше синього
-                    alpha = 1f - colorRatio * 0.6f // Прозорість з висотою
+                    red = (0f + (1f - colorRatio) * 0.3f),
+                    green = (0.5f + (1f - colorRatio) * 0.5f),
+                    blue = (1f - (1f - colorRatio) * 0.3f),
+                    alpha = 1f - colorRatio * 0.6f
                 )
                 drawRect(
                     color = segmentColor,
                     topLeft = Offset(index * barWidth, yOffset),
-                    size = Size(barWidth - 2, segmentHeight - 2) // Додаємо зазор між сегментами
+                    size = Size(barWidth - 2, segmentHeight - 2)
                 )
             }
 
-            // 🎨 Малюємо тінь нижче головного бару
+            //Shadow
             val shadowSegmentCount = (shadowHeightAdj / shadowSegmentHeight).toInt()
 
             repeat(shadowSegmentCount) { segmentIndex ->
                 val yOffset = barHeight + (segmentIndex + 1) * shadowSegmentHeight
 
                 val colorRatio = segmentIndex.toFloat() / shadowSegmentCount.toFloat()
-                val shadowColor = Color.Gray.copy(alpha = 0.2f - colorRatio * 0.1f) // Плавне затухання
+                val shadowColor = Color.Gray.copy(alpha = 0.2f - colorRatio * 0.1f)
 
                 drawRect(
                     color = shadowColor,

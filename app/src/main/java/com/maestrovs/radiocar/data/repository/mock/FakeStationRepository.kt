@@ -43,6 +43,14 @@ class FakeStationRepository : StationRepository() {
         TODO("Not yet implemented")
     }
 
+    override fun getRecentGroupedStationsFlow(): Flow<Resource<List<StationGroup>>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getFavoritesGroupedStationsFlow(): Flow<Resource<List<StationGroup>>> {
+        TODO("Not yet implemented")
+    }
+
     override fun getStationsFlow(countryCode: String): Flow<Resource<List<Station>>> {
         TODO("Not yet implemented")
     }

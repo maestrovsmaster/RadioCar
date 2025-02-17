@@ -40,8 +40,9 @@ import com.maestrovs.radiocar.ui.settings.SpeedUnit
 
 @Composable
 fun RadioDriverWidget(
-    modifier: Modifier = Modifier,
+
     viewModel: RadioViewModel,
+    modifier: Modifier = Modifier,
 ) {
 
     val playerState by PlayerStateManager.playerState.collectAsStateWithLifecycle()
@@ -57,17 +58,17 @@ fun RadioDriverWidget(
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .height(280.dp)
+            //.fillMaxWidth()
+            //.height(280.dp)
             //.background(Color.Black)
-            .padding(16.dp),
+            //.padding(16.dp),
         //contentAlignment = Alignment.Center
     ) {
 
         DynamicShadowCard(
             modifier = Modifier
                 // .padding(16.dp)
-                .fillMaxSize(), contentColor = primary, backgroundColor = Color.DarkGray
+                , contentColor = primary, backgroundColor = Color.DarkGray
         ) {
             LottieLoader()
 
@@ -77,7 +78,7 @@ fun RadioDriverWidget(
             Box(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .padding(start = 50.dp, top = 40.dp),
+                    .padding(start = 30.dp, top = 40.dp),
 
                 ) {
                 SevenSegmentSpeedometer(locationState.speed.toInt(), "mph", Color.White, )

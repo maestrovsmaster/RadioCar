@@ -28,7 +28,8 @@ object PlayerStateManager {
             songMetadata = null,
             preferredBitrateOption = BitrateOption.STANDARD,
             bitmap = null,
-            error = null
+            error = null,
+            isLiked = false
         )
     )
     val playerState: StateFlow<PlayerState> = _playerState.asStateFlow()
@@ -50,6 +51,8 @@ object PlayerStateManager {
     val errorFlow = playerState.map { it.error }.distinctUntilChanged()
 
     val preferredBitrateOptionFlow = playerState.map { it.preferredBitrateOption }.distinctUntilChanged()
+
+    val isLikedFlow = playerState.map { it.isLiked }.distinctUntilChanged()
 
     fun updateStation(stationStream: StationStream) {
         val state = _playerState.value
@@ -180,6 +183,10 @@ object PlayerStateManager {
 
     fun setPreferredBitrateOption(bitrateOption: BitrateOption) {
         _playerState.value = _playerState.value.copy(preferredBitrateOption = bitrateOption)
+    }
+
+    fun setLiked(isLiked: Boolean) {
+        _playerState.value = _playerState.value.copy(isLiked = isLiked)
     }
 
 }

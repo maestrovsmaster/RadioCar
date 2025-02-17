@@ -34,6 +34,8 @@ abstract class StationRepository(){
     abstract fun getStationsByName(searchterm: String):  LiveData<Resource<List<Station>>>
     abstract fun getGroupedStationsFlow(countryCode: String, offset: Int = 0, limit: Int = Constants.PAGE_SIZE): Flow<Resource<List<StationGroup>>>
     abstract fun getStationsByNameGroup(searchterm: String): Flow<Resource<List<StationGroup>>>
+    abstract fun getRecentGroupedStationsFlow(): Flow<Resource<List<StationGroup>>>
+    abstract fun getFavoritesGroupedStationsFlow(): Flow<Resource<List<StationGroup>>>
     abstract fun getStationsFlow(countryCode: String): Flow<Resource<List<Station>>>
     abstract fun getCombinedRecentAndAllStationsFlow(countryCode: String): Flow<List<Station>>
     abstract fun getCombinedFavoritesAndAllStationsFlow(countryCode: String): Flow<List<Station>>
@@ -109,8 +111,14 @@ abstract class StationRepository(){
     fun getRecentStationsFlow() = performLocalGetOperationFlow(databaseQuery = {
         localDataSource.getRecentStationsFlow() })
 
+     override fun getRecentGroupedStationsFlow() = performLocalGetOperationFlow(databaseQuery = {
+         localDataSource.getRecentStationsFlow().map { it.toGroupedStations() }  })
+
      override fun getFavoritesStations() = performLocalGetOperation(databaseQuery = {
         localDataSource.getFavoritesStations() })
+
+     override fun getFavoritesGroupedStationsFlow() = performLocalGetOperationFlow(databaseQuery = {
+         localDataSource.getRecentStationsFlow().map { it.toGroupedStations() }  })
 
     fun getFavoritesStationsFlow(): Flow<Resource<List<Station>>> =
         performLocalGetOperationFlow(databaseQuery = { localDataSource.getFavoritesStationsFlow() })
