@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.manager
+package com.maestrovs.radiocar.manager.radio
 
 import android.graphics.Bitmap
 import com.maestrovs.radiocar.data.entities.radio.BitrateOption

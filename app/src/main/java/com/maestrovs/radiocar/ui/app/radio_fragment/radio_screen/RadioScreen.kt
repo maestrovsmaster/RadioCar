@@ -1,38 +1,32 @@
 package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen
 
-import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
-import com.maestrovs.radiocar.manager.PlayerStateManager
+import com.maestrovs.radiocar.manager.radio.PlayerStateManager
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.applications.ApplicationsWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.StationsListWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.MediumPlayerWidget
-
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.RadioDriverWidget
+
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreen
-import com.maestrovs.radiocar.ui.app.ui.theme.primary
 
 /**
  * Created by maestromaster on 10/02/2025.
@@ -42,6 +36,7 @@ import com.maestrovs.radiocar.ui.app.ui.theme.primary
 @Composable
 fun RadioScreen(
     viewModel: RadioViewModel,
+    navController: NavController,
 ) {
 
     val playerState by PlayerStateManager.playerState.collectAsStateWithLifecycle()
@@ -59,11 +54,16 @@ fun RadioScreen(
         ) {
 
 
-           // RadioDriverWidget(viewModel = viewModel)
+            RadioDriverWidget(viewModel = viewModel)
 
 
+            Row(modifier = Modifier.fillMaxWidth()) {
+                MediumPlayerWidget(viewModel = viewModel)
+                //Spacer(modifier = Modifier.requiredWidth(16.dp)) // можна додати відстань між A та B
+                ApplicationsWidget(navController , modifier = Modifier.weight(1f))
+            }
 
-            MediumPlayerWidget(viewModel = viewModel)
+
 
             StationsListWidget(modifier = Modifier//align(Alignment.BottomCenter),
                 ,
@@ -85,6 +85,6 @@ fun RadioScreenPreview(){
     RadioScreen(
         RadioViewModel(
             FakeStationRepository()
-        )
+        ), NavController(LocalContext.current)
     )
 }

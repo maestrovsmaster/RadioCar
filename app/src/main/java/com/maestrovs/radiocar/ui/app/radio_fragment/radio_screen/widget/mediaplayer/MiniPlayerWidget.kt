@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
-import com.maestrovs.radiocar.manager.PlayerStateManager
+import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.Progress
 

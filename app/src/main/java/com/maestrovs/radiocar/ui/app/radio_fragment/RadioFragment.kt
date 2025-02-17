@@ -8,6 +8,8 @@ import androidx.activity.viewModels
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.RadioScreen
 
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
@@ -30,7 +32,8 @@ class RadioFragment : Fragment() {
 
         return ComposeView(requireContext()).apply {
             setContent {
-                RadioScreen(viewModel)
+                val navController = findNavController()
+                RadioScreen(viewModel, navController = navController)
             }
         }
     }
