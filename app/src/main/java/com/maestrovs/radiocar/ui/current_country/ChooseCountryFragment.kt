@@ -119,9 +119,7 @@ class ChooseCountryFragment : Fragment() {
             customExcludedCountries = "RUS"
         )
         { selectedCountry: CPCountry ->
-            Log.d("CurrentCountry", "CurrentCountry selectedCountry= $selectedCountry")
             setCurrentCountry(selectedCountry)
-          //  binding.btNext.setVisible(!canBack)
         }
     }
 

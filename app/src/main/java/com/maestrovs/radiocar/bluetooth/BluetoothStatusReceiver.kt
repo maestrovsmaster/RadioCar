@@ -16,7 +16,6 @@ import com.maestrovs.radiocar.ui.settings.SettingsManager
 class BluetoothStatusReceiver : BroadcastReceiver(){
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d("BluetoothDevice", "onReceive intent?.action = ${intent?.action}")
 
         val action = intent?.action ?: return
         when (action) {

@@ -25,6 +25,7 @@ import com.maestrovs.radiocar.ui.app.ui.theme.primaryDark
 import com.maestrovs.radiocar.ui.radio.ListType
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
+import com.maestrovs.radiocar.manager.radio.PlaylistManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.ExtendSearchButtonWidget
 
 
@@ -38,17 +39,13 @@ fun StationsListWidget(
     modifier: Modifier = Modifier,
 ) {
 
-    val currentListType by viewModel.currentListType.collectAsState() // або by viewModel.currentListType.value
+    val currentListType by viewModel.currentListType.collectAsState()
+    val stationsGroupFlow by PlaylistManager.stationGroups.collectAsState(emptyList())
 
-    val playerState by PlayerStateManager.playerState.collectAsStateWithLifecycle()
     Box(
         modifier = modifier
             .fillMaxWidth()
-            //.width(250.dp)
             .height(150.dp),
-        // .background(Color.Black)
-        //.padding(16.dp)
-        //contentAlignment = Alignment.Center
     ) {
 
         DynamicShadowCard(
@@ -59,7 +56,7 @@ fun StationsListWidget(
 
 
             CenteredCarousel(
-                items = playerState.stationGroups,
+                items = stationsGroupFlow,
                 modifier = Modifier.fillMaxWidth(),
                 onItemClick = {
                     viewModel.playGroup(it)
@@ -67,22 +64,21 @@ fun StationsListWidget(
                 })
 
 
-
-           /* Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                Color(0x9221292F),
-                                Color(0x0327272A),
-                                Color(0x90182325)
-                            ),
-                            //startY = 0f,
-                            // endY = 800f
-                        )
-                    )
-            )*/
+            /* Box(
+                 modifier = Modifier
+                     .fillMaxSize()
+                     .background(
+                         brush = Brush.horizontalGradient(
+                             colors = listOf(
+                                 Color(0x9221292F),
+                                 Color(0x0327272A),
+                                 Color(0x90182325)
+                             ),
+                             //startY = 0f,
+                             // endY = 800f
+                         )
+                     )
+             )*/
 
             ListTypeSelector(
                 currentListType = currentListType,

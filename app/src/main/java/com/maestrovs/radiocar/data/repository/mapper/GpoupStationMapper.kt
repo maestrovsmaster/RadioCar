@@ -25,12 +25,12 @@ fun List<Station>.toGroupedStations(): List<StationGroup> {
             // Визначаємо спільну назву станції
             val baseName = findCommonSubstring(stations.map { it.name })
 
-            // Групуємо потоки за унікальними URL
+            // Group streams by uniq URL
             val streams = stations
                 .groupBy { it.url_resolved }
                 .map { (_, streamsGroup) ->
                     val firstStream = streamsGroup.first()
-                    StationStream(firstStream.url_resolved, BitrateOption.fromBitrate(firstStream.bitrate))
+                    StationStream( firstStream.stationuuid, firstStream.url_resolved, BitrateOption.fromBitrate(firstStream.bitrate))
                 }
                 .distinctBy { it.url } // Убираємо дублікати URL
 
@@ -39,7 +39,14 @@ fun List<Station>.toGroupedStations(): List<StationGroup> {
                 stations.firstOrNull { it.favicon.isNotEmpty() }?.favicon ?: ""
             }
 
-            StationGroup(baseName, streams, favicon)
+            var isFavorite = false
+            stations.forEach { st ->
+                if(st.isFavorite == 1){
+                    isFavorite = true
+                }
+            }
+
+            StationGroup(baseName, streams, favicon, isFavorite)
         }
 
     //groupedList.forEach {

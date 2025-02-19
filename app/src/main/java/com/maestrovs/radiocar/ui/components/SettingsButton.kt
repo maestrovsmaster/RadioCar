@@ -30,7 +30,7 @@ class SettingsButton (
             try{
                 arrowIcon.setImageDrawable(ContextCompat.getDrawable(context,icon))
             }catch (e: Exception){
-                Log.d("SettingsButton","SettingsButton error: $e")
+                //Log.d("SettingsButton","SettingsButton error: $e")
             }
             tvTitle.text = title
 

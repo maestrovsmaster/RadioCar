@@ -51,7 +51,6 @@ constructor(
     }
 
     fun release() {
-        Log.d("AudioPlayerService", "================Releasing MediaSession")
         mediaSession.release()
     }
 

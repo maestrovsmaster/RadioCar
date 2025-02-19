@@ -22,5 +22,10 @@ interface FavoritesDao {
     @Query("DELETE FROM favorites WHERE stationuuid = :stationuuid")
     suspend fun delete(stationuuid: String)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(stations: List<Favorites>)
+
+    @Query("DELETE FROM favorites WHERE stationuuid IN (:stationUuids)")
+    suspend fun deleteAllByStationUuids(stationUuids: List<String>)
 
 }

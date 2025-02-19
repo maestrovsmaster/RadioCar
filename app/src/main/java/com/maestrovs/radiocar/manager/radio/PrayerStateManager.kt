@@ -1,6 +1,7 @@
 package com.maestrovs.radiocar.manager.radio
 
 import android.graphics.Bitmap
+import android.util.Log
 import com.maestrovs.radiocar.data.entities.radio.BitrateOption
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.entities.radio.StationStream
@@ -19,9 +20,7 @@ object PlayerStateManager {
     private val _playerState = MutableStateFlow(
         PlayerState(
             isPlaying = false,
-            currentGroupIndex = 0,
-            currentStationIndex = 0,
-            stationGroups = emptyList(),
+            currentGroup = null,
             volume = 50,
             isBuffering = false,
             audioSessionId = null,
@@ -34,13 +33,17 @@ object PlayerStateManager {
     )
     val playerState: StateFlow<PlayerState> = _playerState.asStateFlow()
 
+   // val stationsGroupFlow = playerState.map { it.stationGroups }.distinctUntilChanged()
+
     //val isPlayingFlow = playerState.map { it.isPlaying }.distinctUntilChanged()
     val isPlayingFlow = combine(
         playerState.map { it.isPlaying }.distinctUntilChanged(),
-        playerState.map { it.currentGroupIndex }.distinctUntilChanged()
+        playerState.map { it.currentGroup }.distinctUntilChanged()
     ) { isPlaying, currentGroupIndex ->
         isPlaying to currentGroupIndex
     }
+
+    val currentGroup = playerState.map { it.currentGroup }.distinctUntilChanged()
 
     val isBufferingFlow = playerState.map { it.isBuffering }.distinctUntilChanged()
     val volumeFlow = playerState.map { it.volume }.distinctUntilChanged()
@@ -54,94 +57,50 @@ object PlayerStateManager {
 
     val isLikedFlow = playerState.map { it.isLiked }.distinctUntilChanged()
 
-    fun updateStation(stationStream: StationStream) {
-        val state = _playerState.value
 
-        val groupIndex = state.stationGroups.indexOfFirst { group ->
-            group.streams.contains(stationStream)
-        }
-
-        if (groupIndex != -1) {
-            val stationIndex = state.stationGroups[groupIndex].streams.indexOf(stationStream)
-            _playerState.value = state.copy(
-                currentGroupIndex = groupIndex,
-                currentStationIndex = stationIndex
-            )
-        }
-    }
 
     fun updateStationGroup(stationGroup: StationGroup) {
         val state = _playerState.value
 
-        val groupIndex = state.stationGroups.indexOfFirst { it.name == stationGroup.name }
-        if (groupIndex != -1) {
+        var isFavourite = false
+
+
+
             _playerState.value = state.copy(
-                currentGroupIndex = groupIndex,
-                currentStationIndex = 0, // Завжди починаємо з першого потоку у групі
+                currentGroup = stationGroup,
+
                 //bitmap = null,
+                isLiked =  stationGroup.isFavorite
 
             )
-        }
+
     }
 
 
 
 
 
-    fun updateStationGroups(groups: List<StationGroup>) {
-        _playerState.value = _playerState.value.copy(stationGroups = groups)
+  /*  fun updateStationGroups(groups: List<StationGroup>) {
+        Log.d("PlayerStateManager", "updateStationGroups() called")
 
-        // Якщо список не пустий, вибираємо першу групу і перший потік
-        if (groups.isNotEmpty() && groups.first().streams.isNotEmpty()) {
-            _playerState.value = _playerState.value.copy(
-                currentGroupIndex = 0,
-                currentStationIndex = 0
-            )
-        }
-    }
+            _playerState.value = _playerState.value.copy(stationGroups = groups)
 
 
+       /* if(_playerState.value.currentGroup == null) {//Update current station only if it is null
 
-   /* fun nextStationStream() {
-        val state = _playerState.value
-        val group = state.currentGroup
-
-        if (group != null) {
-            val newIndex = state.currentStationIndex + 1
-            if (newIndex < group.streams.size) {
-                _playerState.value = state.copy(currentStationIndex = newIndex)
-            } else {
-                nextGroup()
+            // Якщо список не пустий, вибираємо першу групу і перший потік
+            if (groups.isNotEmpty() && groups.first().streams.isNotEmpty()) {
+                _playerState.value = _playerState.value.copy(
+                    currentGroupIndex = 0,
+                    currentStationIndex = 0
+                )
             }
-        }
-    }
-
-    fun prevStationStream() {
-        val state = _playerState.value
-        if (state.currentStationIndex > 0) {
-            _playerState.value = state.copy(currentStationIndex = state.currentStationIndex - 1)
-        } else {
-            prevGroup() // Якщо ми на першій станції в групі, переходимо до попередньої групи
-        }
+        }*/
     }*/
 
 
 
 
-    fun next() {
-        val state = _playerState.value
-        val newIndex = state.currentGroupIndex + 1
-        if (newIndex < state.stationGroups.size) {
-            _playerState.value = state.copy(currentGroupIndex = newIndex, currentStationIndex = 0, bitmap = null,)
-        }
-    }
-
-    fun prev() {
-        val state = _playerState.value
-        if (state.currentGroupIndex > 0) {
-            _playerState.value = state.copy(currentGroupIndex = state.currentGroupIndex - 1, currentStationIndex = 0, bitmap = null,)
-        }
-    }
 
    /* fun setPlaying(isPlaying: Boolean) {
         _playerState.value = _playerState.value.copy(isPlaying = isPlaying)

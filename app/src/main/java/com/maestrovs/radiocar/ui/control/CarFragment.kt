@@ -98,7 +98,6 @@ class CarFragment : Fragment() {
 
         mainViewModel.mustRefreshStatus.observe(viewLifecycleOwner) {
             val currentCountry = CurrentCountryManager.readCountry(requireContext())
-            Log.d("Weather", "ttmainViewModel.currentCountry ${currentCountry?.name}")
             if (currentCountry != null) {
                 controlViewModel.countryName = currentCountry.name
             }

@@ -22,6 +22,7 @@ import com.maestrovs.radiocar.service.player.AudioPlayerListener
 import com.maestrovs.radiocar.service.player.ExoPlayerManager
 import com.maestrovs.radiocar.manager.radio.PlayerState
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
+import com.maestrovs.radiocar.manager.radio.PlaylistManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -70,10 +71,11 @@ class AudioPlayerService : Service() {
 
                     is PlayAction.Error -> {}
                     PlayAction.Idle -> {}
-                    PlayAction.Next -> PlayerStateManager.next()
+                    PlayAction.Next -> {
+                        PlaylistManager.next()}
                     PlayAction.Pause -> PlayerStateManager.pause()//Receiver commands from Bluetooth
 
-                    PlayAction.Previous -> PlayerStateManager.prev()
+                    PlayAction.Previous -> {PlaylistManager.prev()}
                     PlayAction.Resume -> PlayerStateManager.play()//Receiver commands from Bluetooth
                 }
             }
@@ -108,12 +110,12 @@ class AudioPlayerService : Service() {
             }
 
             ACTION_NEXT -> {
-                PlayerStateManager.next()
+                PlaylistManager.next()
 
             }
 
             ACTION_PREV -> {
-                PlayerStateManager.prev()
+                PlaylistManager.prev()
             }
         }
         return START_STICKY
@@ -121,7 +123,6 @@ class AudioPlayerService : Service() {
 
 
     private fun startForegroundService() {
-        Log.d(TAG, "Calling startForeground()...")
         val notification =
             playerNotificationManagerHelper.showNotification(NotificationStatus.Pause, null, null)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -130,7 +131,6 @@ class AudioPlayerService : Service() {
             startForeground(1, notification)
         }
         isForegroundService = true
-        Log.d(TAG, "startForeground() called successfully")
     }
 
     private fun createNotificationChannel() {
@@ -160,12 +160,10 @@ class AudioPlayerService : Service() {
         }
         val notification =
             playerNotificationManagerHelper.showNotification(status, stationName, imageBitmap, songMetadata)
-        Log.d(TAG, "Updating notification, isPlaying: $isPlaying")
 
         val manager = getSystemService(NotificationManager::class.java)
         manager.notify(1, notification) // ✅ Оновлення нотифікації без `startForeground()`
 
-        Log.d(TAG, "Notification updated successfully")
     }
 
     override fun onDestroy() {
@@ -200,7 +198,6 @@ class AudioPlayerService : Service() {
     private fun observePlayerState() {
         serviceScope.launch {
             PlayerStateManager.isPlayingFlow.collect { isPlaying ->
-                Log.d("AudioPlayerService", "isPlaying changed: $isPlaying")
                 if (isPlaying.first) {
                     startPlaying(PlayerStateManager.playerState.value)
                 } else {
@@ -211,9 +208,9 @@ class AudioPlayerService : Service() {
     }
 
     private fun startPlaying(state: PlayerState) {
-        val group = state.stationGroups.getOrNull(state.currentGroupIndex) ?: return
-        val stream = group.streams.getOrNull(state.currentStationIndex)
-
+        val group = state.currentGroup ?: return
+     //   val stream = group.streams.getOrNull(state.currentStationIndex)
+        val stream = state.currentGroup.streams.getOrNull(0)
         stream?.let {
 
             serviceScope.launch(Dispatchers.Main) {
@@ -246,12 +243,10 @@ class AudioPlayerService : Service() {
 
 
     private fun stopPlaying(state: PlayerState) {
-        val group = state.stationGroups.getOrNull(state.currentGroupIndex) ?: return
-        Log.d("AudioPlayerService", "Stopping playback")
+        val group = state.currentGroup ?: return
         serviceScope.launch(Dispatchers.Main) {
             exoPlayerManager.stopPlayer()
         }
-        //val state = PlayerStateManager.playerState.value
         updateNotification(state.isPlaying, state.currentGroup?.name, state.bitmap, state.songMetadata)
     }
 

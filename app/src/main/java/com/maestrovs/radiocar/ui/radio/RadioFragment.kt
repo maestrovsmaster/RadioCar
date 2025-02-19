@@ -89,17 +89,17 @@ class RadioFragment : Fragment() {
         binding.adView.adListener = object : AdListener() {
             override fun onAdFailedToLoad(p0: LoadAdError) {
                 super.onAdFailedToLoad(p0)
-                Log.d("AdMob", "AdMob onAdFailedToLoad = $p0")
+               // Log.d("AdMob", "AdMob onAdFailedToLoad = $p0")
             }
 
             override fun onAdLoaded() {
                 super.onAdLoaded()
-                Log.d("AdMob", "AdMob onAdLoaded")
+               // Log.d("AdMob", "AdMob onAdLoaded")
             }
 
             override fun onAdClicked() {
                 // Code to be executed when the user clicks on an ad.
-                Log.d("AdMob", "AdMob onAdClicked")
+                //Log.d("AdMob", "AdMob onAdClicked")
             }
 
             override fun onAdClosed() {
@@ -215,14 +215,12 @@ class RadioFragment : Fragment() {
                 }
 
                 is PlayAction.Next -> {
-                    Log.d("RadioFragment","Click ?Next .selectedStation = ${mainViewModel.selectedStation}");
                     mainViewModel.selectedStation.let {
                         adapter.nextStation(it.value)
                     }
                 }
 
                 is PlayAction.Previous -> {
-                    Log.d("RadioFragment","Click ?Previous");
                     mainViewModel.selectedStation.let {
                         adapter.previousStation(it.value)
                     }
@@ -237,9 +235,7 @@ class RadioFragment : Fragment() {
 
 
         radioViewModel.stations.observe(viewLifecycleOwner) {
-            Log.d("ApiError", "Server *  ${it} ")
             it?.let {
-                Log.d("ApiError", "Server *2  ${it} ")
                 if (currentListType == ListType.All) {
                     processResources(it)
                 }
@@ -265,9 +261,7 @@ class RadioFragment : Fragment() {
         }
 
         radioViewModel.searched.observe(viewLifecycleOwner) {
-            Log.d("Searched", "Searched 1")
             it?.let {
-                Log.d("Searched", "Searched 2")
                 if (currentListType == ListType.Searched) {
                     processResources(it)
                 }
@@ -491,7 +485,6 @@ class RadioFragment : Fragment() {
 
             val filteredList = filterAll(list)
 
-            Log.d("RadioFragment","submitList size = ${list.size} page = $currentPage  ")
             if(list.size == lastSubmitSize && list.isNotEmpty()){
                 lastPageCount += 1
                 if(lastPageCount>5) {
@@ -531,7 +524,6 @@ class RadioFragment : Fragment() {
            currentPage * PAGE_SIZE,
            PAGE_SIZE
             )
-        Log.d("RadioFragment","fetchAllStations isLast = $isLastPage  ** = $query")
         radioViewModel.fetchStations(
             query
         )

@@ -12,9 +12,11 @@ import androidx.lifecycle.viewModelScope
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
+import com.maestrovs.radiocar.manager.radio.PlaylistManager
 import com.maestrovs.radiocar.ui.radio.ListType
 import com.maestrovs.radiocar.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,7 +26,7 @@ class RadioViewModel @Inject constructor(
     private val repository: StationRepository
 ) : ViewModel() {
 
-    private val _currentListType = MutableStateFlow<ListType>(ListType.All)
+    private val _currentListType = MutableStateFlow<ListType>(ListType.Recent)
     val currentListType: StateFlow<ListType> = _currentListType
 
 
@@ -46,36 +48,37 @@ class RadioViewModel @Inject constructor(
         fetchStations()
     }
 
+    private var fetchStationsJob: Job? = null
 
-
-    fun fetchStations() {
-       // Log.d("RadioViewModel", "fetchStations() called")
+    private fun fetchStations() {
         _errorMessage.value = null
         _isLoading.value = true
-        viewModelScope.launch {
 
-            val flow = when (_currentListType.value) {
-                ListType.All -> repository.getGroupedStationsFlow(offset = 0, limit = 100, countryCode = "UA")
-                ListType.Recent -> repository.getRecentGroupedStationsFlow()
-                ListType.Favorites -> repository.getFavoritesGroupedStationsFlow()
-                else -> repository.getGroupedStationsFlow(offset = 0, limit = 100, countryCode = "UA")
-            }
+        fetchStationsJob?.cancel()
+
+        fetchStationsJob = viewModelScope.launch {
+            val flow = repository.getGroupedStationsFlow(
+                countryCode = "UA",
+                offset = 0,
+                limit = 100,
+                listType = _currentListType.value
+            )
 
             flow.collectLatest { resource ->
-                    processResources(resource)
-                }
+                processResources(resource)
+            }
         }
     }
-
-
 
 
     private fun processResources(response: Resource<List<StationGroup>>) {
         _isLoading.value = false
         when (response.status) {
             Resource.Status.SUCCESS -> {
+
+
                 _stations.value = response.data ?: emptyList()
-                PlayerStateManager.updateStationGroups(response.data ?: emptyList())
+                PlaylistManager.updateStationGroups(response.data ?: emptyList())
             }
 
             Resource.Status.ERROR -> {
@@ -88,17 +91,18 @@ class RadioViewModel @Inject constructor(
         }
     }
 
-   /* fun playStream(stationGroup: StationGroup) {
-        if (stationGroup.streams.isNotEmpty()) {
-            PlayerStateManager.updateStation(stationGroup.streams.first())
-            PlayerStateManager.play()
-        }
-    }*/
+    /* fun playStream(stationGroup: StationGroup) {
+         if (stationGroup.streams.isNotEmpty()) {
+             PlayerStateManager.updateStation(stationGroup.streams.first())
+             PlayerStateManager.play()
+         }
+     }*/
 
     fun playGroup(stationGroup: StationGroup) {
         if (stationGroup.streams.isNotEmpty()) {
             PlayerStateManager.updateStationGroup(stationGroup)
             PlayerStateManager.play()
+            setRecent(stationGroup)
         }
     }
 
@@ -107,10 +111,31 @@ class RadioViewModel @Inject constructor(
     }
 
     fun next() {
-        PlayerStateManager.next()
+        PlaylistManager.next()
     }
 
     fun prev() {
-        PlayerStateManager.prev()
+        PlaylistManager.prev()
+    }
+
+    private fun setRecent(stationGroup: StationGroup) {
+        viewModelScope.launch {
+
+            repository.setRecent(stationGroup.streams.map { it.stationUuid })
+        }
+
+
+    }
+
+    fun setIsLike(stationGroup: StationGroup, isFavorite: Boolean) {
+        PlayerStateManager.setLiked(isFavorite)
+        viewModelScope.launch {
+
+            if (isFavorite) {
+                repository.setFavorite(stationGroup.streams.map { it.stationUuid })
+            } else {
+                repository.deleteFavorite(stationGroup.streams.map { it.stationUuid })
+            }
+        }
     }
 }

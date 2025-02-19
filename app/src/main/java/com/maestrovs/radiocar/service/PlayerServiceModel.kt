@@ -90,7 +90,6 @@ class PlayerServiceModel @Inject constructor(
         lastStation = station
         this@PlayerServiceModel.listType = listType
 
-        Log.d("CurrentStationFS", "fetchStations...")
 
 
         withContext(Dispatchers.IO) {
@@ -98,11 +97,8 @@ class PlayerServiceModel @Inject constructor(
             when (listType) {
                 ListType.Recent -> {
                     mainRepository.getCombinedRecentAndAllStationsFlow(countryCode).collect {
-                        Log.d("CurrentStationFS", "fetchStationsRecent...  ")
 
                         allList = it
-                        Log.d("CurrentStationFS", "station = ${station?.name}")
-
 
                         if (!allList.isNullOrEmpty()) {
                             station?.let {  setCurrentItem(it)}
@@ -117,7 +113,6 @@ class PlayerServiceModel @Inject constructor(
 
                 ListType.Favorites -> {
                     mainRepository.getCombinedFavoritesAndAllStationsFlow(countryCode).collect {
-                        Log.d("MainActivity22", "fetchStationsFavorites...")
 
                         allList = it
                         if (!allList.isNullOrEmpty()) {

@@ -17,13 +17,11 @@ fun <T, A> performGetOperation(
     saveCallResult: suspend (A) -> Unit
 ): LiveData<Resource<T>> =
     liveData(Dispatchers.IO) {
-        Log.d("RequestResult", "emit...")
         emit(Resource.loading())
         val source = databaseQuery.invoke().map { Resource.success(it) }
         emitSource(source)
 
         val responseStatus = networkCall.invoke()
-        Log.d("ApiError", " -- responseStatus.status ${responseStatus.status}")
         if (responseStatus.status == SUCCESS) {
             saveCallResult(responseStatus.data!!)
 

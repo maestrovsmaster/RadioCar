@@ -21,13 +21,11 @@ fun isPlayableStream(url: String): Boolean {
 
     // Якщо це "OTHER", воно працює як стрім
     if (type == C.CONTENT_TYPE_OTHER) {
-        Log.d("StreamCheck", "Це нормальний стрім")
         return true
     }
 
     // Якщо це HLS (2), перевіряємо додатково
     if (type == C.CONTENT_TYPE_HLS) {
-        Log.d("StreamCheck", "Це HLS, перевіряємо заголовки...")
 
         val client = OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.SECONDS)

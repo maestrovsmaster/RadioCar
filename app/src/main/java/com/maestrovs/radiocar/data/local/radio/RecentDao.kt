@@ -23,5 +23,13 @@ interface RecentDao {
     @Query("DELETE FROM recent WHERE stationuuid = :stationuuid")
     suspend fun delete(stationuuid: String)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(stations: List<Recent>)
+
+
+    @Query("DELETE FROM recent WHERE stationuuid IN (:stationUuids)")
+    suspend fun deleteAllByStationUuids(stationUuids: List<String>)
+
+
 
 }

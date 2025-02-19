@@ -5,6 +5,7 @@ package com.maestrovs.radiocar.data.entities.radio
  */
 
 data class StationStream(
+    val stationUuid: String,
     val url: String,
     val bitrate: BitrateOption
 )

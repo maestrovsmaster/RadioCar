@@ -6,6 +6,7 @@ import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.entities.radio.StationStream
 import com.maestrovs.radiocar.data.repository.StationRepository
+import com.maestrovs.radiocar.ui.radio.ListType
 import com.maestrovs.radiocar.utils.Resource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -20,20 +21,27 @@ class FakeStationRepository : StationRepository() {
         TODO("Not yet implemented")
     }
 
-    override fun getGroupedStationsFlow(countryCode: String, offset: Int, limit: Int): Flow<Resource<List<StationGroup>>> {
+    override fun getGroupedStationsFlow(
+        countryCode: String,
+        offset: Int,
+        limit: Int,
+        listType: ListType
+    ): Flow<Resource<List<StationGroup>>> {
         return flow {
             emit(Resource.loading())
             delay(500) // Симулюємо затримку
             emit(Resource.success(listOf(
                 StationGroup(
                     name = "Mock Station 1",
-                    streams = listOf(StationStream(url = "http://mock1.com", bitrate = BitrateOption.LOW)),
-                    favicon = "https://mock1.com/favicon.png"
+                    streams = listOf(StationStream(stationUuid = "124", url = "http://mock1.com", bitrate = BitrateOption.LOW)),
+                    favicon = "https://mock1.com/favicon.png",
+                    isFavorite = true
                 ),
                 StationGroup(
                     name = "Mock Station 2",
-                    streams = listOf(StationStream(url = "http://mock2.com", bitrate = BitrateOption.HD)),
-                    favicon = "https://mock2.com/favicon.png"
+                    streams = listOf(StationStream(stationUuid = "123", url = "http://mock2.com", bitrate = BitrateOption.HD)),
+                    favicon = "https://mock2.com/favicon.png",
+                    isFavorite = false
                 )
             )))
         }
@@ -67,7 +75,15 @@ class FakeStationRepository : StationRepository() {
         TODO("Not yet implemented")
     }
 
+    override suspend fun setRecent(stationUuids: List<String>) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun deleteRecent(stationuuid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteRecent(stationUuids: List<String>) {
         TODO("Not yet implemented")
     }
 
@@ -75,7 +91,15 @@ class FakeStationRepository : StationRepository() {
         TODO("Not yet implemented")
     }
 
+    override suspend fun setFavorite(stationUuids: List<String>) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun deleteFavorite(stationuuid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteFavorite(stationUuids: List<String>) {
         TODO("Not yet implemented")
     }
 

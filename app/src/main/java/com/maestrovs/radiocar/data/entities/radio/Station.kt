@@ -45,4 +45,6 @@ data class Station(
     val votes: Int,
 
     var isFavorite: Int? = null,
+    var isRecent: Int? = null
+
 )

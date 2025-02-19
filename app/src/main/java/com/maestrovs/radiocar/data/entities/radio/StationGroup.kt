@@ -7,6 +7,7 @@ package com.maestrovs.radiocar.data.entities.radio
 data class StationGroup(
     val name: String,
     val streams: List<StationStream>,
-    val favicon: String
+    val favicon: String,
+    val isFavorite: Boolean
 )
 
