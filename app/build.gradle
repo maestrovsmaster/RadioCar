@@ -161,7 +161,7 @@ dependencies {
 
     implementation 'com.google.android.exoplayer:exoplayer-hls:2.19.1' // Опційно, для HLS потрібно
 
-
+    implementation("androidx.paging:paging-compose:3.3.6")
 
     //Eventbus
     implementation 'org.greenrobot:eventbus:3.3.1'

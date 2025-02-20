@@ -63,4 +63,43 @@
 
     <string name="done">Готово</string>
 
+    <string name="enter_custom_tag">Введіть власний тег (англійською)</string>
+
+    <string-array name="tag_keys">
+        <item>ambient</item>
+        <item>christ</item>
+        <item>classical</item>
+        <item>children</item>
+        <item>dance</item>
+        <item>electronic</item>
+        <item>hiphop</item>
+        <item>jazz</item>
+        <item>metal</item>
+        <item>music</item>
+        <item>news</item>
+        <item>pop</item>
+        <item>relax</item>
+        <item>rock</item>
+        <item>talk</item>
+    </string-array>
+
+    <string-array name="tag_values">
+        <item>Ембієнт</item>
+        <item>Християнська</item>
+        <item>Класична</item>
+        <item>Дитяча</item>
+        <item>Танці</item>
+        <item>Електронна</item>
+        <item>Хіп-хоп</item>
+        <item>Джаз</item>
+        <item>Метал</item>
+        <item>Музика</item>
+        <item>Новини</item>
+        <item>Поп</item>
+        <item>Релакс</item>
+        <item>Рок</item>
+        <item>Подкасти / Розмовні шоу</item>
+    </string-array>
+
+
 </resources>

@@ -13,6 +13,8 @@ import androidx.navigation.findNavController
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.RadioScreen
 
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
+import com.maestrovs.radiocar.ui.app.stations_list.RadioListScreen
+import com.maestrovs.radiocar.ui.app.stations_list.RadioListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -23,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class RadioFragment : Fragment() {
 
     private val viewModel: RadioViewModel by viewModels()
+    private val radioListViewModel : RadioListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +36,9 @@ class RadioFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 val navController = findNavController()
-                RadioScreen(viewModel, navController = navController)
+                //RadioScreen(viewModel, navController = navController)
+
+                RadioListScreen(viewModel = radioListViewModel, navController = navController)
             }
         }
     }

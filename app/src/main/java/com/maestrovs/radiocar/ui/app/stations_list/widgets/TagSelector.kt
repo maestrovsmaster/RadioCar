@@ -1,0 +1,165 @@
+package com.maestrovs.radiocar.ui.app.stations_list.widgets
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.maestrovs.radiocar.R
+import com.maestrovs.radiocar.data.entities.radio.StationGroup
+import com.maestrovs.radiocar.ui.app.stations_list.widgets.CountryFilterDropdown
+import com.maestrovs.radiocar.ui.app.stations_list.widgets.StationItem
+
+/**
+ * Created by maestromaster$ on 20/02/2025$.
+ */
+@Composable
+fun TagSelector(
+    selectedTag: String,
+    onTagSelected: (Pair<String, String>) -> Unit,
+    onTagCleared: () -> Unit
+) {
+    val tagMap = getTagMap()
+    val tagKeys = tagMap.keys.toList()
+    val tagValues = tagMap.values.toList()
+
+    var expanded by remember { mutableStateOf(false) }
+    var customTag by remember { mutableStateOf("") }
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        if (selectedTag.isNullOrEmpty()) {
+            // Якщо тег не вибрано → стандартна кнопка
+            OutlinedButton(
+                onClick = { expanded = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Оберіть тег")
+            }
+        } else {
+            // Якщо тег вибрано → зелена кнопка з тегом та хрестиком
+            Button(
+                onClick = { onTagCleared() },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)), // Зелений колір
+                shape = RoundedCornerShape(50),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = selectedTag,
+                    color = Color.White,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Clear tag",
+                    tint = Color.White
+                )
+            }
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = customTag,
+                    onValueChange = { customTag = it },
+                    label = { Text(LocalContext.current.getString(R.string.enter_custom_tag)) },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                IconButton(
+                    onClick = {
+                        if (customTag.isNotEmpty()) {
+                            onTagSelected(Pair(customTag, customTag))
+                            expanded = false
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "Search",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+
+            HorizontalDivider()
+
+
+            tagValues.forEach { tagValue ->
+                DropdownMenuItem(
+                    text = { Text(tagValue) },
+                    onClick = {
+                        val tagKey = tagMap.entries.find { it.value == tagValue }?.key ?: ""
+                        onTagSelected(Pair(tagKey, tagValue))
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+
+
+
+}
+
+@Composable
+fun getTagMap(): Map<String, String> {
+    val context = LocalContext.current
+    val keys = context.resources.getStringArray(R.array.tag_keys)
+    val values = context.resources.getStringArray(R.array.tag_values)
+
+    return keys.zip(values).toMap()
+}

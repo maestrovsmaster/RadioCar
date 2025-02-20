@@ -1,35 +1,29 @@
 package com.maestrovs.radiocar.data.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
+import com.maestrovs.radiocar.common.Constants
+import com.maestrovs.radiocar.common.Constants.PAGE_SIZE
 import com.maestrovs.radiocar.data.entities.radio.Station
+import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.entities.radio.tables.Favorites
 import com.maestrovs.radiocar.data.entities.radio.tables.Recent
 import com.maestrovs.radiocar.data.local.radio.FavoritesDao
 import com.maestrovs.radiocar.data.local.radio.RecentDao
 import com.maestrovs.radiocar.data.local.radio.StationDao
 import com.maestrovs.radiocar.data.remote.radio.StationRemoteDataSource
-import com.maestrovs.radiocar.utils.Resource
-import com.maestrovs.radiocar.utils.performGetOperation
-import com.maestrovs.radiocar.utils.performLocalGetOperation
-import com.maestrovs.radiocar.utils.performNetworkOperation
-import kotlinx.coroutines.Dispatchers
-import javax.inject.Inject
-import androidx.lifecycle.liveData
-import com.maestrovs.radiocar.common.Constants
-import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.repository.mapper.toGroupedStations
 import com.maestrovs.radiocar.ui.radio.ListType
+import com.maestrovs.radiocar.utils.Resource
+import com.maestrovs.radiocar.utils.performGetOperation
 import com.maestrovs.radiocar.utils.performGetOperationFlow
+import com.maestrovs.radiocar.utils.performLocalGetOperation
 import com.maestrovs.radiocar.utils.performLocalGetOperationFlow
-import kotlinx.coroutines.GlobalScope
+import com.maestrovs.radiocar.utils.performNetworkOperation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 abstract class StationRepository() {
@@ -73,6 +67,31 @@ class StationRepositoryIml @Inject constructor(
     private val favoritesSource: FavoritesDao
 ) : StationRepository() {
 
+    suspend fun getPagedStations(
+        country: String = "UA",
+        searchQuery: String = "",
+        tag: String = "",
+        offset: Int = 0,
+        limit: Int = PAGE_SIZE
+    ): List<StationGroup> {
+        return try {
+            val response = remoteDataSource.getStationsExt(
+                country = country,
+                name = searchQuery,
+                tag = tag,
+                offset = offset,
+                limit = limit
+            )
+            if (response.status == Resource.Status.SUCCESS) {
+                (response.data ?: emptyList()).toGroupedStations()
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     override fun getGroupedStationsFlow(
         countryCode: String,
         offset: Int,
@@ -80,7 +99,7 @@ class StationRepositoryIml @Inject constructor(
         listType: ListType
     ): Flow<Resource<List<StationGroup>>> {
         return performGetOperationFlow(
-            databaseQuery = {4
+            databaseQuery = {
                 localDataSource.getStationsByCountryWithFavouriteStatusFlow(
                     countryCode
                 ).map {
@@ -102,7 +121,8 @@ class StationRepositoryIml @Inject constructor(
     }
 
     override fun getRecentGroupedStationsFlow() = performLocalGetOperationFlow(databaseQuery = {
-        localDataSource.getRecentStationsFlow().map { it.toGroupedStations() }.distinctUntilChanged()
+        localDataSource.getRecentStationsFlow().map { it.toGroupedStations() }
+            .distinctUntilChanged()
     })
 
     override fun getFavoritesGroupedStationsFlow() = performLocalGetOperationFlow(databaseQuery = {
@@ -113,7 +133,8 @@ class StationRepositoryIml @Inject constructor(
     override fun getStationsByNameGroup(searchterm: String): Flow<Resource<List<StationGroup>>> {
         return performGetOperationFlow(
             databaseQuery = {
-                localDataSource.getStationsByNameFlow(searchterm).map { it.toGroupedStations() }.distinctUntilChanged()
+                localDataSource.getStationsByNameFlow(searchterm).map { it.toGroupedStations() }
+                    .distinctUntilChanged()
             },
             networkCall = { remoteDataSource.getStationsByName(searchterm) },
             saveCallResult = { localDataSource.insertAll(it) }
@@ -162,11 +183,9 @@ class StationRepositoryIml @Inject constructor(
     })
 
 
-
     override fun getFavoritesStations() = performLocalGetOperation(databaseQuery = {
         localDataSource.getFavoritesStations()
     })
-
 
 
     fun getFavoritesStationsFlow(): Flow<Resource<List<Station>>> =

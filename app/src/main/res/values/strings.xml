@@ -75,4 +75,47 @@
     <string name="mock_date">07 jul 2024 \n Friday</string>
     <string name="title_activity_main_v2">MainActivityV2</string>
 
+    <string name="enter_custom_tag">Enter your custom tag (in English)</string>
+
+
+
+
+        <string-array name="tag_keys">
+            <item>ambient</item>
+            <item>christ</item>
+            <item>classical</item>
+            <item>children</item>
+            <item>dance</item>
+            <item>electronic</item>
+            <item>hiphop</item>
+            <item>jazz</item>
+            <item>metal</item>
+            <item>music</item>
+            <item>news</item>
+            <item>pop</item>
+            <item>relax</item>
+            <item>rock</item>
+            <item>talk</item>
+        </string-array>
+
+        <string-array name="tag_values">
+            <item>Ambient</item>
+            <item>Christian</item>
+            <item>Classical</item>
+            <item>Children</item>
+            <item>Dance</item>
+            <item>Electronic</item>
+            <item>Hip-hop</item>
+            <item>Jazz</item>
+            <item>Metal</item>
+            <item>Music</item>
+            <item>News</item>
+            <item>Pop</item>
+            <item>Relax</item>
+            <item>Rock</item>
+            <item>Talk / Podcasts</item>
+        </string-array>
+
+
+
 </resources>
