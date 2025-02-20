@@ -76,11 +76,14 @@
     <string name="title_activity_main_v2">MainActivityV2</string>
 
     <string name="enter_custom_tag">Enter your custom tag (in English)</string>
+    <string name="enter_station_name">Enter station name</string>
+    <string name="select_country">Select country</string>
+    <string name="select_tag">Select tag</string>
 
 
 
 
-        <string-array name="tag_keys">
+    <string-array name="tag_keys">
             <item>ambient</item>
             <item>christ</item>
             <item>classical</item>

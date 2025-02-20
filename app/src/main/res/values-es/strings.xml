@@ -74,6 +74,10 @@
 
 
     <string name="enter_custom_tag">Ingrese su etiqueta personalizada (en inglés)</string>
+    <string name="enter_station_name">Ingrese el nombre de la estación</string>
+
+    <string name="select_country">Seleccione un país</string>
+    <string name="select_tag">Seleccione una etiqueta</string>
 
 
 

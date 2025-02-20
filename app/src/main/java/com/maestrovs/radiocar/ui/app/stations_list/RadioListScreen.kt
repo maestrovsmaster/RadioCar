@@ -1,40 +1,27 @@
 package com.maestrovs.radiocar.ui.app.stations_list
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.maestrovs.radiocar.data.entities.radio.StationGroup
-import com.maestrovs.radiocar.ui.app.stations_list.widgets.CountryFilterDropdown
+import com.arpitkatiyarprojects.countrypicker.models.CountryDetails
+import com.maestrovs.radiocar.ui.app.stations_list.widgets.CountryPickerWidget
+import com.maestrovs.radiocar.ui.app.stations_list.widgets.SearchBar
 import com.maestrovs.radiocar.ui.app.stations_list.widgets.StationItem
 import com.maestrovs.radiocar.ui.app.stations_list.widgets.TagSelector
 
@@ -46,72 +33,79 @@ import com.maestrovs.radiocar.ui.app.stations_list.widgets.TagSelector
 fun RadioListScreen(viewModel: RadioListViewModel, navController: NavController) {
     val stationList = viewModel.stationFlow.collectAsLazyPagingItems()
 
+    var latestCountry by remember { mutableStateOf<CountryDetails?>(null) }
+
     var searchQuery by remember { mutableStateOf("") }
-    var selectedCountry by remember { mutableStateOf("UA") }
+    var selectedCountry by remember { mutableStateOf<CountryDetails?>(null) }
     var selectedTag by remember { mutableStateOf(Pair("", "")) }
 
+    val showCountryPicker = remember { mutableStateOf(true) }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
 
-        fun serch() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+
+        fun search() {
             viewModel.searchStations(
                 searchQuery,
-                selectedCountry,
+                selectedCountry?.countryCode ?: "",
                 selectedTag.first
             )
         }
 
-        // Поле пошуку
-        TextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            label = { Text("Введіть назву станції") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+        SearchBar(
+            searchQuery = searchQuery,
+            onSearch = {
+                searchQuery = it
+                search()
+            },
+            onClear = {
+                searchQuery = ""
+                search()
+            },
+            onBackClick = { navController.popBackStack() }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Вибір країни (поки без реалізації)
-        OutlinedButton(
-            onClick = { /* Реалізуємо пізніше */ },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = selectedCountry)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            CountryPickerWidget(selectedCountry = selectedCountry, onCountrySelected = {
+                selectedCountry = it
+                search()
+            }, onShowCountryPicker = {
+
+                showCountryPicker.value = it
+                selectedCountry = if(it){
+                    latestCountry
+                }else {
+                    latestCountry = selectedCountry
+                    null
+                }
+                search()
+
+            }, modifier = Modifier.weight(6f), showCountryPicker = showCountryPicker.value)
+
+            TagSelector(
+                selectedTag = selectedTag.second,
+                onTagSelected = {
+
+                    selectedTag = it
+                    search()
+                },
+                onTagCleared = {
+                    selectedTag = Pair("", "")
+                    search()
+                },
+                modifier = Modifier.weight(4f)
+            )
+
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        // Вибір тегу
-        TagSelector(
-            selectedTag = selectedTag.second,
-            onTagSelected = {
-
-                selectedTag = it
-                serch()
-            },
-            onTagCleared = {
-                selectedTag = Pair("", "")
-                serch()
-            }
-        )
-
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Кнопка пошуку
-        /* Button(
-             onClick = { viewModel.searchStations(searchQuery, selectedCountry, selectedTag.ifEmpty { customTag }) },
-             modifier = Modifier.fillMaxWidth()
-         ) {
-             Text(text = "Пошук")
-         }*/
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Список радіостанцій
         LazyColumn {
             items(stationList.itemCount) { index ->
                 val stationGroup = stationList[index]

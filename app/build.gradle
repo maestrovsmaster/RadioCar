@@ -184,6 +184,9 @@ dependencies {
     //Country picker
     implementation 'com.hbb20:android-country-picker:0.0.7'
 
+    //country for compose
+    implementation("com.github.arpitkatiyar1999:Country-Picker:2.1.0")
+
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
 

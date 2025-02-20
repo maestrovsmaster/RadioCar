@@ -64,6 +64,10 @@
     <string name="done">Готово</string>
 
     <string name="enter_custom_tag">Введіть власний тег (англійською)</string>
+    <string name="enter_station_name">Введіть назву станції</string>
+    <string name="select_country">Оберіть країну</string>
+    <string name="select_tag">Оберіть тег</string>
+
 
     <string-array name="tag_keys">
         <item>ambient</item>
