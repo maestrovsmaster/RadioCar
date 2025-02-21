@@ -8,6 +8,7 @@ data class StationGroup(
     val name: String,
     val streams: List<StationStream>,
     val favicon: String,
-    val isFavorite: Boolean
+    val isFavorite: Boolean,
+    val countryCode: String? = null
 )
 

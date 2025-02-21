@@ -11,18 +11,16 @@ import com.maestrovs.radiocar.data.entities.radio.StationStream
  */
 
 fun List<Station>.toGroupedStations(): List<StationGroup> {
-   // Log.d("MiniPlayerWidget", "Total stations count = ${this.size}")
 
-    //this.forEach {
-    //    Log.d("MiniPlayerWidget", "toGroupedStations name: ${it.name}, serveruuid: ${it.serveruuid}")
-   // }
+    Log.d("StationPagingSource", "toGroupedStations 1")
 
     val groupedList = this
-        .groupBy { it.serveruuid.ifEmpty { it.url_resolved } } // Групуємо спочатку за `serveruuid`
+        .groupBy {
+            it.serveruuid?.takeIf { it.isNotEmpty() } ?: it.url_resolved
+        } // Групуємо спочатку за `serveruuid`
         .map { (_, stations) ->
-            val primaryStation = stations.maxByOrNull { it.favicon.length } ?: stations.first()
+            val primaryStation = stations.maxByOrNull { it.favicon?.length ?: 0 } ?: stations.first()
 
-            // Визначаємо спільну назву станції
             val baseName = findCommonSubstring(stations.map { it.name })
 
             // Group streams by uniq URL
@@ -39,6 +37,10 @@ fun List<Station>.toGroupedStations(): List<StationGroup> {
                 stations.firstOrNull { it.favicon.isNotEmpty() }?.favicon ?: ""
             }
 
+            val countryCode = primaryStation.countrycode.ifEmpty {
+                stations.firstOrNull { it.countrycode.isNotEmpty() }?.countrycode ?: null
+            }
+
             var isFavorite = false
             stations.forEach { st ->
                 if(st.isFavorite == 1){
@@ -46,7 +48,7 @@ fun List<Station>.toGroupedStations(): List<StationGroup> {
                 }
             }
 
-            StationGroup(baseName, streams, favicon, isFavorite)
+            StationGroup(baseName, streams, favicon, isFavorite, countryCode)
         }
 
     //groupedList.forEach {
@@ -58,16 +60,16 @@ fun List<Station>.toGroupedStations(): List<StationGroup> {
 
 
 
-
 fun findCommonSubstring(names: List<String>): String {
     if (names.isEmpty()) return ""
+    if (names.size == 1) return names.first() //  Додаємо перевірку
 
     val sortedNames = names.sortedBy { it.length }
     val shortestName = sortedNames.first()
 
     var commonBase = shortestName
 
-    for (i in shortestName.length downTo 4) {
+    for (i in shortestName.length downTo 4) { // Уникаємо коротких збігів
         for (j in 0..shortestName.length - i) {
             val substring = shortestName.substring(j, j + i)
             if (names.all { it.contains(substring, ignoreCase = true) }) {
@@ -95,6 +97,3 @@ fun findCommonSubstring(names: List<String>): String {
         commonBase
     }
 }
-
-
-

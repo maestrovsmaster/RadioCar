@@ -84,6 +84,7 @@
 
     <string-array name="tag_keys">
         <item>ambient</item>
+        <item>bible</item>
         <item>christ</item>
         <item>classical</item>
         <item>children</item>
@@ -102,6 +103,7 @@
 
     <string-array name="tag_values">
         <item>Ambiente</item>
+        <item>Bible</item>
         <item>Cristiana</item>
         <item>Clásica</item>
         <item>Infantil</item>

@@ -39,7 +39,7 @@ fun RadioListScreen(viewModel: RadioListViewModel, navController: NavController)
     var selectedCountry by remember { mutableStateOf<CountryDetails?>(null) }
     var selectedTag by remember { mutableStateOf(Pair("", "")) }
 
-    val showCountryPicker = remember { mutableStateOf(true) }
+    val showCountryPicker = remember { mutableStateOf(false) }
 
 
     Column(
@@ -78,9 +78,9 @@ fun RadioListScreen(viewModel: RadioListViewModel, navController: NavController)
             }, onShowCountryPicker = {
 
                 showCountryPicker.value = it
-                selectedCountry = if(it){
+                selectedCountry = if (it) {
                     latestCountry
-                }else {
+                } else {
                     latestCountry = selectedCountry
                     null
                 }
@@ -110,7 +110,21 @@ fun RadioListScreen(viewModel: RadioListViewModel, navController: NavController)
             items(stationList.itemCount) { index ->
                 val stationGroup = stationList[index]
                 stationGroup?.let {
-                    StationItem(station = it)
+                    StationItem(station = it,
+                        onItemClick = { item ->
+                            //TODO: Play station
+
+                        },
+                        onLikeClick = { isLiked ->
+                          //  viewModel.setIsLike(it, isLiked)
+                        },
+                       onPlayClick = { item ->
+                           viewModel.playGroup(item)
+                       },
+                        onPausedClick = { item ->
+                            viewModel.stop()
+                        }
+                    )
                 }
             }
 

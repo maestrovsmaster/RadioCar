@@ -117,9 +117,9 @@ fun MediumPlayerWidget(
                         .align(Alignment.TopEnd)
                         .padding(6.dp)
                 ) {
-                    LikeWidget(isLiked = isLikedFlow) {
+                    LikeWidget(isLiked = isLikedFlow, onLikeClick =  {
                         viewModel.setIsLike(currentGroup!!, !isLikedFlow)
-                    }
+                    })
 
                 }
 

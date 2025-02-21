@@ -120,11 +120,8 @@ class RadioViewModel @Inject constructor(
 
     private fun setRecent(stationGroup: StationGroup) {
         viewModelScope.launch {
-
             repository.setRecent(stationGroup.streams.map { it.stationUuid })
         }
-
-
     }
 
     fun setIsLike(stationGroup: StationGroup, isFavorite: Boolean) {

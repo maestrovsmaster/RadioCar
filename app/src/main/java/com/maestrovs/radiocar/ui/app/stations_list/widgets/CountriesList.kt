@@ -1,5 +1,7 @@
 package com.maestrovs.radiocar.ui.app.stations_list.widgets
 
+import com.maestrovs.radiocar.data.repository.filters.excludedCountries
+
 /**
  * Created by maestromaster$ on 20/02/2025$.
  */
@@ -24,7 +26,7 @@ val countryCodes = listOf(
 )
 
 val prioritizedCountries = listOf("UA", "UK", "US", "DE", "PL", "IT", "ES")
-val excludedCountries = listOf("RU", "KP")
+
 
 val sortedCountries = countryCodes
     .filter { it !in excludedCountries }

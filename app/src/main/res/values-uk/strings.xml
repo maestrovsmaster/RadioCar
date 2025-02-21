@@ -71,6 +71,7 @@
 
     <string-array name="tag_keys">
         <item>ambient</item>
+        <item>bible</item>
         <item>christ</item>
         <item>classical</item>
         <item>children</item>
@@ -89,6 +90,7 @@
 
     <string-array name="tag_values">
         <item>Ембієнт</item>
+        <item>Біблія</item>
         <item>Християнська</item>
         <item>Класична</item>
         <item>Дитяча</item>

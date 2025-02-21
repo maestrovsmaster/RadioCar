@@ -55,28 +55,15 @@ fun PlayControlWidget(
 
         }
 
+        PlayButton(
+            isPlaying = isPlaying,
+            isLoading = isLoading,
+            onPlayPauseClick = onPlayPauseClick,
+            tintColor = Color(0xFFB0DCF5 ),
+            modifier = Modifier.size(52.dp)
+        )
 
-        Box( modifier = Modifier.size(52.dp),
-            contentAlignment = Alignment.Center ) {
-            PlayProgressWidget(isLoading = isLoading, numDots = 50, radius = 26.dp, baseColor = Color(
-                0xFFB0DCF5
-            )
-            )
 
-            IconButton(
-                onClick = onPlayPauseClick
-            ) {
-
-                Icon(
-                    painter = painterResource(
-                        id = if (isPlaying) R.drawable.ic_pause_32
-                        else R.drawable.ic_play_32
-                    ),
-                    contentDescription = "Play",
-                    tint = tintColor
-                )
-            }
-        }
 
         IconButton(onClick = onNextClick) {
             Icon(
@@ -91,9 +78,12 @@ fun PlayControlWidget(
 @Preview
 @Composable
 fun PlayControlWidgetPreview() {
-    Box(modifier = Modifier.width(200.dp)
-        .background(Color.Black)
-        .padding(16.dp)) {
+    Box(
+        modifier = Modifier
+            .width(200.dp)
+            .background(Color.Black)
+            .padding(16.dp)
+    ) {
         PlayControlWidget(
             isPlaying = true,
             onPrevClick = {},

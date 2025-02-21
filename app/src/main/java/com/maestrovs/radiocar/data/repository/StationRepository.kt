@@ -1,5 +1,6 @@
 package com.maestrovs.radiocar.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.maestrovs.radiocar.common.Constants
 import com.maestrovs.radiocar.common.Constants.PAGE_SIZE
@@ -11,6 +12,7 @@ import com.maestrovs.radiocar.data.local.radio.FavoritesDao
 import com.maestrovs.radiocar.data.local.radio.RecentDao
 import com.maestrovs.radiocar.data.local.radio.StationDao
 import com.maestrovs.radiocar.data.remote.radio.StationRemoteDataSource
+import com.maestrovs.radiocar.data.repository.filters.filters
 import com.maestrovs.radiocar.data.repository.mapper.toGroupedStations
 import com.maestrovs.radiocar.ui.radio.ListType
 import com.maestrovs.radiocar.utils.Resource
@@ -83,11 +85,21 @@ class StationRepositoryIml @Inject constructor(
                 limit = limit
             )
             if (response.status == Resource.Status.SUCCESS) {
-                (response.data ?: emptyList()).toGroupedStations()
+                val apiResultList = (response.data ?: emptyList())
+
+
+
+                val filteredStations = apiResultList
+                   .filter { station -> filters.all { filter -> filter(station) }}
+
+
+                val resultList = filteredStations.toGroupedStations()
+                resultList
             } else {
                 emptyList()
             }
         } catch (e: Exception) {
+            Log.e("StationPagingSource", "StationRepositoryIml Load stations error: $e")
             emptyList()
         }
     }

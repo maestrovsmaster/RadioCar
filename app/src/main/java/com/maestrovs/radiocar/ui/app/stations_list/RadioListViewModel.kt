@@ -7,8 +7,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.data.repository.StationRepositoryIml
+import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.radio.ListType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -31,12 +34,10 @@ class RadioListViewModel @Inject constructor(
     private val _selectedCountry = MutableStateFlow("UA")
     private val _selectedTag = MutableStateFlow("")
 
-    // Об'єднуємо всі фільтри в один `StateFlow`
     private val searchParams = combine(_searchQuery, _selectedCountry, _selectedTag) { query, country, tag ->
         Triple(query, country, tag)
     }.stateIn(viewModelScope, SharingStarted.Lazily, Triple("", "UA", ""))
 
-    // Кожного разу, коли змінюються параметри, створюємо новий `Pager`
     val stationFlow = searchParams.flatMapLatest { (query, country, tag) ->
         Pager(
             config = PagingConfig(
@@ -55,6 +56,24 @@ class RadioListViewModel @Inject constructor(
         _searchQuery.value = query
         _selectedCountry.value = country
         _selectedTag.value = tag
+    }
+
+    fun playGroup(stationGroup: StationGroup) {
+        if (stationGroup.streams.isNotEmpty()) {
+            PlayerStateManager.updateStationGroup(stationGroup)
+            PlayerStateManager.play()
+            setRecent(stationGroup)
+        }
+    }
+
+    fun stop() {
+        PlayerStateManager.pause()
+    }
+
+    private fun setRecent(stationGroup: StationGroup) {
+        viewModelScope.launch {
+            repository.setRecent(stationGroup.streams.map { it.stationUuid })
+        }
     }
 }
 

@@ -11,6 +11,7 @@ import com.maestrovs.radiocar.data.local.radio.AppDatabase
 import com.maestrovs.radiocar.data.local.radio.FavoritesDao
 import com.maestrovs.radiocar.data.local.radio.RecentDao
 import com.maestrovs.radiocar.data.local.radio.StationDao
+import com.maestrovs.radiocar.data.net.CustomLoggingInterceptor
 import com.maestrovs.radiocar.data.remote.radio.StationRemoteDataSource
 import com.maestrovs.radiocar.data.remote.radio.StationService
 import com.maestrovs.radiocar.data.remote.weather.WeatherRemoteDataSource
@@ -51,8 +52,8 @@ object AppModule {
     @Named("radio")
     fun provideRadioRetrofit(gson: Gson): Retrofit {
 
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        val interceptor = CustomLoggingInterceptor()//HttpLoggingInterceptor()
+        //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         val client: OkHttpClient = OkHttpClient.Builder().addInterceptor(interceptor).build()
 
 
