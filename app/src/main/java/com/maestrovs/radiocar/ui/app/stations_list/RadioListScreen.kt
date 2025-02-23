@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,11 +16,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.arpitkatiyarprojects.countrypicker.models.CountryDetails
+import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.MiniPlayerWidget
 import com.maestrovs.radiocar.ui.app.stations_list.widgets.CountryPickerWidget
 import com.maestrovs.radiocar.ui.app.stations_list.widgets.SearchBar
 import com.maestrovs.radiocar.ui.app.stations_list.widgets.StationItem
@@ -106,7 +111,7 @@ fun RadioListScreen(viewModel: RadioListViewModel, navController: NavController)
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        LazyColumn {
+        LazyColumn(modifier = Modifier.weight(1f)) {
             items(stationList.itemCount) { index ->
                 val stationGroup = stationList[index]
                 stationGroup?.let {
@@ -116,11 +121,12 @@ fun RadioListScreen(viewModel: RadioListViewModel, navController: NavController)
 
                         },
                         onLikeClick = { isLiked ->
-                          //  viewModel.setIsLike(it, isLiked)
+                            viewModel.setIsLike(it, isLiked)
+                            stationList.refresh()
                         },
-                       onPlayClick = { item ->
-                           viewModel.playGroup(item)
-                       },
+                        onPlayClick = { item ->
+                            viewModel.playGroup(item)
+                        },
                         onPausedClick = { item ->
                             viewModel.stop()
                         }
@@ -131,16 +137,35 @@ fun RadioListScreen(viewModel: RadioListViewModel, navController: NavController)
             stationList.apply {
                 when {
                     loadState.refresh is LoadState.Loading -> {
-                        item { CircularProgressIndicator() }
+                        item { CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally)) }
                     }
 
                     loadState.append is LoadState.Loading -> {
-                        item { CircularProgressIndicator() }
+                        item { CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally)) }
                     }
                 }
             }
         }
+
+        MiniPlayerWidget(
+            viewModel, onClickLike = { group, isLiked ->
+                viewModel.setIsLike(group, isLiked)
+                stationList.refresh()
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(90.dp)
+        )
     }
 
 
+}
+
+@Preview
+@Composable
+fun RadioListScreenPreview() {
+    RadioListScreen(
+        RadioListViewModel(FakeStationRepository()),
+        NavController(LocalContext.current)
+    )
 }

@@ -1,5 +1,6 @@
 package com.maestrovs.radiocar.ui.app.stations_list.widgets
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -33,6 +35,9 @@ import com.maestrovs.radiocar.data.entities.radio.StationStream
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.LikeWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
+import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerManager
+import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreenMicro
+import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreenTiny
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PlayButton
 import com.murgupluoglu.flagkit.FlagKit
 
@@ -51,13 +56,16 @@ fun StationItem(
     val isPlayingFlow by PlayerStateManager.isPlayingFlow.collectAsStateWithLifecycle(null)
     val isBufferingFlow by PlayerStateManager.isBufferingFlow.collectAsStateWithLifecycle(false)
     val audioSessionIdFlow by PlayerStateManager.audioSessionIdFlow.collectAsStateWithLifecycle(null)
-    val isLikedFlow by PlayerStateManager.isLikedFlow.collectAsStateWithLifecycle(false)
     val songMetadataFlow by PlayerStateManager.songMetadataFlow.collectAsStateWithLifecycle(null)
 
     val isPlayingState = if(isPlayingFlow == null) false else isPlayingFlow!!.first
-    val showPlaying = currentPlayingGroup == station   && isPlayingState
+
+
+    val showPlaying = currentPlayingGroup?.name == station.name   && isPlayingState
 
     val showBuffering = currentPlayingGroup == station   && isBufferingFlow
+
+    val showVisualizer = currentPlayingGroup == station   //&& audioSessionIdFlow
 
     Row(
         modifier = Modifier
@@ -97,6 +105,32 @@ fun StationItem(
         Column(modifier = Modifier.weight(1f)) {
             Text(text = station.name)//, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             //Text(text = station.country, fontSize = 14.sp, color = Color.Gray)
+        }
+
+        if (audioSessionIdFlow != null && showVisualizer) {
+            val visualizer =
+                AudioVisualizerManager.getVisualizer(audioSessionIdFlow!!, step = 32)
+
+            Box(
+                modifier = Modifier
+                    //.align(Alignment.BottomStart)
+                    .padding(bottom = 0.dp)
+                    .padding(0.dp)
+                    .width(30.dp)
+                    .height(30.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0x0027272A),
+                                Color(0x0027272A),
+                            ),
+                            // startY = 0f,
+                            //endY = 240f
+                        )
+                    )
+            ) {
+                AudioVisualizerScreenMicro( modifier = Modifier.width(30.dp).height(30.dp), color = Color.Red)
+            }
         }
 
         PlayButton(

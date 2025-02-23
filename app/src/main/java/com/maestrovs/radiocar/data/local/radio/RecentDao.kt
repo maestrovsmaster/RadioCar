@@ -6,6 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.maestrovs.radiocar.data.entities.radio.tables.Favorites
 import com.maestrovs.radiocar.data.entities.radio.tables.Recent
 
 @Dao
@@ -13,6 +14,9 @@ interface RecentDao {
 
     @Query("SELECT * FROM recent")
     fun getAllRecent(): LiveData<List<Recent>>
+
+    @Query("SELECT * FROM favorites")
+    suspend fun getAllRecentList(): List<Recent>
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -60,6 +60,14 @@ abstract class StationRepository() {
     abstract suspend fun setFavorite(stationUuids: List<String>)
     abstract suspend fun deleteFavorite(stationUuids: List<String>)
     abstract suspend fun deleteRecent(stationUuids: List<String>)
+    abstract fun getFavoriteStationIdsFlow(): Flow<List<Favorites>>
+    abstract suspend fun getPagedStations(
+        country: String = "UA",
+        searchQuery: String = "",
+        tag: String = "",
+        offset: Int = 0,
+        limit: Int = PAGE_SIZE
+    ): List<StationGroup>
 }
 
 class StationRepositoryIml @Inject constructor(
@@ -69,12 +77,12 @@ class StationRepositoryIml @Inject constructor(
     private val favoritesSource: FavoritesDao
 ) : StationRepository() {
 
-    suspend fun getPagedStations(
-        country: String = "UA",
-        searchQuery: String = "",
-        tag: String = "",
-        offset: Int = 0,
-        limit: Int = PAGE_SIZE
+    override suspend fun getPagedStations(
+        country: String,
+        searchQuery: String,
+        tag: String,
+        offset: Int,
+        limit: Int
     ): List<StationGroup> {
         return try {
             val response = remoteDataSource.getStationsExt(
@@ -87,10 +95,15 @@ class StationRepositoryIml @Inject constructor(
             if (response.status == Resource.Status.SUCCESS) {
                 val apiResultList = (response.data ?: emptyList())
 
-
+                val favoriteStationIds = getFavoriteStationIds()
+                val recentStationIds = getRecentStationIds()
 
                 val filteredStations = apiResultList
                    .filter { station -> filters.all { filter -> filter(station) }}
+                    .map { station ->
+                        station.copy(isFavorite = if(station.stationuuid in favoriteStationIds) 1 else 0,
+                            isRecent = if(station.stationuuid in recentStationIds) 1 else 0)
+                    }
 
 
                 val resultList = filteredStations.toGroupedStations()
@@ -103,6 +116,20 @@ class StationRepositoryIml @Inject constructor(
             emptyList()
         }
     }
+
+    override fun getFavoriteStationIdsFlow(): Flow<List<Favorites>> {
+        return favoritesSource.getAllFavoritesFlow()
+            //.map { favorites -> favorites.map { it.stationuuid }.toSet() }
+    }
+
+    suspend fun getFavoriteStationIds(): Set<String> {
+        return favoritesSource.getAllFavoritesList().map { it.stationuuid }.toSet()
+    }
+
+    suspend fun getRecentStationIds(): Set<String> {
+        return recentSource.getAllRecentList().map { it.stationuuid }.toSet()
+    }
+
 
     override fun getGroupedStationsFlow(
         countryCode: String,

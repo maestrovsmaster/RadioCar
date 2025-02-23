@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
+import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.data.repository.StationRepositoryIml
 
 /**
@@ -11,7 +12,7 @@ import com.maestrovs.radiocar.data.repository.StationRepositoryIml
  */
 
 class StationPagingSource(
-    private val repository: StationRepositoryIml,
+    private val repository: StationRepository,
     private val countryCode: String,
     private val searchQuery: String,
     private val tag: String

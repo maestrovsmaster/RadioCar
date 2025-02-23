@@ -14,9 +14,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.maestrovs.radiocar.manager.audio_visual.AudioVisualizerStateManager
+import com.maestrovs.radiocar.ui.app.ui.theme.baseBlue
 
 /**
  * Created by maestromaster$ on 12/02/2025$.
@@ -29,3 +31,23 @@ fun AudioVisualizerScreen() {
 
     AudioSpectrumBarGraphMini(fftData = spectrumData, modifier = Modifier.width(200.dp).height(70.dp))
 }
+
+@Composable
+fun AudioVisualizerScreenTiny(modifier: Modifier = Modifier) {
+
+    val spectrumData by AudioVisualizerStateManager.spectrumData.collectAsState()
+
+    AudioSpectrumBarGraphTiny(fftData = spectrumData, modifier = modifier)
+}
+
+@Composable
+fun AudioVisualizerScreenMicro(modifier: Modifier = Modifier, color: Color = baseBlue) {
+
+    val spectrumData by AudioVisualizerStateManager.spectrumData.collectAsState()
+
+    AudioSpectrumBarGraphMicro(fftData = spectrumData, modifier = modifier, color = color)
+}
+
+
+
+

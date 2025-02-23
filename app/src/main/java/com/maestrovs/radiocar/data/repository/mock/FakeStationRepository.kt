@@ -5,6 +5,7 @@ import com.maestrovs.radiocar.data.entities.radio.BitrateOption
 import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.entities.radio.StationStream
+import com.maestrovs.radiocar.data.entities.radio.tables.Favorites
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.ui.radio.ListType
 import com.maestrovs.radiocar.utils.Resource
@@ -120,6 +121,28 @@ class FakeStationRepository : StationRepository() {
     }
 
     override suspend fun insertStations(list: List<Station>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getFavoriteStationIdsFlow(): Flow<List<Favorites>> {
+        return flow {
+            emit(
+                listOf(
+                    Favorites(stationuuid = "station_1"),
+                    Favorites(stationuuid = "station_2"),
+                    Favorites(stationuuid = "station_3")
+                )
+            )
+        }
+    }
+
+    override suspend fun getPagedStations(
+        country: String,
+        searchQuery: String,
+        tag: String,
+        offset: Int,
+        limit: Int
+    ): List<StationGroup> {
         TODO("Not yet implemented")
     }
 }
