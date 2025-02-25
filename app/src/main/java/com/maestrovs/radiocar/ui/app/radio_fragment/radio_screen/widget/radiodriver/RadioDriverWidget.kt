@@ -27,6 +27,7 @@ import com.maestrovs.radiocar.ui.app.ui.theme.primary
 import com.maestrovs.radiocar.shared_managers.SettingsManager
 import com.maestrovs.radiocar.shared_managers.SpeedUnit
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.widget.BtStatusWidget
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 
 /**
  * Created by maestromaster$ on 14/02/2025$.
@@ -113,7 +114,7 @@ fun RadioDriverWidget(
 fun RadioDriverWidgetPreview() {
     RadioDriverWidget(
         viewModel = RadioViewModel(
-            FakeStationRepository()
+            FakeStationRepository(),  SharedPreferencesRepositoryMock()
         )
     )
 }

@@ -21,6 +21,8 @@ import com.maestrovs.radiocar.data.repository.StationRepositoryIml
 import com.maestrovs.radiocar.data.repository.WeatherRepository
 import com.maestrovs.radiocar.service.player.ExoPlayerManager
 import com.maestrovs.radiocar.service.player.MediaSessionHelper2
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepository
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryIml
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,7 +44,6 @@ object AppModule {
 
     @Provides
     fun provideGson(): Gson = GsonBuilder().create()
-
 
 
     //Radio
@@ -96,10 +97,14 @@ object AppModule {
     fun provideRadioRepository(
         remoteDataSource: StationRemoteDataSource,
         localDataSource: StationDao, recentSource: RecentDao, favoritesSource: FavoritesDao
-    ) : StationRepository =
+    ): StationRepository =
         StationRepositoryIml(remoteDataSource, localDataSource, recentSource, favoritesSource)
 
 
+    @Singleton
+    @Provides
+    fun provideSharedPreferencesRepository(@ApplicationContext context: Context): SharedPreferencesRepository =
+        SharedPreferencesRepositoryIml(context = context)
 
     //Weather
 
@@ -119,9 +124,10 @@ object AppModule {
     }
 
     @Provides
-    fun provideWeatherService(@Named("weather") retrofit: Retrofit): WeatherService = retrofit.create(
-        WeatherService::class.java
-    )
+    fun provideWeatherService(@Named("weather") retrofit: Retrofit): WeatherService =
+        retrofit.create(
+            WeatherService::class.java
+        )
 
     @Singleton
     @Provides

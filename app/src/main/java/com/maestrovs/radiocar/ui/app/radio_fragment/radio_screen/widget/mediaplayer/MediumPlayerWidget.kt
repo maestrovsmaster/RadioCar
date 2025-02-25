@@ -35,6 +35,7 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.ControlBackground
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreen
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
@@ -133,8 +134,6 @@ fun MediumPlayerWidget(
             }
 
 
-            Log.d("MediumPlayerWidget", "audioSessionIdFlow: $audioSessionIdFlow")
-
             if (audioSessionIdFlow != null) {
                 val visualizer =
                     AudioVisualizerManager.getVisualizer(audioSessionIdFlow!!, step = 32)
@@ -186,7 +185,7 @@ fun MediumPlayerWidgetPreview() {
 
     MediumPlayerWidget(
         RadioViewModel(
-            FakeStationRepository()
+            FakeStationRepository(),  SharedPreferencesRepositoryMock()
         )
     )
 }

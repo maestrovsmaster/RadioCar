@@ -27,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import com.maestrovs.radiocar.manager.radio.PlaylistManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.ExtendSearchButtonWidget
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 
 
 /**
@@ -69,6 +70,8 @@ fun StationsListWidget(
                 currentListType = currentListType,
                 onChangeType = {
                     viewModel.setListType(it)
+
+
                     if(it == ListType.All){
                         onSelectAllClick()
                     }
@@ -92,7 +95,8 @@ fun StationsListWidgetPreview() {
 
     StationsListWidget(
         RadioViewModel(
-            FakeStationRepository()
+            FakeStationRepository(),
+            SharedPreferencesRepositoryMock()
         ),
         modifier = Modifier,
     )

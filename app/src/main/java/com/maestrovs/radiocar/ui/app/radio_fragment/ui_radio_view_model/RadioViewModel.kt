@@ -15,6 +15,7 @@ import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.manager.bluetooth.BluetoothStateManager
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.manager.radio.PlaylistManager
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepository
 import com.maestrovs.radiocar.ui.radio.ListType
 import com.maestrovs.radiocar.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +26,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RadioViewModel @Inject constructor(
-    private val repository: StationRepository
+    private val repository: StationRepository,
+    private val sharedPreferencesRepository: SharedPreferencesRepository
 ) : ViewModel() {
 
     private val _currentListType = MutableStateFlow<ListType>(ListType.Recent)
@@ -34,9 +36,14 @@ class RadioViewModel @Inject constructor(
     private val _firstTimeLaunch = MutableStateFlow(true)
     val firstTimeLaunch: StateFlow<Boolean> = _firstTimeLaunch
 
+    init {
+        _currentListType.value = sharedPreferencesRepository.getListType()
+    }
+
 
     fun setListType(type: ListType) {
         _currentListType.value = type
+        sharedPreferencesRepository.setListType(type)
         fetchStations()
     }
 
@@ -136,9 +143,12 @@ class RadioViewModel @Inject constructor(
     }
 
 
-
-
-    val currentBluetoothDevice: StateFlow<String?> = BluetoothStateManager.currentBluetoothDevice.stateIn(viewModelScope, SharingStarted.Lazily, "")
+    val currentBluetoothDevice: StateFlow<String?> =
+        BluetoothStateManager.currentBluetoothDevice.stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            ""
+        )
 
 
     private val _manualBluetoothState = MutableStateFlow<Int?>(null)
@@ -149,7 +159,10 @@ class RadioViewModel @Inject constructor(
     ) { managerState, manualState ->
 
         val actualState = managerState ?: manualState
-        Log.d("BluetoothStatusReceiver", "Combined Bluetooth state: Manager - $managerState, Manual - $manualState Actual - $actualState")
+        Log.d(
+            "BluetoothStatusReceiver",
+            "Combined Bluetooth state: Manager - $managerState, Manual - $manualState Actual - $actualState"
+        )
         actualState
     }.stateIn(viewModelScope, SharingStarted.Lazily, BluetoothAdapter.STATE_OFF)
 

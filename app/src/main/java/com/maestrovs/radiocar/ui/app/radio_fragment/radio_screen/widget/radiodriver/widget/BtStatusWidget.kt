@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 
 /**
  * Created by maestromaster$ on 24/02/2025$.
@@ -78,7 +79,7 @@ fun BtStatusWidget( radioViewModel: RadioViewModel, modifier: Modifier = Modifie
 fun BtStatusWidgetPreview(){
     Box(modifier = Modifier.background(Color.Black), contentAlignment = Alignment.Center) {
         BtStatusWidget(
-            RadioViewModel(FakeStationRepository())
+            RadioViewModel(FakeStationRepository(), SharedPreferencesRepositoryMock() )
         )
     }
 }
