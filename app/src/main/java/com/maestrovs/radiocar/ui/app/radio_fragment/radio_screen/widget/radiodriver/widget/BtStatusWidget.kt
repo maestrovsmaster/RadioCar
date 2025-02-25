@@ -2,7 +2,6 @@ package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodr
 
 import android.bluetooth.BluetoothAdapter
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -11,21 +10,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
-import com.maestrovs.radiocar.manager.bluetooth.BluetoothStateManager
-import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 
 /**
@@ -35,18 +29,10 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioVie
 @Composable
 fun BtStatusWidget( radioViewModel: RadioViewModel, modifier: Modifier = Modifier){
 
-   // val isBluetoothEnabled by BluetoothStateManager.getBluetoothEnabledState(LocalContext.current).collectAsStateWithLifecycle(null)
-    //val currentBtDevice by BluetoothStateManager.currentBluetoothDevice.collectAsStateWithLifecycle(null)
-
     val btState by radioViewModel.isBluetoothEnabled.collectAsState()
     val currentBtDevice by radioViewModel.currentBluetoothDevice.collectAsState()
-    Log.d("BtStatusWidget", "isBluetoothEnabled: $btState,  currentBtDevice = $currentBtDevice")
 
     if(btState == null) return
-
-
-       // BluetoothStateManager.getCurrentBluetoothConnected(LocalContext.current)
-
 
     val btIcon = when(btState){
         BluetoothAdapter.STATE_OFF -> R.drawable.ic_bt_off
@@ -73,8 +59,6 @@ fun BtStatusWidget( radioViewModel: RadioViewModel, modifier: Modifier = Modifie
         }
         else -> baseGray
     }
-
-
 
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Icon(

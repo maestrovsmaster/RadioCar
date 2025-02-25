@@ -42,8 +42,11 @@ fun RadioDriverWidget(
     val playerState by PlayerStateManager.playerState.collectAsStateWithLifecycle()
     val locationState by LocationStateManager.locationState.collectAsStateWithLifecycle()
 
+    val locationAvailability by LocationStateManager.locationAvailability.collectAsStateWithLifecycle()
+
     val displayColor = Color(0xFF10CAE5)
 
+    val speedValue = if(locationAvailability) locationState.speed.toInt() else null
 
     when (SettingsManager.getSpeedUnit(LocalContext.current)) {
         SpeedUnit.kmh -> LocalContext.current.getString(R.string.km_h)
@@ -75,7 +78,7 @@ fun RadioDriverWidget(
                     .padding(start = 30.dp, top = 40.dp),
 
                 ) {
-                SevenSegmentSpeedometer(locationState.speed.toInt(), "mph", Color.White, )
+                SevenSegmentSpeedometer(speedValue, "mph", Color.White, )
             }
 
             Box(

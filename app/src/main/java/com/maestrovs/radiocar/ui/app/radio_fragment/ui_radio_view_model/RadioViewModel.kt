@@ -31,6 +31,9 @@ class RadioViewModel @Inject constructor(
     private val _currentListType = MutableStateFlow<ListType>(ListType.Recent)
     val currentListType: StateFlow<ListType> = _currentListType
 
+    private val _firstTimeLaunch = MutableStateFlow(true)
+    val firstTimeLaunch: StateFlow<Boolean> = _firstTimeLaunch
+
 
     fun setListType(type: ListType) {
         _currentListType.value = type
@@ -93,12 +96,6 @@ class RadioViewModel @Inject constructor(
         }
     }
 
-    /* fun playStream(stationGroup: StationGroup) {
-         if (stationGroup.streams.isNotEmpty()) {
-             PlayerStateManager.updateStation(stationGroup.streams.first())
-             PlayerStateManager.play()
-         }
-     }*/
 
     fun playGroup(stationGroup: StationGroup) {
         if (stationGroup.streams.isNotEmpty()) {

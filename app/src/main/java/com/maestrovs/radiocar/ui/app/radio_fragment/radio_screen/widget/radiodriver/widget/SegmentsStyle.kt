@@ -26,32 +26,43 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun SevenSegmentNumber(
-    number: Int,
+    number: Int?,
     color: Color = Color.Cyan,
     segmentWidth: Int = 20,
     segmentHeight: Int = 35,
     paddingSegments: Dp = 4.dp
 ) {
+    if (number == null) {
+        Row {
 
-    val digits = mutableListOf<Int>()
-
-    if (number < 0) {
-        digits.add(-1)
-        digits.addAll(number.toString().drop(1).map { it.toString().toInt() })
-    } else {
-        digits.addAll(number.toString().map { it.toString().toInt() })
-    }
-
-    // val digits0 = String.format("%03d", number).map { it.toString().toInt() }
-
-    Row {
-        var leadingZero = true
-        digits.forEachIndexed { index, digit ->
-            if (leadingZero && digit == 0 && index < digits.size - 1) return@forEachIndexed
-            leadingZero = false
-
-            SevenSegmentDigit(digit, Modifier.size(segmentWidth.dp, segmentHeight.dp), color)
+            SevenSegmentDigit(-1, Modifier.size(segmentWidth.dp, segmentHeight.dp), color)
             Spacer(modifier = Modifier.width(paddingSegments))
+            SevenSegmentDigit(-1, Modifier.size(segmentWidth.dp, segmentHeight.dp), color)
+            Spacer(modifier = Modifier.width(paddingSegments))
+
+        }
+    } else {
+
+        val digits = mutableListOf<Int>()
+
+        if (number < 0) {
+            digits.add(-1)
+            digits.addAll(number.toString().drop(1).map { it.toString().toInt() })
+        } else {
+            digits.addAll(number.toString().map { it.toString().toInt() })
+        }
+
+        // val digits0 = String.format("%03d", number).map { it.toString().toInt() }
+
+        Row {
+            var leadingZero = true
+            digits.forEachIndexed { index, digit ->
+                if (leadingZero && digit == 0 && index < digits.size - 1) return@forEachIndexed
+                leadingZero = false
+
+                SevenSegmentDigit(digit, Modifier.size(segmentWidth.dp, segmentHeight.dp), color)
+                Spacer(modifier = Modifier.width(paddingSegments))
+            }
         }
     }
 }
@@ -135,6 +146,12 @@ fun SevenSegmentNumberPreview() {
 @Composable
 fun SevenSegmentNumberPreviewTemperature() {
     SevenSegmentNumber(-5, color = Color.Cyan)
+}
+
+@Preview
+@Composable
+fun SevenSegmentNumberPreviewNull() {
+    SevenSegmentNumber(null, color = Color.Cyan)
 }
 
 

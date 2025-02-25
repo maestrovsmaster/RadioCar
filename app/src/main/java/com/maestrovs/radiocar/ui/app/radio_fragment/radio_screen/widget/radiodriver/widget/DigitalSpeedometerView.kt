@@ -14,7 +14,7 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodri
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.widget.SpeedUnitText
 
 @Composable
-fun SevenSegmentSpeedometer(speed: Int, unit: String, color: Color = Color.Cyan, ) {
+fun SevenSegmentSpeedometer(speed: Int?, unit: String, color: Color = Color.Cyan, ) {
     Box(
         modifier = Modifier
             //.background(Color.Black)

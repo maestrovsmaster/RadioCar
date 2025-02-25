@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +57,12 @@ fun MiniPlayerWidget(
     val songMetadataFlow by PlayerStateManager.songMetadataFlow.collectAsStateWithLifecycle(null)
 
     val isPlaying = if(isPlayingFlow == null) false else isPlayingFlow!!.first
+
+    DisposableEffect(Unit) {
+        onDispose {
+            AudioVisualizerManager.releaseVisualizer()
+        }
+    }
 
     Box(
         modifier = modifier

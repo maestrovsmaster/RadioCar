@@ -10,6 +10,16 @@ import android.location.Location
 import kotlin.math.roundToInt
 
 object LocationStateManager {
+
+
+    private var _locationAvailability = MutableStateFlow(false)
+    val locationAvailability = _locationAvailability.asStateFlow()
+
+    fun updateLocationAvailability(isAvailable: Boolean) {
+        _locationAvailability.value = isAvailable
+    }
+
+
     private val _locationState = MutableStateFlow(
         LocationState(
             latitude = 0.0,

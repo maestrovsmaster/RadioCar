@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -59,9 +60,11 @@ fun MediumPlayerWidget(
     val songMetadataFlow by PlayerStateManager.songMetadataFlow.collectAsStateWithLifecycle(null)
 
 
-
-    // if (playerState.currentStation == null) return // Не показуємо, якщо станції нема
-
+    DisposableEffect(Unit) {
+        onDispose {
+            AudioVisualizerManager.releaseVisualizer()
+        }
+    }
 
 
     Box(
@@ -129,6 +132,8 @@ fun MediumPlayerWidget(
 
             }
 
+
+            Log.d("MediumPlayerWidget", "audioSessionIdFlow: $audioSessionIdFlow")
 
             if (audioSessionIdFlow != null) {
                 val visualizer =

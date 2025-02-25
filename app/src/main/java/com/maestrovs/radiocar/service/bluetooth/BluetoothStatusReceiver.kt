@@ -21,9 +21,7 @@ class BluetoothStatusReceiver : BroadcastReceiver(){
         when (action) {
             BluetoothAdapter.ACTION_STATE_CHANGED -> {
 
-                Log.d("BluetoothStatusReceiver", "Bluetooth state changedintent : $intent")
                 val isEnabled = isBluetoothEnabled(intent)
-                Log.d("BluetoothStatusReceiver", "Bluetooth state changed: $isEnabled")
                 BluetoothStateManager.setBluetoothState(context!!, if(isEnabled == true) BluetoothAdapter.STATE_ON else BluetoothAdapter.STATE_OFF, StateSender.Receiver)//setBluetoothEnabled(context!!,isEnabled == true)
 
                 if (isEnabled == true) {
@@ -59,9 +57,7 @@ class BluetoothStatusReceiver : BroadcastReceiver(){
 
 
     private fun checkBluetoothDevices(context: Context ){
-        /*checkIsConnectedAudioBluetoothDevices(context){
-             BluetoothStateManager.setBluetoothDevices(context,it)
-        }*/
+
         getActiveBluetoothAudioDevice(context){
             BluetoothStateManager.setCurrentBluetoothDevice(context,it, StateSender.Receiver)
         }
