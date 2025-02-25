@@ -1,8 +1,6 @@
-package com.maestrovs.radiocar.common
+package com.maestrovs.radiocar.shared_managers
 
 import android.content.Context
-import com.google.gson.Gson
-import com.hbb20.countrypicker.models.CPCountry
 
 object CarLogoManager {
     private const val CAR_LOGO_RES_ID = "car_logo_res_id"

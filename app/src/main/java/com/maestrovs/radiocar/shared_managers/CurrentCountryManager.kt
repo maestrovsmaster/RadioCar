@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.common
+package com.maestrovs.radiocar.shared_managers
 
 import android.content.Context
 import com.google.gson.Gson
@@ -28,7 +28,8 @@ object CurrentCountryManager {
         }
     }
 
-    fun isAskCountry(context: Context) = SharedManager.readBooleanOptions(context,ASK_COUNTRY_KEY,false)
+    fun isAskCountry(context: Context) =
+        SharedManager.readBooleanOptions(context, ASK_COUNTRY_KEY, false)
 
     fun setAskedCountryTrue(context: Context){
         SharedManager.writeBooleanOption(context, ASK_COUNTRY_KEY, true)

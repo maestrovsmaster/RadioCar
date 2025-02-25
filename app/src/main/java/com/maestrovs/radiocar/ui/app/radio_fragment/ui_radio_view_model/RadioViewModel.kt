@@ -4,6 +4,7 @@ package com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model
  * Created by maestromaster$ on 10/02/2025$.
  */
 
+import android.bluetooth.BluetoothAdapter
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.repository.StationRepository
+import com.maestrovs.radiocar.manager.bluetooth.BluetoothStateManager
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.manager.radio.PlaylistManager
 import com.maestrovs.radiocar.ui.radio.ListType
@@ -134,5 +136,27 @@ class RadioViewModel @Inject constructor(
                 repository.deleteFavorite(stationGroup.streams.map { it.stationUuid })
             }
         }
+    }
+
+
+
+
+    val currentBluetoothDevice: StateFlow<String?> = BluetoothStateManager.currentBluetoothDevice.stateIn(viewModelScope, SharingStarted.Lazily, "")
+
+
+    private val _manualBluetoothState = MutableStateFlow<Int?>(null)
+
+    val isBluetoothEnabled: StateFlow<Int?> = combine(
+        BluetoothStateManager.bluetoothState,
+        _manualBluetoothState
+    ) { managerState, manualState ->
+
+        val actualState = managerState ?: manualState
+        Log.d("BluetoothStatusReceiver", "Combined Bluetooth state: Manager - $managerState, Manual - $manualState Actual - $actualState")
+        actualState
+    }.stateIn(viewModelScope, SharingStarted.Lazily, BluetoothAdapter.STATE_OFF)
+
+    fun setBluetoothState(state: Int) {
+        _manualBluetoothState.value = state
     }
 }

@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.common
+package com.maestrovs.radiocar.shared_managers
 
 import android.content.Context
 

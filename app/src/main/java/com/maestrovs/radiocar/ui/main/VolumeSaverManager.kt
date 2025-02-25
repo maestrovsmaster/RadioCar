@@ -1,8 +1,7 @@
 package com.maestrovs.radiocar.ui.main
 
 import android.content.Context
-import com.maestrovs.radiocar.common.SharedManager
-import android.location.Location
+import com.maestrovs.radiocar.shared_managers.SharedManager
 
 object WeatherManager {
 

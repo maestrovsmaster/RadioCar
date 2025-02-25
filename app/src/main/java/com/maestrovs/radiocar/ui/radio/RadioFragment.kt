@@ -17,7 +17,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.common.CurrentCountryManager
+import com.maestrovs.radiocar.shared_managers.CurrentCountryManager
 import com.maestrovs.radiocar.data.default_podcasts.bbc_uk_json
 import com.maestrovs.radiocar.data.default_podcasts.cowboys_juke_json
 import com.maestrovs.radiocar.data.default_podcasts.jaz_fm_json
@@ -519,7 +519,8 @@ class RadioFragment : Fragment() {
             lastPageCount = 0
             isLastPage = false
         }
-       val query = StationQuery(CurrentCountryManager.readCountry(requireContext())?.alpha2
+       val query = StationQuery(
+           CurrentCountryManager.readCountry(requireContext())?.alpha2
             ?: CurrentCountryManager.DEFAULT_COUNTRY,
            currentPage * PAGE_SIZE,
            PAGE_SIZE

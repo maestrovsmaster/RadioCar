@@ -1,7 +1,6 @@
 package com.maestrovs.radiocar.ui.current_country
 
 import android.os.Bundle
-import android.util.Log
 
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +14,7 @@ import com.maestrovs.radiocar.ui.main.MainViewModel
 import com.hbb20.countrypicker.models.CPCountry
 import com.hbb20.countrypicker.recyclerview.loadCountries
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.common.CurrentCountryManager
+import com.maestrovs.radiocar.shared_managers.CurrentCountryManager
 import com.maestrovs.radiocar.extensions.setVisible
 import com.murgupluoglu.flagkit.FlagKit
 

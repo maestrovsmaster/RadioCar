@@ -1,13 +1,8 @@
 package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver
 
 import SevenSegmentSpeedometer
-import android.util.Log
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -18,7 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.github.anastr.speedviewlib.Speedometer
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
 import com.maestrovs.radiocar.manager.location.LocationStateManager
@@ -29,10 +23,10 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodri
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.LottieLoader
-import com.maestrovs.radiocar.ui.app.ui.theme.baseBlue
 import com.maestrovs.radiocar.ui.app.ui.theme.primary
-import com.maestrovs.radiocar.ui.settings.SettingsManager
-import com.maestrovs.radiocar.ui.settings.SpeedUnit
+import com.maestrovs.radiocar.shared_managers.SettingsManager
+import com.maestrovs.radiocar.shared_managers.SpeedUnit
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.widget.BtStatusWidget
 
 /**
  * Created by maestromaster$ on 14/02/2025$.
@@ -101,6 +95,10 @@ fun RadioDriverWidget(
                 ) {
                 DigitalWeatherWidget(-14.0, "C", color = displayColor)
             }
+
+            BtStatusWidget(viewModel, modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(16.dp),)
         }
     }
 

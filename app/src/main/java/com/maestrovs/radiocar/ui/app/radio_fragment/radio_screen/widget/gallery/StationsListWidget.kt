@@ -37,6 +37,7 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.
 fun StationsListWidget(
     viewModel: RadioViewModel,
     modifier: Modifier = Modifier,
+    onSelectAllClick: () -> Unit = {},
 ) {
 
     val currentListType by viewModel.currentListType.collectAsState()
@@ -64,26 +65,13 @@ fun StationsListWidget(
                 })
 
 
-            /* Box(
-                 modifier = Modifier
-                     .fillMaxSize()
-                     .background(
-                         brush = Brush.horizontalGradient(
-                             colors = listOf(
-                                 Color(0x9221292F),
-                                 Color(0x0327272A),
-                                 Color(0x90182325)
-                             ),
-                             //startY = 0f,
-                             // endY = 800f
-                         )
-                     )
-             )*/
-
             ListTypeSelector(
                 currentListType = currentListType,
                 onChangeType = {
                     viewModel.setListType(it)
+                    if(it == ListType.All){
+                        onSelectAllClick()
+                    }
                 }
             )
 

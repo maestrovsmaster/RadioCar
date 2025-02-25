@@ -9,11 +9,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.common.CarLogoManager
+import com.maestrovs.radiocar.shared_managers.CarLogoManager
 import com.maestrovs.radiocar.databinding.FragmentLogosBinding
-import com.maestrovs.radiocar.extensions.setVisible
 import com.maestrovs.radiocar.ui.main.MainViewModel
-import com.maestrovs.radiocar.ui.settings.SettingsViewModel
 
 
 class LogosFragment : Fragment() {

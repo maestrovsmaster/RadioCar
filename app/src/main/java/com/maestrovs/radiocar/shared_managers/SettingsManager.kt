@@ -1,7 +1,6 @@
-package com.maestrovs.radiocar.ui.settings
+package com.maestrovs.radiocar.shared_managers
 
 import android.content.Context
-import com.maestrovs.radiocar.common.SharedManager
 
 object SettingsManager {
 

@@ -1,21 +1,12 @@
 package com.maestrovs.radiocar.service
 
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.maestrovs.radiocar.common.CurrentCountryManager
 import com.maestrovs.radiocar.data.entities.radio.Station
-import com.maestrovs.radiocar.data.remote.radio.StationRemoteDataSource
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.ui.radio.ListType
 import com.maestrovs.radiocar.utils.Resource
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton

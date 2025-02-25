@@ -7,14 +7,17 @@ import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.RadioScreen
 
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 import com.maestrovs.radiocar.ui.app.stations_list.RadioListScreen
 import com.maestrovs.radiocar.ui.app.stations_list.RadioListViewModel
+import com.maestrovs.radiocar.ui.splash_start_fragment.SplashFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -24,7 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class RadioFragment : Fragment() {
 
-    private val viewModel: RadioViewModel by viewModels()
+    private val viewModel: RadioViewModel by activityViewModels()
     private val radioListViewModel : RadioListViewModel by viewModels()
 
     override fun onCreateView(
@@ -32,13 +35,18 @@ class RadioFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
+       // findNavController().navigate(RadioFragmentDirections.actionRadioFragmentToRadioListFragment())
 
         return ComposeView(requireContext()).apply {
             setContent {
                 val navController = findNavController()
-                //RadioScreen(viewModel, navController = navController)
+                RadioScreen(viewModel, navController = navController,
+                    onSelectAllClick = {
+                         navController.navigate(RadioFragmentDirections.actionRadioFragmentToRadioListFragment())
+                    }
+                )
 
-                RadioListScreen(viewModel = radioListViewModel, navController = navController)
+                //RadioListScreen(viewModel = radioListViewModel, navController = navController)
             }
         }
     }

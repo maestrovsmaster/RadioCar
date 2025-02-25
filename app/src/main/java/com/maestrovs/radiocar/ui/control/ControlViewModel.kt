@@ -6,9 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.maestrovs.radiocar.common.CurrentCountryManager
+import com.maestrovs.radiocar.shared_managers.CurrentCountryManager
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
-import com.maestrovs.radiocar.data.remote.weather.WeatherService
 import com.maestrovs.radiocar.data.repository.WeatherRepository
 import com.maestrovs.radiocar.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

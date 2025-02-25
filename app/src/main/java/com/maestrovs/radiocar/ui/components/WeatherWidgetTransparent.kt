@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
 import com.maestrovs.radiocar.extensions.setVisible
-import com.maestrovs.radiocar.ui.settings.TemperatureUnit
+import com.maestrovs.radiocar.shared_managers.TemperatureUnit
 import com.squareup.picasso.Picasso
 
 

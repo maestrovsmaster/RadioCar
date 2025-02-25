@@ -14,6 +14,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
 import com.maestrovs.radiocar.manager.audio_visual.AudioVisualizerStateManager
+import com.maestrovs.radiocar.manager.bluetooth.BluetoothStateManager
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.LikeWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
@@ -55,6 +57,8 @@ fun MediumPlayerWidget(
     val audioSessionIdFlow by PlayerStateManager.audioSessionIdFlow.collectAsStateWithLifecycle(null)
     val isLikedFlow by PlayerStateManager.isLikedFlow.collectAsStateWithLifecycle(false)
     val songMetadataFlow by PlayerStateManager.songMetadataFlow.collectAsStateWithLifecycle(null)
+
+
 
     // if (playerState.currentStation == null) return // Не показуємо, якщо станції нема
 

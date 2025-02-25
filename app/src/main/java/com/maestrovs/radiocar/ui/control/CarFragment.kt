@@ -1,10 +1,6 @@
 package com.maestrovs.radiocar.ui.control
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,16 +8,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.common.CarLogoManager
+import com.maestrovs.radiocar.shared_managers.CarLogoManager
 import com.maestrovs.radiocar.common.Constants.CHECK_WEATHER_MINUTES_DELAY
-import com.maestrovs.radiocar.common.CurrentCountryManager
+import com.maestrovs.radiocar.shared_managers.CurrentCountryManager
 import com.maestrovs.radiocar.databinding.FragmentCarBinding
-import com.maestrovs.radiocar.enums.bluetooth.BT_Status
 import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.extensions.setVisible
 import com.maestrovs.radiocar.ui.main.MainViewModel
-import com.maestrovs.radiocar.ui.settings.SettingsManager
-import com.maestrovs.radiocar.ui.settings.SpeedUnit
+import com.maestrovs.radiocar.shared_managers.SettingsManager
+import com.maestrovs.radiocar.shared_managers.SpeedUnit
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

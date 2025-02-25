@@ -2,6 +2,7 @@ package com.maestrovs.radiocar.ui.app.stations_list.widgets
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,28 +42,41 @@ fun SearchBar(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .background(Color.White, shape = RoundedCornerShape(8.dp))
-            .border(1.dp, Color.Gray, shape = RoundedCornerShape(8.dp)),
+            .background(Color.Black, shape = RoundedCornerShape(20.dp))
+            .border(1.dp, Color.Gray, shape = RoundedCornerShape(20.dp)),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
         IconButton(onClick = { onBackClick() }) {
-            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+            Icon(imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.White)
         }
 
 
         TextField(
             value = searchQuery,
             onValueChange = { onSearch(it) },
-            placeholder = { Text(LocalContext.current.getString(R.string.enter_station_name)) },
+            placeholder = {
+                Text(
+                    text = LocalContext.current.getString(R.string.enter_station_name),
+                    color = Color.Gray // Сірий хінт
+                )
+            },
             singleLine = true,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .background(Color.Transparent), // Прозорий фон
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            /*colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            )*/
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.Transparent, // Прозорий фон без фокусу
+                focusedContainerColor = Color.Transparent, // Прозорий фон при фокусі
+                cursorColor = Color.White, // Білий курсор
+                focusedTextColor = Color.White, // Білий текст у фокусі
+                unfocusedTextColor = Color.White, // Білий текст без фокусу
+                focusedIndicatorColor = Color.Transparent, // Прозорий індикатор у фокусі
+                unfocusedIndicatorColor = Color.Transparent // Прозорий індикатор без фокусу
+            )
         )
 
 
@@ -76,7 +91,8 @@ fun SearchBar(
         ) {
             Icon(
                 imageVector = if (searchQuery.isNotEmpty()) Icons.Default.Close else Icons.Default.Search,
-                contentDescription = "Search/Clear"
+                contentDescription = "Search/Clear",
+                tint = Color.White
             )
         }
     }
@@ -84,6 +100,11 @@ fun SearchBar(
 
 @Preview
 @Composable
-fun SearchBarPreview(){
-    SearchBar(onBackClick = {}, searchQuery = "", onSearch = {}, onClear = {})
+fun SearchBarPreview() {
+    Box(modifier = Modifier
+        .padding(16.dp)
+        .background(Color.Black)) {
+        SearchBar(onBackClick = {}, searchQuery = "", onSearch = {}, onClear = {})
+    }
+
 }

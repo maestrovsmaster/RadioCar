@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.maestrovs.radiocar.R
+import com.maestrovs.radiocar.ui.app.ui.theme.primary
 
 
 /**
@@ -57,13 +58,13 @@ fun TagSelector(
                 onClick = { expanded = true },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = LocalContext.current.getString(R.string.select_tag))
+                Text(text = LocalContext.current.getString(R.string.select_tag), color = Color.White)
             }
         } else {
 
             Button(
                 onClick = { onTagCleared() },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                colors = ButtonDefaults.buttonColors(containerColor = primary),
                 shape = RoundedCornerShape(50),
                 modifier = Modifier.fillMaxWidth()
             ) {

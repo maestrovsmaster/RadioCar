@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,7 +39,11 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediapla
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreenMicro
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreenTiny
+import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.MarqueeText
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PlayButton
+import com.maestrovs.radiocar.ui.app.ui.theme.primary
+import com.maestrovs.radiocar.ui.app.ui.theme.primaryDark
+import com.maestrovs.radiocar.ui.app.ui.theme.primaryLight
 import com.murgupluoglu.flagkit.FlagKit
 
 /**
@@ -63,9 +68,11 @@ fun StationItem(
 
     val showPlaying = currentPlayingGroup?.name == station.name   && isPlayingState
 
-    val showBuffering = currentPlayingGroup == station   && isBufferingFlow
+    val showBuffering = currentPlayingGroup?.name == station.name   && isBufferingFlow
 
-    val showVisualizer = currentPlayingGroup == station   //&& audioSessionIdFlow
+    val showVisualizer = currentPlayingGroup?.name  == station.name
+
+    val showMetadata = currentPlayingGroup?.name  == station.name && songMetadataFlow != null && songMetadataFlow!!.isNotEmpty()
 
     Row(
         modifier = Modifier
@@ -81,7 +88,7 @@ fun StationItem(
             modifier = Modifier
                 .width(50.dp)
                 .height(50.dp)
-                .background(Color.LightGray)
+                .background(primaryDark)
             //.padding(bottom = 40.dp, top = 0.dp, )
         ) {
 
@@ -103,8 +110,17 @@ fun StationItem(
         Spacer(modifier = Modifier.width(8.dp))
 
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = station.name)//, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            //Text(text = station.country, fontSize = 14.sp, color = Color.Gray)
+            Text(text = station.name, fontSize = 16.sp, color = Color.White)//, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+
+            if(showMetadata) {
+                MarqueeText(
+                    text = "${songMetadataFlow ?: "Unknown song"}",
+                    color = primaryLight,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Normal,
+                    gradientEdgeColor = primary.copy(alpha = 0.9f),
+                )
+            }
         }
 
         if (audioSessionIdFlow != null && showVisualizer) {
@@ -129,7 +145,7 @@ fun StationItem(
                         )
                     )
             ) {
-                AudioVisualizerScreenMicro( modifier = Modifier.width(30.dp).height(30.dp), color = Color.Red)
+                AudioVisualizerScreenMicro( modifier = Modifier.width(26.dp).height(26.dp), color = primaryLight)
             }
         }
 
@@ -166,11 +182,13 @@ fun StationItemPreview() {
         favicon = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPZ-WDFZ5Pz-lBPZj9GSU2LbBSEmlTVOtRmQ&s",
         isFavorite = true
     )
-    StationItem(
-        station = group,
-        onItemClick = {},
-        onLikeClick = {},
-        onPlayClick = {},
-        onPausedClick = {}
-    )
+    Box(modifier = Modifier.background(Color.Black)) {
+        StationItem(
+            station = group,
+            onItemClick = {},
+            onLikeClick = {},
+            onPlayClick = {},
+            onPausedClick = {}
+        )
+    }
 }

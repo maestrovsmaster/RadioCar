@@ -16,12 +16,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.applications.ApplicationsWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.StationsListWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.MediumPlayerWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.RadioDriverWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
+
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+
 
 /**
  * Created by maestromaster on 10/02/2025.
@@ -32,7 +37,10 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioVie
 fun RadioScreen(
     viewModel: RadioViewModel,
     navController: NavController,
+    onSelectAllClick: () -> Unit = {},
 ) {
+
+
 
     Scaffold(
         containerColor = Color.Black,
@@ -45,9 +53,9 @@ fun RadioScreen(
             configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT
 
         if (isPortrait) {
-            VerticalOrientation(padding, viewModel, navController)
+            RadioVerticalOrientation(padding, viewModel, navController, onSelectAllClick)
         } else {
-            HorizontalOrientation(padding, viewModel, navController)
+            RadioHorizontalOrientation(padding, viewModel, navController, onSelectAllClick)
         }
 
 
@@ -56,10 +64,11 @@ fun RadioScreen(
 
 
 @Composable
-fun VerticalOrientation(
+fun RadioVerticalOrientation(
     padding: PaddingValues,
     viewModel: RadioViewModel,
-    navController: NavController
+    navController: NavController,
+    onSelectAllClick: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -91,16 +100,19 @@ fun VerticalOrientation(
         StationsListWidget(
             viewModel,
             modifier = Modifier.padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
+
+            onSelectAllClick = onSelectAllClick
         )
     }
 }
 
 
 @Composable
-fun HorizontalOrientation(
+fun RadioHorizontalOrientation(
     padding: PaddingValues,
     viewModel: RadioViewModel,
-    navController: NavController
+    navController: NavController,
+    onSelectAllClick: () -> Unit = {},
 ) {
     Row(
         modifier = Modifier
@@ -135,7 +147,8 @@ fun HorizontalOrientation(
 
                 viewModel,
                 modifier = Modifier
-                    .padding(top = 8.dp, bottom = 16.dp, start = 8.dp, end = 16.dp)
+                    .padding(top = 8.dp, bottom = 16.dp, start = 8.dp, end = 16.dp),
+                onSelectAllClick = onSelectAllClick
             )
         }
 

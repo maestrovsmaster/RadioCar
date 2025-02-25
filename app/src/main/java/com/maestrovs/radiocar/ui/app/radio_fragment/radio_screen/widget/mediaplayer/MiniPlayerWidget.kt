@@ -18,21 +18,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.maestrovs.radiocar.data.entities.radio.StationGroup
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.LikeWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
-import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.ControlBackground
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.ControlBackgroundLight
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerManager
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreenMicro
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreenTiny
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.MarqueeText
@@ -48,9 +45,8 @@ import com.maestrovs.radiocar.ui.app.ui.theme.primary
 fun MiniPlayerWidget(
     viewModel: RadioListViewModel,
     modifier: Modifier = Modifier,
-    onClickLike: (StationGroup, Boolean) -> Unit = {_,_ -> }
 ) {
-    //val playerState by PlayerStateManager.playerState.collectAsStateWithLifecycle()
+    val stationList = viewModel.stationFlow.collectAsLazyPagingItems()
 
     val currentGroup by PlayerStateManager.currentGroup.collectAsStateWithLifecycle(null)
     val isPlayingFlow by PlayerStateManager.isPlayingFlow.collectAsStateWithLifecycle(null)
@@ -59,22 +55,14 @@ fun MiniPlayerWidget(
     val isLikedFlow by PlayerStateManager.isLikedFlow.collectAsStateWithLifecycle(false)
     val songMetadataFlow by PlayerStateManager.songMetadataFlow.collectAsStateWithLifecycle(null)
 
-    // if (playerState.currentStation == null) return // Не показуємо, якщо станції нема
-
     val isPlaying = if(isPlayingFlow == null) false else isPlayingFlow!!.first
 
     Box(
         modifier = modifier
-
-        //.background(Color.Black)
-        //.padding(16.dp),
-        //contentAlignment = Alignment.Center
     ) {
 
         DynamicShadowCard(
             modifier = Modifier,
-            // .padding(16.dp)
-            // .fillMaxWidth(),
             contentColor = primary, backgroundColor = primary
         ) {
 
@@ -90,13 +78,10 @@ fun MiniPlayerWidget(
                         .width(90.dp)
                         .height(90.dp)
                         .background(Color.LightGray)
-                    //.padding(bottom = 40.dp, top = 0.dp, )
                 ) {
                     currentGroup?.favicon?.let {
                         BackgroundCover(imageUrl = currentGroup!!.favicon)
                     }
-
-
                 }
 
                 Column(
@@ -146,21 +131,15 @@ fun MiniPlayerWidget(
 
                     Row(
                         modifier = Modifier
-                            //.align(Alignment.TopEnd)
                             .padding(6.dp)
                     ) {
                         LikeWidget(isLiked = isLikedFlow, onLikeClick =  {
-                            //viewModel.setIsLike(currentGroup!!, !isLikedFlow)
-                            onClickLike(currentGroup!!, !isLikedFlow)
+                            viewModel.setIsLike(currentGroup!!, !isLikedFlow)
+                            stationList.refresh()
                         })
-
                     }
-
                 }
-
             }
-
-
 
             ControlBackgroundLight()
 
@@ -183,20 +162,13 @@ fun MiniPlayerWidget(
                                     Color(0x4027272A),
                                     Color(0xC927272A),
                                 ),
-                                // startY = 0f,
-                                //endY = 240f
                             )
                         )
                 ) {
                     AudioVisualizerScreenTiny( modifier = Modifier.width(90.dp).height(40.dp))
                 }
             }
-
-
-
         }
-
-
     }
 }
 

@@ -69,12 +69,12 @@ fun CountryPickerWidget(
                         ),
                         countriesList = sortedCountries,
                         onCountrySelected = { country ->
-                            Log.d("StationRemoteDataSource", "country = $country")
                             onCountrySelected(country)
                         })
 
                 }else{
-                    Text(LocalContext.current.getString(R.string.select_country))
+                    Text(LocalContext.current.getString(R.string.select_country),
+                        color = Color.White)
                 }
 
 

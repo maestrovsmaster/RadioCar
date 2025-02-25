@@ -10,13 +10,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.common.CarLogoManager
+import com.maestrovs.radiocar.shared_managers.CarLogoManager
 import com.maestrovs.radiocar.common.Constants.ABOUT_RADIO_URL
 import com.maestrovs.radiocar.common.Constants.CONTACT_EMAIL
 import com.maestrovs.radiocar.common.Constants.PLAY_MARKET_URL
 import com.maestrovs.radiocar.common.Constants.PRIVACY_URL
-import com.maestrovs.radiocar.common.CurrentCountryManager
+import com.maestrovs.radiocar.shared_managers.CurrentCountryManager
 import com.maestrovs.radiocar.databinding.FragmentSettingsMainBinding
+import com.maestrovs.radiocar.shared_managers.SettingsManager
+import com.maestrovs.radiocar.shared_managers.SpeedUnit
+import com.maestrovs.radiocar.shared_managers.TemperatureUnit
 import com.maestrovs.radiocar.ui.main.MainViewModel
 
 
