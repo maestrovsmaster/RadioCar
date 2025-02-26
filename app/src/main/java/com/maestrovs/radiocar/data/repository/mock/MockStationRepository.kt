@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.flow
  * Created by maestromaster$ on 11/02/2025$.
  */
 
-class FakeStationRepository : StationRepository() {
+class MockStationRepository : StationRepository() {
     override fun getStationsByName(searchterm: String): LiveData<Resource<List<Station>>> {
         TODO("Not yet implemented")
     }
@@ -128,9 +128,9 @@ class FakeStationRepository : StationRepository() {
         return flow {
             emit(
                 listOf(
-                    Favorites(stationuuid = "station_1"),
-                    Favorites(stationuuid = "station_2"),
-                    Favorites(stationuuid = "station_3")
+                    Favorites(stationuuid = "station_1", lastPlayedTime = System.currentTimeMillis()),
+                    Favorites(stationuuid = "station_2", lastPlayedTime = System.currentTimeMillis()),
+                    Favorites(stationuuid = "station_3", lastPlayedTime = System.currentTimeMillis())
                 )
             )
         }
@@ -143,6 +143,14 @@ class FakeStationRepository : StationRepository() {
         offset: Int,
         limit: Int
     ): List<StationGroup> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getRecentStationDetailsByLastTimeGrouped(): Flow<Resource<List<StationGroup>>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getFavoriteStationDetailsByLastTimeGrouped(): Flow<Resource<List<StationGroup>>> {
         TODO("Not yet implemented")
     }
 }

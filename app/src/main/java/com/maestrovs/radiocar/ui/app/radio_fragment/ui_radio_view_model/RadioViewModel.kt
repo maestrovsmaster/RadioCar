@@ -19,6 +19,7 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.reposito
 import com.maestrovs.radiocar.ui.radio.ListType
 import com.maestrovs.radiocar.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -30,22 +31,8 @@ class RadioViewModel @Inject constructor(
     private val sharedPreferencesRepository: SharedPreferencesRepository
 ) : ViewModel() {
 
-    private val _currentListType = MutableStateFlow<ListType>(ListType.Recent)
+    private val _currentListType = MutableStateFlow<ListType>(ListType.All)
     val currentListType: StateFlow<ListType> = _currentListType
-
-    private val _firstTimeLaunch = MutableStateFlow(true)
-    val firstTimeLaunch: StateFlow<Boolean> = _firstTimeLaunch
-
-    init {
-        _currentListType.value = sharedPreferencesRepository.getListType()
-    }
-
-
-    fun setListType(type: ListType) {
-        _currentListType.value = type
-        sharedPreferencesRepository.setListType(type)
-        fetchStations()
-    }
 
     private val _stations = MutableLiveData<List<StationGroup>>()
     val stations: LiveData<List<StationGroup>> = _stations
@@ -56,11 +43,31 @@ class RadioViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+    private var fetchStationsJob: Job? = null
+
     init {
+        _currentListType.value = sharedPreferencesRepository.getListType()
+       // Log.d("RadioViewModel", "ListType: ${_currentListType.value}")
         fetchStations()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val stationLatest = sharedPreferencesRepository.getRecentStationGroup()
+            if(stationLatest != null) {
+                PlayerStateManager.updateStationGroup(stationLatest)
+            }
+        }
     }
 
-    private var fetchStationsJob: Job? = null
+
+
+
+
+
+    fun setListType(type: ListType) {
+        _currentListType.value = type
+        sharedPreferencesRepository.setListType(type)
+        fetchStations()
+    }
 
     private fun fetchStations() {
         _errorMessage.value = null
@@ -69,12 +76,17 @@ class RadioViewModel @Inject constructor(
         fetchStationsJob?.cancel()
 
         fetchStationsJob = viewModelScope.launch {
-            val flow = repository.getGroupedStationsFlow(
-                countryCode = "UA",
-                offset = 0,
-                limit = 100,
-                listType = _currentListType.value
-            )
+
+            val flow = when (_currentListType.value) {
+                ListType.Recent -> repository.getRecentStationDetailsByLastTimeGrouped()
+                ListType.Favorites -> repository.getFavoriteStationDetailsByLastTimeGrouped()
+                else -> repository.getGroupedStationsFlow(
+                    countryCode = "UA",
+                    offset = 0,
+                    limit = 100,
+                    listType = ListType.All
+                )
+            }
 
             flow.collectLatest { resource ->
                 processResources(resource)
@@ -127,6 +139,7 @@ class RadioViewModel @Inject constructor(
     private fun setRecent(stationGroup: StationGroup) {
         viewModelScope.launch {
             repository.setRecent(stationGroup.streams.map { it.stationUuid })
+            sharedPreferencesRepository.saveRecentStationGroup(stationGroup)
         }
     }
 
@@ -139,6 +152,15 @@ class RadioViewModel @Inject constructor(
             } else {
                 repository.deleteFavorite(stationGroup.streams.map { it.stationUuid })
             }
+        }
+    }
+
+    fun deleteFromRecentAndFavorites(stationGroup: StationGroup) {
+        PlayerStateManager.setLiked(false)
+        viewModelScope.launch {
+            repository.deleteFavorite(stationGroup.streams.map { it.stationUuid })
+            repository.deleteRecent(stationGroup.streams.map { it.stationUuid })
+
         }
     }
 

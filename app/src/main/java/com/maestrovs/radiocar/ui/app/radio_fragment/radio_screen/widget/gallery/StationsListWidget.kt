@@ -1,21 +1,16 @@
 package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery
 
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
-import com.maestrovs.radiocar.manager.radio.PlayerStateManager
+import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.CenteredCarousel
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.ListTypeSelector
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
@@ -24,8 +19,14 @@ import com.maestrovs.radiocar.ui.app.ui.theme.primary
 import com.maestrovs.radiocar.ui.app.ui.theme.primaryDark
 import com.maestrovs.radiocar.ui.radio.ListType
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import com.maestrovs.radiocar.data.entities.radio.Station
+import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.manager.radio.PlaylistManager
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.ConfirmDeleteDialog
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.ExtendSearchButtonWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 
@@ -43,6 +44,9 @@ fun StationsListWidget(
 
     val currentListType by viewModel.currentListType.collectAsState()
     val stationsGroupFlow by PlaylistManager.stationGroups.collectAsState(emptyList())
+
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedStation by remember { mutableStateOf<StationGroup?>(null) }
 
     Box(
         modifier = modifier
@@ -62,6 +66,10 @@ fun StationsListWidget(
                 modifier = Modifier.fillMaxWidth(),
                 onItemClick = {
                     viewModel.playGroup(it)
+
+                },
+                onItemLongClick = { selectedStation = it
+                    showDialog = true
 
                 })
 
@@ -86,6 +94,17 @@ fun StationsListWidget(
         }
 
 
+
+    }
+    if (showDialog && selectedStation != null) {
+        ConfirmDeleteDialog(
+            stationName = selectedStation!!.name,
+            onConfirm = {
+                viewModel.deleteFromRecentAndFavorites(selectedStation!!)
+                showDialog = false
+            },
+            onDismiss = { showDialog = false }
+        )
     }
 }
 
@@ -95,7 +114,7 @@ fun StationsListWidgetPreview() {
 
     StationsListWidget(
         RadioViewModel(
-            FakeStationRepository(),
+            MockStationRepository(),
             SharedPreferencesRepositoryMock()
         ),
         modifier = Modifier,

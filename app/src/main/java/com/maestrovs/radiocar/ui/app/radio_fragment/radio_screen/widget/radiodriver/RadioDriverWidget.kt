@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
+import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
 import com.maestrovs.radiocar.manager.location.LocationStateManager
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.widget.DigitalWeatherWidget
@@ -114,7 +114,7 @@ fun RadioDriverWidget(
 fun RadioDriverWidgetPreview() {
     RadioDriverWidget(
         viewModel = RadioViewModel(
-            FakeStationRepository(),  SharedPreferencesRepositoryMock()
+            MockStationRepository(),  SharedPreferencesRepositoryMock()
         )
     )
 }

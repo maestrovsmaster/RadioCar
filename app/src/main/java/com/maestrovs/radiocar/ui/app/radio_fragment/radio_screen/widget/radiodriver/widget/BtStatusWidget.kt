@@ -1,7 +1,6 @@
 package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.widget
 
 import android.bluetooth.BluetoothAdapter
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -19,7 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
+import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 
@@ -79,7 +78,7 @@ fun BtStatusWidget( radioViewModel: RadioViewModel, modifier: Modifier = Modifie
 fun BtStatusWidgetPreview(){
     Box(modifier = Modifier.background(Color.Black), contentAlignment = Alignment.Center) {
         BtStatusWidget(
-            RadioViewModel(FakeStationRepository(), SharedPreferencesRepositoryMock() )
+            RadioViewModel(MockStationRepository(), SharedPreferencesRepositoryMock() )
         )
     }
 }

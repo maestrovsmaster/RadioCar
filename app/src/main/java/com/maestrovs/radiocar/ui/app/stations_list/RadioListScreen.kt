@@ -15,11 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
+import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.MiniPlayerWidget
 import com.maestrovs.radiocar.ui.app.stations_list.list_widget.ListWidget
 import com.maestrovs.radiocar.ui.app.stations_list.search_block.SearchBlock
@@ -145,7 +143,7 @@ fun RadioListHorizontalOrientation(
 @Composable
 fun RadioListScreenPreview() {
     RadioListScreen(
-        RadioListViewModel(FakeStationRepository())
+        RadioListViewModel(MockStationRepository())
 
     )
 }

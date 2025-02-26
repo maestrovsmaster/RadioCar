@@ -103,8 +103,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideSharedPreferencesRepository(@ApplicationContext context: Context): SharedPreferencesRepository =
-        SharedPreferencesRepositoryIml(context = context)
+    fun provideSharedPreferencesRepository(@ApplicationContext context: Context,localDataSource: StationDao,): SharedPreferencesRepository =
+        SharedPreferencesRepositoryIml(context = context, localDataSource = localDataSource)
 
     //Weather
 

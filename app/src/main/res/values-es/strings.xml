@@ -79,7 +79,9 @@
     <string name="select_country">Seleccione un país</string>
     <string name="select_tag">Seleccione una etiqueta</string>
 
-
+    <string name="delete_station_title">Eliminar estación</string>
+    <string name="delete_station_message">¿Está seguro de que desea eliminar la estación %1$s?</string>
+    <string name="confirm">Eliminar</string>
 
 
     <string-array name="tag_keys">

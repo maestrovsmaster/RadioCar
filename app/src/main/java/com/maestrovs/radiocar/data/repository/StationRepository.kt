@@ -24,6 +24,7 @@ import com.maestrovs.radiocar.utils.performNetworkOperation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -68,6 +69,9 @@ abstract class StationRepository() {
         offset: Int = 0,
         limit: Int = PAGE_SIZE
     ): List<StationGroup>
+
+    abstract fun getRecentStationDetailsByLastTimeGrouped(): Flow<Resource<List<StationGroup>>>
+    abstract fun getFavoriteStationDetailsByLastTimeGrouped(): Flow<Resource<List<StationGroup>>>
 }
 
 class StationRepositoryIml @Inject constructor(
@@ -130,6 +134,23 @@ class StationRepositoryIml @Inject constructor(
         return recentSource.getAllRecentList().map { it.stationuuid }.toSet()
     }
 
+
+    override fun getRecentStationDetailsByLastTimeGrouped(): Flow<Resource<List<StationGroup>>> =
+        localDataSource.getRecentStationDetailsByLastTime()
+            .map { stationList ->
+                val updatedList = stationList.map { it.copy(isRecent = 1) }
+                val groupedStations = updatedList.toGroupedStations()
+                Resource.success(groupedStations)
+            }
+
+
+    override fun getFavoriteStationDetailsByLastTimeGrouped(): Flow<Resource<List<StationGroup>>> =
+        localDataSource.getFavoriteStationDetailsByLastTime()
+            .map { stationList ->
+                val updatedList = stationList.map { it.copy(isFavorite = 1) }
+                val groupedStations = updatedList.toGroupedStations()
+                Resource.success(groupedStations)
+            }
 
     override fun getGroupedStationsFlow(
         countryCode: String,
@@ -232,11 +253,13 @@ class StationRepositoryIml @Inject constructor(
 
 
     override suspend fun setRecent(stationuuid: String) {
-        recentSource.insert(Recent(stationuuid = stationuuid))
+        val currentTime = System.currentTimeMillis()
+        recentSource.insert(Recent(stationuuid = stationuuid, lastPlayedTime = currentTime))
     }
 
     override suspend fun setRecent(stationUuids: List<String>) {
-        val recentStations = stationUuids.map { Recent(stationuuid = it) }
+        val currentTime = System.currentTimeMillis()
+        val recentStations = stationUuids.map { Recent(stationuuid = it, lastPlayedTime = currentTime) }
         recentSource.insertAll(recentStations)
     }
 
@@ -250,11 +273,13 @@ class StationRepositoryIml @Inject constructor(
 
 
     override suspend fun setFavorite(stationuuid: String) {
-        favoritesSource.insert(Favorites(stationuuid = stationuuid))
+        val currentTime = System.currentTimeMillis()
+        favoritesSource.insert(Favorites(stationuuid = stationuuid, lastPlayedTime = currentTime))
     }
 
     override suspend fun setFavorite(stationUuids: List<String>) {
-        val favoriteStations = stationUuids.map { Favorites(stationuuid = it) }
+        val currentTime = System.currentTimeMillis()
+        val favoriteStations = stationUuids.map { Favorites(stationuuid = it, lastPlayedTime = currentTime) }
         favoritesSource.insertAll(favoriteStations)
     }
 

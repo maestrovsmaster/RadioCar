@@ -39,7 +39,8 @@ fun CenteredCarousel(
     modifier: Modifier = Modifier,
     itemHeight: Dp = 120.dp,
     itemWidth: Dp = 140.dp,
-    onItemClick: (StationGroup) -> Unit
+    onItemClick: (StationGroup) -> Unit,
+    onItemLongClick: (StationGroup) -> Unit
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -92,7 +93,8 @@ fun CenteredCarousel(
                 ) {
                     StationGroupItem(
                         item = item,
-                        onItemClick = onItemClick
+                        onItemClick = onItemClick,
+                        onItemLongClick = onItemLongClick
                     )
                 }
             }
@@ -149,6 +151,6 @@ fun CenteredCarouselPreview() {
     CenteredCarousel(items = sampleItems, modifier = Modifier.fillMaxWidth(), onItemClick = {
 
 
-    })
+    }, onItemLongClick = {})
 
 }

@@ -1,6 +1,7 @@
 package com.maestrovs.radiocar.shared_managers
 
 import android.content.Context
+import android.util.Log
 
 
 object SharedManager {
@@ -24,7 +25,8 @@ object SharedManager {
 
     fun readStringOptions(context: Context, key: String?): String? {
         val prefs = context.getSharedPreferences(RADIOCAR_PREFS, Context.MODE_PRIVATE)
-        return prefs.getString(key, null)
+        val str =  prefs.getString(key, null)
+        return str
     }
 
 
@@ -51,6 +53,20 @@ object SharedManager {
         val prefs = context.getSharedPreferences(RADIOCAR_PREFS, Context.MODE_PRIVATE)
         return prefs.getInt(key, defValue)
     }
+
+    fun saveList(context: Context, key: String, list: List<String>) {
+        val sharedPreferences = context.getSharedPreferences(RADIOCAR_PREFS, Context.MODE_PRIVATE)
+        sharedPreferences.edit()
+            .putStringSet(key, list.toSet())
+            .apply()
+    }
+
+    fun getList(context: Context, key: String): List<String> {
+        val sharedPreferences = context.getSharedPreferences(RADIOCAR_PREFS, Context.MODE_PRIVATE)
+        return sharedPreferences.getStringSet(key, emptySet())?.toList() ?: emptyList()
+    }
+
+
 
 
 }

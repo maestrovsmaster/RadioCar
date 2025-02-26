@@ -1,6 +1,7 @@
 package com.maestrovs.radiocar.shared_managers
 
 import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import com.hbb20.countrypicker.models.CPCountry
 import com.maestrovs.radiocar.ui.radio.ListType
@@ -15,10 +16,10 @@ object CurrentListTypeManager {
     }
 
     fun readListType(context: Context): ListType {
-        val listTypeStr = SharedManager.readStringOptions(context, CURRENT_LIST_TYPE_KEY)
 
+        val listTypeStr = SharedManager.readStringOptions(context, CURRENT_LIST_TYPE_KEY)
         return if (listTypeStr == null) {
-            ListType.Recent
+            ListType.All
         } else {
             ListType.valueOf(listTypeStr)
         }

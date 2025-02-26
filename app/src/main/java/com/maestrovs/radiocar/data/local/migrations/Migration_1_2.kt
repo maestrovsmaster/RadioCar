@@ -18,3 +18,10 @@ val MIGRATION_1_5 = object : Migration(1, 2) {
         db.execSQL("ALTER TABLE stations ADD COLUMN isRecent INTEGER NOT NULL DEFAULT 0")
     }
 }
+
+val MIGRATION_1_6 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE recent ADD COLUMN lastPlayedTime INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE favorites ADD COLUMN lastPlayedTime INTEGER NOT NULL DEFAULT 0")
+    }
+}

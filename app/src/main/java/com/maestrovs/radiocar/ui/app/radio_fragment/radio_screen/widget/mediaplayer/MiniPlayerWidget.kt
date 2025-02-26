@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.maestrovs.radiocar.data.repository.mock.FakeStationRepository
+import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.LikeWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
@@ -186,7 +186,7 @@ fun MiniPlayerWidgetPreview() {
 
     MiniPlayerWidget(
         RadioListViewModel(
-            FakeStationRepository()
+            MockStationRepository()
         ),
         modifier = Modifier.fillMaxWidth()
             .height(90.dp)

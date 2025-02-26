@@ -80,7 +80,9 @@
     <string name="select_country">Select country</string>
     <string name="select_tag">Select tag</string>
 
-
+    <string name="delete_station_title">Delete station</string>
+    <string name="delete_station_message">Are you sure you want to delete the station %1$s?</string>
+    <string name="confirm">Delete</string>
 
 
     <string-array name="tag_keys">

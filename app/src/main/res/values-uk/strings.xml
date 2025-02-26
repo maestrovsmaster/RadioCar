@@ -68,6 +68,9 @@
     <string name="select_country">Оберіть країну</string>
     <string name="select_tag">Оберіть тег</string>
 
+    <string name="delete_station_title">Видалення станції</string>
+    <string name="delete_station_message">Ви справді хочете видалити станцію %1$s?</string>
+    <string name="confirm">Видалити</string>
 
     <string-array name="tag_keys">
         <item>ambient</item>

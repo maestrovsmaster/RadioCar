@@ -34,6 +34,10 @@ interface RecentDao {
     @Query("DELETE FROM recent WHERE stationuuid IN (:stationUuids)")
     suspend fun deleteAllByStationUuids(stationUuids: List<String>)
 
+    @Query("UPDATE recent SET lastPlayedTime = :time WHERE stationuuid = :stationuuid")
+    fun updateLastPlayedTime(stationuuid: String, time: Long)
 
+    @Query("SELECT * FROM recent ORDER BY lastPlayedTime DESC")
+    fun getRecentStations(): List<Recent>
 
 }

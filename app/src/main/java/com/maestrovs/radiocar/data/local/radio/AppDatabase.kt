@@ -9,8 +9,9 @@ import com.maestrovs.radiocar.data.entities.radio.tables.Favorites
 import com.maestrovs.radiocar.data.entities.radio.tables.Recent
 import com.maestrovs.radiocar.data.local.migrations.MIGRATION_1_2
 import com.maestrovs.radiocar.data.local.migrations.MIGRATION_1_5
+import com.maestrovs.radiocar.data.local.migrations.MIGRATION_1_6
 
-@Database(entities = [Station::class, Recent::class, Favorites::class], version = 5, exportSchema = false)
+@Database(entities = [Station::class, Recent::class, Favorites::class], version = 6, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun stationDao(): StationDao
@@ -29,6 +30,7 @@ abstract class AppDatabase : RoomDatabase() {
             Room.databaseBuilder(appContext, AppDatabase::class.java, "radio_car_db")
                 .addMigrations(MIGRATION_1_2) // version = 4,
                 .addMigrations(MIGRATION_1_5)// version = 5,
+                .addMigrations(MIGRATION_1_6)//version 6
                 .fallbackToDestructiveMigration()
                 .build()
     }

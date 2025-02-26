@@ -45,11 +45,11 @@ object PlaylistManager {
 
     fun updateStationGroups(groups: List<StationGroup>) {
         _stationGroups.value = groups
-        if(_stationGroups.value.isNotEmpty()) {
-            if(PlayerStateManager.playerState.value.currentGroup == null) {
-                PlayerStateManager.updateStationGroup(_stationGroups.value[0])
-            }
-        }
+        //if(_stationGroups.value.isNotEmpty()) {
+            //if(PlayerStateManager.playerState.value.currentGroup == null) {
+             //   PlayerStateManager.updateStationGroup(_stationGroups.value[0])
+           // }
+       // }
     }
 
     fun getGroupForStation(station: StationStream): Int? {
