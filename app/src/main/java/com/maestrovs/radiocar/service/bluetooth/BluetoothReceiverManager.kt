@@ -14,13 +14,7 @@ object BluetoothReceiverManager {
     private  var bluetoothStatusReceiver: BluetoothStatusReceiver? = null
     private var isReceiverRegistered = false
 
-    fun getReceiver(context: Context): BluetoothStatusReceiver? {
-        if (bluetoothStatusReceiver == null) {
-            bluetoothStatusReceiver = BluetoothStatusReceiver()
-        }
-        return bluetoothStatusReceiver
 
-    }
 
     fun registerReceiver(context: Context) {
         if (bluetoothStatusReceiver == null) {

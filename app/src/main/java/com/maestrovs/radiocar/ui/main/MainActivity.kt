@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.os.StrictMode
 import android.util.Log
 import android.view.WindowManager
 import androidx.activity.viewModels
@@ -21,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
 import com.google.android.gms.ads.MobileAds
 import com.google.firebase.FirebaseApp
+import com.maestrovs.radiocar.BuildConfig
 import com.maestrovs.radiocar.databinding.ActivityMainBinding
 import com.maestrovs.radiocar.events.ActivityStatus
 import com.maestrovs.radiocar.manager.bluetooth.BluetoothStateManager
@@ -52,7 +54,7 @@ class MainActivity : AppCompatActivity() {
     private var serviceBound = false
 
 
-    private val scope = CoroutineScope(Dispatchers.Default)
+    private val scope = lifecycleScope
 
 
     private val serviceConnection = object : ServiceConnection {
@@ -68,7 +70,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private lateinit var binding: ActivityMainBinding
+    private  var binding: ActivityMainBinding? = null
 
     private val mainViewModel: MainViewModel by viewModels()
     private val radioViewModel: RadioViewModel by viewModels()
@@ -85,10 +87,21 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (BuildConfig.DEBUG) {
+            StrictMode.setVmPolicy(
+                StrictMode.VmPolicy.Builder()
+                    .detectLeakedClosableObjects()
+                    .detectLeakedRegistrationObjects()
+                    .penaltyLog()
+                    //.penaltyDeath() //!! will be crash
+                    .build()
+            )
+        }
+
        // startMockLocationUpdates(scope)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding!!.root)
 
         FirebaseApp.initializeApp(this);
         MobileAds.initialize(
@@ -182,8 +195,10 @@ class MainActivity : AppCompatActivity() {
     @OptIn(UnstableApi::class)
     override fun onStart() {
         super.onStart()
-        Intent(this, AudioPlayerService::class.java).also { intent ->
-            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        if (!serviceBound) {
+            Intent(this, AudioPlayerService::class.java).also { intent ->
+                bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+            }
         }
     }
 
@@ -191,6 +206,9 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         mainViewModel.updateActivityStatus(ActivityStatus.VISIBLE)
         BluetoothReceiverManager.registerReceiver(this)
+        /*if (serviceBound) {
+            audioPlayerService?.resumePlayback() // Додай метод resumePlayback() у сервіс
+        }*/
     }
 
     override fun onStop() {
@@ -209,6 +227,11 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         BluetoothReceiverManager.unregisterReceiver(this)
         scope.cancel()
+        if (serviceBound) {
+            unbindService(serviceConnection)
+            serviceBound = false
+        }
+        binding = null
     }
 
 

@@ -95,6 +95,12 @@ class AudioPlayerService : Service() {
         startForegroundService()
     }
 
+   /* fun resumePlayback() {
+        if (!player.isPlaying) {
+            player.play()
+        }
+    }*/
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
