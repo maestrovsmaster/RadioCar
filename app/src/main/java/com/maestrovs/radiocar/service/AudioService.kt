@@ -210,7 +210,14 @@ class AudioPlayerService : Service() {
     private fun startPlaying(state: PlayerState) {
         val group = state.currentGroup ?: return
      //   val stream = group.streams.getOrNull(state.currentStationIndex)
-        val stream = state.currentGroup.streams.getOrNull(0)
+
+        val preferredBitrate = state.preferredBitrateOption
+        var stream = state.currentGroup.streams.getOrNull(0)
+        state.currentGroup.streams.forEach {
+            if (it.bitrate == preferredBitrate) {
+                stream = it
+            }
+        }
         stream?.let {
 
             serviceScope.launch(Dispatchers.Main) {

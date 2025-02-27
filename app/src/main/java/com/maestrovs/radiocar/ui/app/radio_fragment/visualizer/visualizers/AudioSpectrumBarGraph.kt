@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.ui.app.radio_fragment.visualizer
+package com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.visualizers
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable

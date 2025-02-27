@@ -17,6 +17,7 @@ import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
 import com.google.android.gms.ads.MobileAds
 import com.google.firebase.FirebaseApp
@@ -25,6 +26,7 @@ import com.maestrovs.radiocar.events.ActivityStatus
 import com.maestrovs.radiocar.manager.bluetooth.BluetoothStateManager
 import com.maestrovs.radiocar.manager.bluetooth.StateSender
 import com.maestrovs.radiocar.manager.location.startMockLocationUpdates
+import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.service.AudioPlayerService
 import com.maestrovs.radiocar.service.bluetooth.BluetoothReceiverManager
 import com.maestrovs.radiocar.service.bluetooth.getActiveBluetoothAudioDevice
@@ -33,10 +35,13 @@ import com.maestrovs.radiocar.service.location.LocationManager
 import com.maestrovs.radiocar.shared_managers.SettingsManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.LaunchViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
+import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @UnstableApi
@@ -143,6 +148,15 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.mustRefreshStatus.observe(this) {
             applySettingsChanges()
+        }
+
+
+        lifecycleScope.launch {
+            PlayerStateManager.audioSessionIdFlow.collectLatest { sessionId ->
+                sessionId?.let {
+                    AudioVisualizerManager.initVisualizer(it)
+                }
+            }
         }
     }
 

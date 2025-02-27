@@ -33,7 +33,7 @@ object PlayerStateManager {
     )
     val playerState: StateFlow<PlayerState> = _playerState.asStateFlow()
 
-   // val stationsGroupFlow = playerState.map { it.stationGroups }.distinctUntilChanged()
+    // val stationsGroupFlow = playerState.map { it.stationGroups }.distinctUntilChanged()
 
     //val isPlayingFlow = playerState.map { it.isPlaying }.distinctUntilChanged()
     val isPlayingFlow = combine(
@@ -53,10 +53,10 @@ object PlayerStateManager {
     val bitmapFlow = playerState.map { it.bitmap }.distinctUntilChanged()
     val errorFlow = playerState.map { it.error }.distinctUntilChanged()
 
-    val preferredBitrateOptionFlow = playerState.map { it.preferredBitrateOption }.distinctUntilChanged()
+    val preferredBitrateOptionFlow =
+        playerState.map { it.preferredBitrateOption }.distinctUntilChanged()
 
     val isLikedFlow = playerState.map { it.isLiked }.distinctUntilChanged()
-
 
 
     fun updateStationGroup(stationGroup: StationGroup) {
@@ -64,49 +64,41 @@ object PlayerStateManager {
 
         var isFavourite = false
 
+        _playerState.value = state.copy(
+            currentGroup = stationGroup,
 
+            //bitmap = null,
+            isLiked = stationGroup.isFavorite
 
-            _playerState.value = state.copy(
-                currentGroup = stationGroup,
-
-                //bitmap = null,
-                isLiked =  stationGroup.isFavorite
-
-            )
+        )
 
     }
 
 
+    /*  fun updateStationGroups(groups: List<StationGroup>) {
+          Log.d("PlayerStateManager", "updateStationGroups() called")
+
+              _playerState.value = _playerState.value.copy(stationGroups = groups)
 
 
+         /* if(_playerState.value.currentGroup == null) {//Update current station only if it is null
 
-  /*  fun updateStationGroups(groups: List<StationGroup>) {
-        Log.d("PlayerStateManager", "updateStationGroups() called")
-
-            _playerState.value = _playerState.value.copy(stationGroups = groups)
-
-
-       /* if(_playerState.value.currentGroup == null) {//Update current station only if it is null
-
-            // Якщо список не пустий, вибираємо першу групу і перший потік
-            if (groups.isNotEmpty() && groups.first().streams.isNotEmpty()) {
-                _playerState.value = _playerState.value.copy(
-                    currentGroupIndex = 0,
-                    currentStationIndex = 0
-                )
-            }
-        }*/
-    }*/
+              // Якщо список не пустий, вибираємо першу групу і перший потік
+              if (groups.isNotEmpty() && groups.first().streams.isNotEmpty()) {
+                  _playerState.value = _playerState.value.copy(
+                      currentGroupIndex = 0,
+                      currentStationIndex = 0
+                  )
+              }
+          }*/
+      }*/
 
 
+    /* fun setPlaying(isPlaying: Boolean) {
+         _playerState.value = _playerState.value.copy(isPlaying = isPlaying)
+     }*/
 
-
-
-   /* fun setPlaying(isPlaying: Boolean) {
-        _playerState.value = _playerState.value.copy(isPlaying = isPlaying)
-    }*/
-
-    fun play(){
+    fun play() {
         _playerState.value = _playerState.value.copy(isPlaying = true)
     }
 
@@ -146,6 +138,11 @@ object PlayerStateManager {
 
     fun setLiked(isLiked: Boolean) {
         _playerState.value = _playerState.value.copy(isLiked = isLiked)
+    }
+
+    fun setPreferredBitrate(bitrate: BitrateOption) {
+        _playerState.value = _playerState.value.copy(preferredBitrateOption = bitrate)
+
     }
 
 }

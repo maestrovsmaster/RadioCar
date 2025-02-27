@@ -1,13 +1,16 @@
 package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,15 +19,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.maestrovs.radiocar.data.entities.radio.BitrateOption
 import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.BitrateWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.LikeWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.ChooseBitratesDialog
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.ControlBackground
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerManager
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreen
+import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.visualizers.AudioVisualizerScreen
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PlayControlWidget
 import com.maestrovs.radiocar.ui.app.ui.theme.primary
@@ -47,21 +52,14 @@ fun MediumPlayerWidget(
     val isLikedFlow by PlayerStateManager.isLikedFlow.collectAsStateWithLifecycle(false)
     val songMetadataFlow by PlayerStateManager.songMetadataFlow.collectAsStateWithLifecycle(null)
 
+    val bitrateFlow by PlayerStateManager.preferredBitrateOptionFlow.collectAsStateWithLifecycle(null)
+    val bitrate = bitrateFlow ?: BitrateOption.STANDARD
 
-    DisposableEffect(Unit) {
-        onDispose {
-            AudioVisualizerManager.releaseVisualizer()
-        }
-    }
+    var showDialog by remember { mutableStateOf(false) }
 
 
     Box(
         modifier = modifier
-        //.width(250.dp)
-        //.height(320.dp)
-        //.background(Color.Black)
-        //.padding(16.dp),
-        //contentAlignment = Alignment.Center
     ) {
 
         DynamicShadowCard(
@@ -86,7 +84,7 @@ fun MediumPlayerWidget(
 
             ControlBackground()
 
-            // Назва станції (внизу від кнопок)
+
             Column(
                 modifier = Modifier
                     .align(Alignment.TopStart)
@@ -94,13 +92,13 @@ fun MediumPlayerWidget(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = currentGroup?.name ?: "Unknown Station",
+                    text = currentGroup?.name ?: "Choose station",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
                 Text(
-                    text = songMetadataFlow ?: "Unknown song",
+                    text = songMetadataFlow ?: "",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Thin,
                     color = Color.White
@@ -116,15 +114,16 @@ fun MediumPlayerWidget(
                         viewModel.setIsLike(currentGroup!!, !isLikedFlow)
                     })
 
+                    BitrateWidget(bitrate = bitrate, onClick = {
+                        showDialog = true
+                    })
+
                 }
 
             }
 
 
             if (audioSessionIdFlow != null) {
-                val visualizer =
-                    AudioVisualizerManager.getVisualizer(audioSessionIdFlow!!, step = 32)
-
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
@@ -159,6 +158,28 @@ fun MediumPlayerWidget(
                     viewModel.next()
                 })
 
+        }
+
+        if (showDialog) {
+
+            var bitratesList = listOf<BitrateOption>()
+
+            currentGroup?.let { group ->
+
+                bitratesList = group.streams.map { it.bitrate  }
+
+            }
+
+
+            ChooseBitratesDialog(
+                items = bitratesList,
+                onItemSelected = { selectedItem ->
+                    Log.d("Dialog", "Вибрано: $selectedItem")
+                    viewModel.setBitrate(selectedItem)
+                    showDialog = false
+                },
+                onDismiss = { showDialog = false }
+            )
         }
 
 

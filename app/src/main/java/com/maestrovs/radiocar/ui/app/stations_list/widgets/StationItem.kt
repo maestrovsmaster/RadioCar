@@ -1,6 +1,5 @@
 package com.maestrovs.radiocar.ui.app.stations_list.widgets
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,17 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,15 +26,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.entities.radio.StationStream
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.LikeWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerManager
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreenMicro
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreenTiny
+import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.visualizers.AudioVisualizerScreenMicro
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.MarqueeText
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PlayButton
 import com.maestrovs.radiocar.ui.app.ui.theme.primary
@@ -74,12 +66,6 @@ fun StationItem(
     val showVisualizer = currentPlayingGroup?.name  == station.name
 
     val showMetadata = currentPlayingGroup?.name  == station.name && songMetadataFlow != null && songMetadataFlow!!.isNotEmpty()
-
-    DisposableEffect(Unit) {
-        onDispose {
-            AudioVisualizerManager.releaseVisualizer()
-        }
-    }
 
 
     Row(
@@ -132,8 +118,6 @@ fun StationItem(
         }
 
         if (audioSessionIdFlow != null && showVisualizer) {
-            val visualizer =
-                AudioVisualizerManager.getVisualizer(audioSessionIdFlow!!, step = 32)
 
             Box(
                 modifier = Modifier
@@ -148,8 +132,6 @@ fun StationItem(
                                 Color(0x0027272A),
                                 Color(0x0027272A),
                             ),
-                            // startY = 0f,
-                            //endY = 240f
                         )
                     )
             ) {

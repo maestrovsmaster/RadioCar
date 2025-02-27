@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.maestrovs.radiocar.data.entities.radio.BitrateOption
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.manager.bluetooth.BluetoothStateManager
@@ -134,6 +135,10 @@ class RadioViewModel @Inject constructor(
 
     fun prev() {
         PlaylistManager.prev()
+    }
+
+    fun setBitrate(bitrate: BitrateOption)  {
+        PlayerStateManager.setPreferredBitrate(bitrate)
     }
 
     private fun setRecent(stationGroup: StationGroup) {

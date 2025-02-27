@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,8 +29,7 @@ import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.LikeWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.ControlBackgroundLight
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerManager
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreenTiny
+import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.visualizers.AudioVisualizerScreenTiny
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.MarqueeText
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PlayButton
@@ -58,11 +56,6 @@ fun MiniPlayerWidget(
 
     val isPlaying = if(isPlayingFlow == null) false else isPlayingFlow!!.first
 
-    DisposableEffect(Unit) {
-        onDispose {
-            AudioVisualizerManager.releaseVisualizer()
-        }
-    }
 
     Box(
         modifier = modifier
@@ -76,7 +69,6 @@ fun MiniPlayerWidget(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    //.padding(8.dp)
                     ,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -93,7 +85,6 @@ fun MiniPlayerWidget(
 
                 Column(
                     modifier = Modifier
-                        //.align(Alignment.TopStart)
                         .padding(16.dp)
                         .weight(1f),
                     horizontalAlignment = Alignment.Start
@@ -151,8 +142,6 @@ fun MiniPlayerWidget(
             ControlBackgroundLight()
 
             if (audioSessionIdFlow != null) {
-                val visualizer =
-                    AudioVisualizerManager.getVisualizer(audioSessionIdFlow!!, step = 32)
 
                 Box(
                     modifier = Modifier
