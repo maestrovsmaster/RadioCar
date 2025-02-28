@@ -48,7 +48,6 @@ class RadioViewModel @Inject constructor(
 
     init {
         _currentListType.value = sharedPreferencesRepository.getListType()
-       // Log.d("RadioViewModel", "ListType: ${_currentListType.value}")
         fetchStations()
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -57,6 +56,8 @@ class RadioViewModel @Inject constructor(
                 PlayerStateManager.updateStationGroup(stationLatest)
             }
         }
+        val volume = sharedPreferencesRepository.getSavedVolume().toFloat()/100
+        PlayerStateManager.setVolume(volume)
     }
 
 
@@ -135,6 +136,13 @@ class RadioViewModel @Inject constructor(
 
     fun prev() {
         PlaylistManager.prev()
+    }
+
+    fun setVolume(volume: Float) {
+        //0.0..1.0 to 0..100 int
+        val intVolume = (volume*100).toInt()
+        sharedPreferencesRepository.saveVolume(intVolume)
+        PlayerStateManager.setVolume(volume)
     }
 
     fun setBitrate(bitrate: BitrateOption)  {

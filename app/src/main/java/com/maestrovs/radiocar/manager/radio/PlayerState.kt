@@ -14,7 +14,7 @@ data class PlayerState(
     val currentGroup: StationGroup?,
     //val currentStationIndex: Int,
     //val stationGroups: List<StationGroup>,
-    val volume: Int,
+    val volume: Float,
     val isBuffering: Boolean = false,
     val audioSessionId: Int?,
     val songMetadata: String? = null,

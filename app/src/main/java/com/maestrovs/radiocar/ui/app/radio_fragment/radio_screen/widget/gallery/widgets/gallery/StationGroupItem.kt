@@ -1,11 +1,8 @@
-package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets
+package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.gallery
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,12 +32,13 @@ import com.maestrovs.radiocar.ui.app.ui.theme.primary
 fun StationGroupItem(
     item: StationGroup,
     onItemClick: (StationGroup) -> Unit,
-    onItemLongClick: (StationGroup) -> Unit
+    onItemLongClick: (StationGroup) -> Unit,
+    modifier: Modifier = Modifier
     ) {
 
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier//.fillMaxSize()
             .combinedClickable(
                 onClick = { onItemClick(item) },
                 onLongClick = {

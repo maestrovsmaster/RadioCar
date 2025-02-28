@@ -1,10 +1,14 @@
 package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,6 +36,9 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.reposito
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.visualizers.AudioVisualizerScreen
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PlayControlWidget
+import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.VolumeBar
+import com.maestrovs.radiocar.ui.app.ui.theme.baseBlue
+import com.maestrovs.radiocar.ui.app.ui.theme.baseBlueLight
 import com.maestrovs.radiocar.ui.app.ui.theme.primary
 
 /**
@@ -52,8 +59,14 @@ fun MediumPlayerWidget(
     val isLikedFlow by PlayerStateManager.isLikedFlow.collectAsStateWithLifecycle(false)
     val songMetadataFlow by PlayerStateManager.songMetadataFlow.collectAsStateWithLifecycle(null)
 
-    val bitrateFlow by PlayerStateManager.preferredBitrateOptionFlow.collectAsStateWithLifecycle(null)
+    val bitrateFlow by PlayerStateManager.preferredBitrateOptionFlow.collectAsStateWithLifecycle(
+        null
+    )
     val bitrate = bitrateFlow ?: BitrateOption.STANDARD
+
+    val volumeFlow by PlayerStateManager.volumeFlow.collectAsStateWithLifecycle(1f)
+
+
 
     var showDialog by remember { mutableStateOf(false) }
 
@@ -110,32 +123,38 @@ fun MediumPlayerWidget(
                         .align(Alignment.TopEnd)
                         .padding(6.dp)
                 ) {
-                    LikeWidget(isLiked = isLikedFlow, onLikeClick =  {
+                    LikeWidget(isLiked = isLikedFlow, onLikeClick = {
                         viewModel.setIsLike(currentGroup!!, !isLikedFlow)
                     })
 
-                    BitrateWidget(bitrate = bitrate, onClick = {
-                        showDialog = true
-                    })
+                    /*BitrateWidget(bitrate = bitrate, onClick = {
+                    showDialog = true
+                })*/
 
                 }
 
             }
 
-
-            if (audioSessionIdFlow != null) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 50.dp)
-                        .padding(16.dp)
-                ) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 66.dp)
+                    .padding(16.dp)
+            ) {
+                if (audioSessionIdFlow != null) {
                     AudioVisualizerScreen()
                 }
+                VolumeBar(
+                    volume = volumeFlow, segmentsCount = 10, onValueChange = {
+                        viewModel.setVolume(it)
+                    }, color = baseBlueLight.copy(alpha = 0.85f), modifier = Modifier
+                        .height(36.dp)
+                        .fillMaxWidth()
+                )
             }
 
 
-            val isPlaying = if(isPlayingFlow == null) false else isPlayingFlow!!.first
+            val isPlaying = if (isPlayingFlow == null) false else isPlayingFlow!!.first
 
             PlayControlWidget(
                 modifier = Modifier
@@ -166,7 +185,7 @@ fun MediumPlayerWidget(
 
             currentGroup?.let { group ->
 
-                bitratesList = group.streams.map { it.bitrate  }
+                bitratesList = group.streams.map { it.bitrate }
 
             }
 
@@ -193,7 +212,7 @@ fun MediumPlayerWidgetPreview() {
 
     MediumPlayerWidget(
         RadioViewModel(
-            MockStationRepository(),  SharedPreferencesRepositoryMock()
+            MockStationRepository(), SharedPreferencesRepositoryMock()
         )
     )
 }

@@ -21,7 +21,7 @@ object PlayerStateManager {
         PlayerState(
             isPlaying = false,
             currentGroup = null,
-            volume = 50,
+            volume = 0.8f,
             isBuffering = false,
             audioSessionId = null,
             songMetadata = null,
@@ -107,8 +107,8 @@ object PlayerStateManager {
         _playerState.value = _playerState.value.copy(isPlaying = false)
     }
 
-    fun setVolume(volume: Int) {
-        val newVolume = volume.coerceIn(0, 100)
+    fun setVolume(volume: Float) {
+        val newVolume = volume.coerceIn(0f, 1f)
         _playerState.value = _playerState.value.copy(volume = newVolume)
     }
 

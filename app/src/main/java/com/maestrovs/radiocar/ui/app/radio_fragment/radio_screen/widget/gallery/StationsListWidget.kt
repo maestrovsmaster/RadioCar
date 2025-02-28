@@ -1,6 +1,5 @@
 package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
-import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.CenteredCarousel
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.gallery.CenteredCarousel
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.ListTypeSelector
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
@@ -23,11 +22,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.manager.radio.PlaylistManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.ConfirmDeleteDialog
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.ExtendSearchButtonWidget
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.gallery.CenteredCarousel2
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 
 
@@ -51,7 +50,7 @@ fun StationsListWidget(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(150.dp),
+            //.height(180.dp),
     ) {
 
         DynamicShadowCard(
@@ -61,7 +60,7 @@ fun StationsListWidget(
         ) {
 
 
-            CenteredCarousel(
+            CenteredCarousel2(
                 items = stationsGroupFlow,
                 modifier = Modifier.fillMaxWidth(),
                 onItemClick = {
@@ -86,9 +85,9 @@ fun StationsListWidget(
                 }
             )
 
-            ExtendSearchButtonWidget(modifier = Modifier.align(Alignment.CenterEnd),
+           /* ExtendSearchButtonWidget(modifier = Modifier.align(Alignment.CenterEnd),
                 onClick = { }
-            )
+            )*/
 
 
         }

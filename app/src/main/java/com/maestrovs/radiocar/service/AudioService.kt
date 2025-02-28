@@ -28,6 +28,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
@@ -58,6 +59,7 @@ class AudioPlayerService : Service() {
         observePlayerState()
         //observeBufferingState()
         observeSongMetadata()
+        observeVolume()
 
        // Log.d(TAG, "Service created, serviceModel = $serviceModel")
 
@@ -208,6 +210,17 @@ class AudioPlayerService : Service() {
                     startPlaying(PlayerStateManager.playerState.value)
                 } else {
                     stopPlaying(PlayerStateManager.playerState.value)
+                }
+            }
+        }
+    }
+
+
+    private fun observeVolume(){
+        serviceScope.launch {
+            PlayerStateManager.volumeFlow.collect { volume ->
+                withContext(Dispatchers.Main) {
+                    exoPlayerManager.setVolume(volume)
                 }
             }
         }

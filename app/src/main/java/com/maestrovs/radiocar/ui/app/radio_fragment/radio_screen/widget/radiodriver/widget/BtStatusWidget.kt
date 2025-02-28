@@ -2,6 +2,7 @@ package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodr
 
 import android.bluetooth.BluetoothAdapter
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -27,7 +28,7 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.reposito
  */
 
 @Composable
-fun BtStatusWidget( radioViewModel: RadioViewModel, modifier: Modifier = Modifier){
+fun BtStatusWidget(radioViewModel: RadioViewModel, onClick: () -> Unit = {}, modifier: Modifier = Modifier){
 
     val btState by radioViewModel.isBluetoothEnabled.collectAsState()
     val currentBtDevice by radioViewModel.currentBluetoothDevice.collectAsState()
@@ -60,7 +61,7 @@ fun BtStatusWidget( radioViewModel: RadioViewModel, modifier: Modifier = Modifie
         else -> baseGray
     }
 
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+    Row(modifier = modifier.clickable { onClick() }, verticalAlignment = Alignment.CenterVertically) {
         Icon(
             painter = painterResource(id =  btIcon  ),
             contentDescription = "Next",

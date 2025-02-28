@@ -15,8 +15,13 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun BackgroundCover(
@@ -25,30 +30,35 @@ fun BackgroundCover(
 ) {
     val context = LocalContext.current
     var imageBitmap by remember { mutableStateOf<android.graphics.Bitmap?>(null) }
+    val currentImageUrl by rememberUpdatedState(imageUrl)
 
-    // Плавна анімація появи
     val alphaAnim by animateFloatAsState(
         targetValue = if (imageBitmap != null) 1f else 0f,
         animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing),
         label = "fade-in"
     )
 
-    // Завантажуємо зображення через Glide
-    LaunchedEffect(imageUrl) {
+    LaunchedEffect(currentImageUrl) {
+        imageBitmap = null
         Glide.with(context)
             .asBitmap()
-            .load(imageUrl)
+            .diskCacheStrategy(DiskCacheStrategy.NONE) // Вимикаємо кеш
+            .skipMemoryCache(true)
+            .load(currentImageUrl)
             .into(object : CustomTarget<android.graphics.Bitmap>() {
                 override fun onResourceReady(resource: android.graphics.Bitmap, transition: Transition<in android.graphics.Bitmap>?) {
-                    imageBitmap = resource
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(100) // Невелика пауза для стабільності
+                        imageBitmap = resource
+                    }
                 }
+
                 override fun onLoadCleared(placeholder: Drawable?) {
                     imageBitmap = null
                 }
             })
     }
 
-    // Малюємо фон, якщо картинка завантажена
     imageBitmap?.let { bitmap ->
         Image(
             bitmap = bitmap.asImageBitmap(),

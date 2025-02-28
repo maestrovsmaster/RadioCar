@@ -34,7 +34,7 @@ import com.maestrovs.radiocar.ui.radio.ListType
 fun ListTypeSelector(
     currentListType: ListType,
     modifier: Modifier = Modifier,
-    onChangeType: (ListType) -> Unit
+    onChangeType: (ListType) -> Unit,
 ) {
 
     val haptic = LocalHapticFeedback.current
@@ -44,7 +44,7 @@ fun ListTypeSelector(
     Column(
         modifier = modifier
             .width(60.dp)
-            .height(150.dp)
+            //.height(150.dp)
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(

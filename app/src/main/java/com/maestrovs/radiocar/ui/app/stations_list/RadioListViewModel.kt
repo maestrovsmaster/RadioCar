@@ -38,7 +38,7 @@ class RadioListViewModel @Inject constructor(
 
 
     init {
-        PlaylistManager.init(repository.getFavoriteStationIdsFlow())
+      //  PlaylistManager.init(repository.getFavoriteStationIdsFlow())
     }
 
     private val searchParams = combine(_searchQuery, _selectedCountry, _selectedTag) { query, country, tag ->

@@ -1,10 +1,16 @@
 package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver
 
 import SevenSegmentSpeedometer
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +34,7 @@ import com.maestrovs.radiocar.shared_managers.SettingsManager
 import com.maestrovs.radiocar.shared_managers.SpeedUnit
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.widget.BtStatusWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
+import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PowerButton
 
 /**
  * Created by maestromaster$ on 14/02/2025$.
@@ -53,6 +60,19 @@ fun RadioDriverWidget(
         SpeedUnit.kmh -> LocalContext.current.getString(R.string.km_h)
         SpeedUnit.mph -> LocalContext.current.getString(R.string.mph)
     }
+    val context = LocalContext.current
+
+    fun onCloseApp(){
+        //Finish application process
+        android.os.Process.killProcess(android.os.Process.myPid())
+        System.exit(1)
+    }
+
+    fun onLaunchBluetoothSettingsIntent(){
+        val intent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
+        context.startActivity(intent)
+    }
+
 
     Box(
         modifier = modifier
@@ -82,7 +102,7 @@ fun RadioDriverWidget(
                 SevenSegmentSpeedometer(speedValue, "mph", Color.White, )
             }
 
-            Box(
+          /*  Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(16.dp),
@@ -98,11 +118,22 @@ fun RadioDriverWidget(
 
                 ) {
                 DigitalWeatherWidget(-14.0, "C", color = displayColor)
+            }*/
+
+            Row(modifier = Modifier
+                .align(Alignment.TopEnd).padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+                ){
+                BtStatusWidget(viewModel, {
+                    onLaunchBluetoothSettingsIntent()
+                })
+                Spacer(modifier = Modifier.width(8.dp))
+                PowerButton({
+                    onCloseApp()
+                })
             }
 
-            BtStatusWidget(viewModel, modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp),)
+
         }
     }
 

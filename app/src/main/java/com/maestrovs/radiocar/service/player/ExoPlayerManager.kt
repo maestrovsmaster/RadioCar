@@ -20,6 +20,7 @@ import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.extractor.metadata.icy.IcyInfo
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.enums.radio.PlayAction
+import com.maestrovs.radiocar.events.PlayVolume
 import com.maestrovs.radiocar.utils.isPlayableStream
 
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -138,6 +139,12 @@ class ExoPlayerManager @Inject constructor(
         exoPlayer = null
         mediaSessionHelper.release()
     }
+
+    fun setVolume(volume: Float){
+        exoPlayer?.volume = volume
+        lastVolume = volume
+    }
+
 
     @OptIn(UnstableApi::class)
     override fun onPlayerError(error: PlaybackException) {

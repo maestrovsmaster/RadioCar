@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets
+package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.gallery
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
