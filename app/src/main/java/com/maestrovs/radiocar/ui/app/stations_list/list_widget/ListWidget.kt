@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
 import com.maestrovs.radiocar.ui.app.stations_list.RadioListViewModel
 import com.maestrovs.radiocar.ui.app.stations_list.widgets.StationItem
@@ -37,7 +38,7 @@ fun ListWidget(viewModel: RadioListViewModel,  modifier: Modifier = Modifier){
 
         DynamicShadowCard(
             modifier = Modifier.fillMaxSize(),
-            contentColor = primary, backgroundColor = primary
+            contentColor = primary,
         ) {
             LazyColumn(modifier = modifier) {
                 items(stationList.itemCount) { index ->
@@ -93,7 +94,7 @@ fun ListWidget(viewModel: RadioListViewModel,  modifier: Modifier = Modifier){
 fun ListWidgetPreview(){
 
     ListWidget(
-        RadioListViewModel(MockStationRepository()),
+        RadioListViewModel(MockStationRepository(),   SharedPreferencesRepositoryMock()),
         )
 
 }

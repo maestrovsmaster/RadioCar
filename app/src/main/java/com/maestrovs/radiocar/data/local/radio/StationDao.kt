@@ -48,7 +48,6 @@ interface StationDao {
         """
         SELECT stations.* FROM stations
         INNER JOIN favorites ON stations.stationuuid = favorites.stationuuid
-        ORDER BY favorites.lastPlayedTime DESC
     """
     )
     fun getFavoriteStationDetailsByLastTime(): Flow<List<Station>>

@@ -29,6 +29,7 @@ import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.LikeWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.ControlBackgroundLight
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.visualizers.AudioVisualizerScreenTiny
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.MarqueeText
@@ -63,7 +64,7 @@ fun MiniPlayerWidget(
 
         DynamicShadowCard(
             modifier = Modifier,
-            contentColor = primary, backgroundColor = primary
+            contentColor = primary,
         ) {
 
             Row(
@@ -175,7 +176,9 @@ fun MiniPlayerWidgetPreview() {
 
     MiniPlayerWidget(
         RadioListViewModel(
-            MockStationRepository()
+            MockStationRepository(),
+            SharedPreferencesRepositoryMock()
+
         ),
         modifier = Modifier.fillMaxWidth()
             .height(90.dp)

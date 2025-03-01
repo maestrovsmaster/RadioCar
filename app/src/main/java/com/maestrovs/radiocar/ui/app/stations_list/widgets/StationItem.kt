@@ -170,6 +170,7 @@ fun StationItemPreview() {
         name = "Test",
         streams = listOf<StationStream>(),
         favicon = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPZ-WDFZ5Pz-lBPZj9GSU2LbBSEmlTVOtRmQ&s",
+        stations = listOf(),
         isFavorite = true
     )
     Box(modifier = Modifier.background(Color.Black)) {

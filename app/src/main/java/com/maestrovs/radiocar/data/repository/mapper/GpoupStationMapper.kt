@@ -48,7 +48,7 @@ fun List<Station>.toGroupedStations(): List<StationGroup> {
                 }
             }
 
-            StationGroup(baseName, streams, favicon, isFavorite, countryCode)
+            StationGroup(baseName, streams, stations, favicon, isFavorite, countryCode)
         }
 
     //groupedList.forEach {

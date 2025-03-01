@@ -44,7 +44,7 @@ class SplashFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        val currentCountry = CurrentCountryManager.readCountry(requireContext())
+//        val currentCountry = CurrentCountryManager.readCountry(requireContext())
 
         /*if (currentCountry != null) { //UNCOMMENT IT
             findNavController().navigate(R.id.action_splashFragment_to_mainFragment)

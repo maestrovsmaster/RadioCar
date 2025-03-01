@@ -11,6 +11,13 @@ import kotlin.math.roundToInt
 
 object LocationStateManager {
 
+    /*private var _currentCountryCode = MutableStateFlow(null as String?)
+    val currentCountryCode = _currentCountryCode.asStateFlow()
+
+    fun updateCountryCode(countryCode: String) {
+        _currentCountryCode.value = countryCode
+    }*/
+
 
     private var _locationAvailability = MutableStateFlow(false)
     val locationAvailability = _locationAvailability.asStateFlow()

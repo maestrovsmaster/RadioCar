@@ -4,7 +4,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
-import com.maestrovs.radiocar.utils.Resource.Status.*
+import com.maestrovs.radiocar.utils.Resource.Status.ERROR
+import com.maestrovs.radiocar.utils.Resource.Status.SUCCESS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -37,24 +38,31 @@ fun <T, A> performGetOperationFlow(
     saveCallResult: suspend (A) -> Unit
 ): Flow<Resource<T>> = flow {
     emit(Resource.loading<T>()) // Emit loading state
-
+    Log.d("StationRepositoryIml", "getGroupedStationsFlow... 1c")
     // Emit database items initially.
     val initialData = databaseQuery.invoke().first()
+    Log.d("StationRepositoryIml", "getGroupedStationsFlow... 1cc")
     emit(Resource.success(initialData))
 
     // Perform the network call.
     try {
+        Log.d("StationRepositoryIml", "getGroupedStationsFlow... 1")
         val responseStatus = networkCall.invoke()
+        Log.d("StationRepositoryIml", "getGroupedStationsFlow /....2 $responseStatus")
 
         if (responseStatus.status == SUCCESS) {
+            Log.d("StationRepositoryIml", "getGroupedStationsFlow... succcc")
             // Save the result of the call and fetch & emit from DB again.
             responseStatus.data?.let { data ->
+                Log.d("StationRepositoryIml", "getGroupedStationsFlowrr... 2succ2 $data")
                 saveCallResult(data)
-
                 // Emit new data from the database after saving.
+                Log.d("StationRepositoryIml", "getGroupedStationsFlow... 3")
                 databaseQuery.invoke().collect { newlyFetchedData ->
+                    Log.d("StationRepositoryIml", "getGroupedStationsFlow... 4 newlyFetchedData = $newlyFetchedData")
                     emit(Resource.success(newlyFetchedData))
                 }
+
             }
         } else if (responseStatus.status == ERROR) {
             emit(Resource.error<T>(responseStatus.message ?: "Unknown Error"))
@@ -93,7 +101,6 @@ fun <T> performLocalGetOperation(databaseQuery: () -> LiveData<T>): LiveData<Res
 
 fun performLocalSetOperation(databaseQuery: () -> (Unit)): LiveData<Resource<Unit>> =
     liveData(Dispatchers.IO) {
-        Log.d("Database", ">>recentStations setRecent----")
         emit(Resource.loading())
         databaseQuery.invoke()
         emit(Resource.success(Unit))

@@ -112,30 +112,35 @@ fun CenteredCarousel2Preview() {
             name = "Test",
             streams = listOf<StationStream>(),
             favicon = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPZ-WDFZ5Pz-lBPZj9GSU2LbBSEmlTVOtRmQ&s",
+            stations = listOf(),
             isFavorite = true
         ),
         StationGroup(
             name = "Test",
             streams = listOf<StationStream>(),
             favicon = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPZ-WDFZ5Pz-lBPZj9GSU2LbBSEmlTVOtRmQ&s",
+            stations = listOf(),
             isFavorite = false
         ),
         StationGroup(
             name = "Test",
             streams = listOf<StationStream>(),
             favicon = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPZ-WDFZ5Pz-lBPZj9GSU2LbBSEmlTVOtRmQ&s",
+            stations = listOf(),
             isFavorite = true
         ),
         StationGroup(
             name = "Test",
             streams = listOf<StationStream>(),
             favicon = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPZ-WDFZ5Pz-lBPZj9GSU2LbBSEmlTVOtRmQ&s",
+            stations = listOf(),
             isFavorite = false
         ),
         StationGroup(
             name = "Test",
             streams = listOf<StationStream>(),
             favicon = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPZ-WDFZ5Pz-lBPZj9GSU2LbBSEmlTVOtRmQ&s",
+            stations = listOf(),
             isFavorite = true
         )
     )

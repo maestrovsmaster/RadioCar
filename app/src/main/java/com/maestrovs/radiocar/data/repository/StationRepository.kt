@@ -21,10 +21,12 @@ import com.maestrovs.radiocar.utils.performGetOperationFlow
 import com.maestrovs.radiocar.utils.performLocalGetOperation
 import com.maestrovs.radiocar.utils.performLocalGetOperationFlow
 import com.maestrovs.radiocar.utils.performNetworkOperation
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -72,6 +74,11 @@ abstract class StationRepository() {
 
     abstract fun getRecentStationDetailsByLastTimeGrouped(): Flow<Resource<List<StationGroup>>>
     abstract fun getFavoriteStationDetailsByLastTimeGrouped(): Flow<Resource<List<StationGroup>>>
+    abstract fun getPagedStationsFlow(
+        country: String,
+        offset: Int,
+        limit: Int
+    ): Flow<Resource<List<StationGroup>>>
 }
 
 class StationRepositoryIml @Inject constructor(
@@ -81,7 +88,7 @@ class StationRepositoryIml @Inject constructor(
     private val favoritesSource: FavoritesDao
 ) : StationRepository() {
 
-    override suspend fun getPagedStations(
+    override suspend fun getPagedStations(//for list
         country: String,
         searchQuery: String,
         tag: String,
@@ -120,6 +127,53 @@ class StationRepositoryIml @Inject constructor(
             emptyList()
         }
     }
+
+
+    override fun getPagedStationsFlow( //for radio main screen
+        country: String,
+        offset: Int,
+        limit: Int
+    ): Flow<Resource<List<StationGroup>>> = flow {
+        try {
+            val response = remoteDataSource.getStationsExt(
+                country = country,
+                name = "",
+                tag = "",
+                offset = offset,
+                limit = limit
+            )
+
+            if (response.status == Resource.Status.SUCCESS) {
+                val apiResultList = response.data ?: emptyList()
+
+                val favoriteStationIds = getFavoriteStationIds()
+                val recentStationIds = getRecentStationIds()
+
+                val filteredStations = apiResultList
+                    .filter { station -> filters.all { filter -> filter(station) } }
+                    .map { station ->
+                        station.copy(
+                            isFavorite = if (station.stationuuid in favoriteStationIds) 1 else 0,
+                            isRecent = if (station.stationuuid in recentStationIds) 1 else 0
+                        )
+                    }
+
+                val resultList = filteredStations.toGroupedStations()
+                emit(Resource.success(resultList))
+            } else {
+                emit(Resource.success(emptyList()))
+            }
+        } catch (e: Exception) {
+            Log.e("StationPagingSource", "StationRepositoryImpl Load stations error: $e")
+            emit(Resource.success(emptyList()))
+        }
+    }.flowOn(Dispatchers.IO)
+
+
+
+
+
+
 
     override fun getFavoriteStationIdsFlow(): Flow<List<Favorites>> {
         return favoritesSource.getAllFavoritesFlow()
@@ -160,7 +214,7 @@ class StationRepositoryIml @Inject constructor(
     ): Flow<Resource<List<StationGroup>>> {
         return performGetOperationFlow(
             databaseQuery = {
-                localDataSource.getStationsByCountryWithFavouriteStatusFlow(
+                val dbq = localDataSource.getStationsByCountryWithFavouriteStatusFlow(
                     countryCode
                 ).map {
                     it.filter { st ->
@@ -174,9 +228,19 @@ class StationRepositoryIml @Inject constructor(
                     }.toGroupedStations()
 
                 }.distinctUntilChanged()
+                dbq
+
             },
             networkCall = { remoteDataSource.getStations(countryCode) },
-            saveCallResult = { localDataSource.insertAll(it) }
+            saveCallResult = {
+                try {
+                    localDataSource.insertAll(it)
+
+                }catch (e: Exception) {
+                    Log.e("StationRepositoryIml", "getGroupedStationsFlow error: $e")
+
+                }
+            }
         )
     }
 

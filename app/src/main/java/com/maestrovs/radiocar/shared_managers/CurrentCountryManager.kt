@@ -28,10 +28,40 @@ object CurrentCountryManager {
         }
     }
 
+
+    fun writeCountryCode(context: Context, country: String) {
+        SharedManager.writeStringOption(context, CURRENT_COUNTRY_KEY, country)
+    }
+
+    fun readCountryCode(context: Context) =
+        SharedManager.readStringOptions(context, CURRENT_COUNTRY_KEY)
+
+
     fun isAskCountry(context: Context) =
         SharedManager.readBooleanOptions(context, ASK_COUNTRY_KEY, false)
 
-    fun setAskedCountryTrue(context: Context){
+    fun setAskedCountryTrue(context: Context) {
         SharedManager.writeBooleanOption(context, ASK_COUNTRY_KEY, true)
+    }
+
+
+    fun getPlaceholderUK(): CPCountry {
+        return CPCountry(
+            alpha2 = "GB",
+            alpha3 = "GBR",
+            englishName = "United Kingdom",
+            demonym = "British",
+            capitalEnglishName = "London",
+            areaKM2 = "243610",
+            population = 67220000,
+            currencyCode = "GBP",
+            currencyName = "Pound Sterling",
+            currencySymbol = "£",
+            cctld = ".uk",
+            flagEmoji = "\uD83C\uDDEC\uD83C\uDDE7",
+            phoneCode = 44,
+            name = "United Kingdom"
+        )
+
     }
 }

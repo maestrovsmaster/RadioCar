@@ -30,7 +30,7 @@ import com.maestrovs.radiocar.R
 
 @Composable
 fun CountryPickerWidget(
-    selectedCountry: CountryDetails?,
+    defaultCountryCode: String?,
     showCountryPicker: Boolean,
     onCountrySelected: (CountryDetails) -> Unit,
     onShowCountryPicker: (Boolean) -> Unit,
@@ -47,7 +47,7 @@ fun CountryPickerWidget(
 
                 Switch(onCheckedChange = {
                     onShowCountryPicker(it)
-                }, checked = selectedCountry != null)
+                }, checked = defaultCountryCode != null)
 
                 Spacer(modifier = Modifier.width(4.dp))
 
@@ -55,7 +55,7 @@ fun CountryPickerWidget(
 
 
                     com.arpitkatiyarprojects.countrypicker.CountryPicker(
-                        defaultCountryCode = selectedCountry?.countryCode,
+                        defaultCountryCode = defaultCountryCode,
                         selectedCountryDisplayProperties = SelectedCountryDisplayProperties(
                             properties = SelectedCountryProperties(
                                 showCountryPhoneCode = false,

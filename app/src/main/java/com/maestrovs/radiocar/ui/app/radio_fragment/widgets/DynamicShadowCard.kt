@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -19,13 +20,19 @@ import androidx.compose.ui.unit.dp
  */
 
 @Composable
-fun DynamicShadowCard(modifier: Modifier = Modifier,
+fun DynamicShadowCard(
+    modifier: Modifier = Modifier,
     contentColor: Color,
-                      backgroundColor: Color = Color.White,
-                      elevation: Int = 10,
-                      content: @Composable () -> Unit,
+    brush: Brush = Brush.verticalGradient(
+        colors = listOf(
+            Color(0xFF3A4A57),
+            Color(0xFF1E2A34)
+        ),
+    ),
+    elevation: Int = 10,
+    content: @Composable () -> Unit,
 
-) {
+    ) {
     val shadowColor = contentColor.copy(alpha = 1.0f)
 
     Box(
@@ -36,7 +43,10 @@ fun DynamicShadowCard(modifier: Modifier = Modifier,
                 ambientColor = shadowColor,
                 spotColor = shadowColor
             )
-            .background(backgroundColor, shape = RoundedCornerShape(16.dp))
+            .background(
+                shape = RoundedCornerShape(16.dp),
+                brush = brush
+            )
 
     ) {
         content()

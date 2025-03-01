@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class Station(
     val bitrate: Int,
     val changeuuid: String,
-    @ColumnInfo(defaultValue = "") val serveruuid: String,
+    @ColumnInfo(defaultValue = "") val serveruuid: String?,
     val clickcount: Int,
     val clicktimestamp: String,
    // val clicktimestamp_iso8601: Any?,

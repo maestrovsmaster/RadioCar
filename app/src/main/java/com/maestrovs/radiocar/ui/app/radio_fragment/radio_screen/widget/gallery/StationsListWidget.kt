@@ -1,5 +1,6 @@
 package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,6 +44,7 @@ fun StationsListWidget(
 
     val currentListType by viewModel.currentListType.collectAsState()
     val stationsGroupFlow by PlaylistManager.stationGroups.collectAsState(emptyList())
+    Log.d("StationRepositoryIml", "StationsListWidget: $stationsGroupFlow")
 
     var showDialog by remember { mutableStateOf(false) }
     var selectedStation by remember { mutableStateOf<StationGroup?>(null) }
@@ -56,7 +58,7 @@ fun StationsListWidget(
         DynamicShadowCard(
             modifier = Modifier
                 // .padding(16.dp)
-                .fillMaxSize(), contentColor = primary, backgroundColor = primaryDark
+                .fillMaxSize(), contentColor = primary,
         ) {
 
 

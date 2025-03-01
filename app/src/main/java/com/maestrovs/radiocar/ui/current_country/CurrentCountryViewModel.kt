@@ -7,14 +7,15 @@ import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.ResponseDeserializable
 import com.google.gson.Gson
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.LocationAPIDeserializer
 import java.io.Reader
 
-
+/*
 data class LocationResponse(val country: String?)
 
 class LocationAPIDeserializer : ResponseDeserializable<LocationResponse> {
     override fun deserialize(reader: Reader) = Gson().fromJson(reader, LocationResponse::class.java)
-}
+}*/
 
 class CurrentCountryViewModel: ViewModel() {
 

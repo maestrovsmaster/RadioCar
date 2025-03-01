@@ -42,13 +42,13 @@ fun BackgroundCover(
         imageBitmap = null
         Glide.with(context)
             .asBitmap()
-            .diskCacheStrategy(DiskCacheStrategy.NONE) // Вимикаємо кеш
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
             .load(currentImageUrl)
             .into(object : CustomTarget<android.graphics.Bitmap>() {
                 override fun onResourceReady(resource: android.graphics.Bitmap, transition: Transition<in android.graphics.Bitmap>?) {
                     CoroutineScope(Dispatchers.Main).launch {
-                        delay(100) // Невелика пауза для стабільності
+                        delay(100)
                         imageBitmap = resource
                     }
                 }

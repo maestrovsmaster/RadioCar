@@ -12,6 +12,7 @@ import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.data.repository.StationRepositoryIml
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.manager.radio.PlaylistManager
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepository
 import com.maestrovs.radiocar.ui.radio.ListType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,17 +30,28 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class RadioListViewModel @Inject constructor(
-    private val repository: StationRepository
+    private val repository: StationRepository,
+    private val sharedPreferencesRepository: SharedPreferencesRepository
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
     private val _selectedCountry = MutableStateFlow("UA")
     private val _selectedTag = MutableStateFlow("")
 
+   /* private val _currentCountry = MutableStateFlow<String>("UK")
+    val currentCountry = _currentCountry.asStateFlow()*/
+
+    fun updateCurrentCountry(countryCode: String) {
+        //_currentCountry.value = countryCode
+        sharedPreferencesRepository.setCurrentCountry(countryCode)
+    }
 
     init {
-      //  PlaylistManager.init(repository.getFavoriteStationIdsFlow())
+       // _currentCountry.value = sharedPreferencesRepository.getCountryCode()
+
     }
+
+    val currentCountry = MutableStateFlow(sharedPreferencesRepository.getCountryCode())
 
     private val searchParams = combine(_searchQuery, _selectedCountry, _selectedTag) { query, country, tag ->
         Triple(query, country, tag)
@@ -59,7 +71,6 @@ class RadioListViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
 
     fun searchStations(query: String, country: String, tag: String) {
-        Log.d("StationRemoteDataSource", "model searchStations: $query, $country, $tag")
         _searchQuery.value = query
         _selectedCountry.value = country
         _selectedTag.value = tag
@@ -79,6 +90,7 @@ class RadioListViewModel @Inject constructor(
 
     private fun setRecent(stationGroup: StationGroup) {
         viewModelScope.launch {
+            repository.insertStations(stationGroup.stations)
             repository.setRecent(stationGroup.streams.map { it.stationUuid })
         }
     }
@@ -88,6 +100,7 @@ class RadioListViewModel @Inject constructor(
     fun setIsLike(stationGroup: StationGroup, isFavorite: Boolean) {
         PlayerStateManager.setLiked(isFavorite)
         viewModelScope.launch {
+            repository.insertStations(stationGroup.stations)
 
             if (isFavorite) {
                 repository.setFavorite(stationGroup.streams.map { it.stationUuid })

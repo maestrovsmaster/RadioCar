@@ -73,7 +73,7 @@ fun ApplicationsWidget(
         DynamicShadowCard(
             modifier = Modifier
                 // .padding(16.dp)
-                .fillMaxSize(), contentColor = primary, backgroundColor = primary
+                .fillMaxSize(), contentColor = primary,
         ) {
             ControlBackground()
             Column(

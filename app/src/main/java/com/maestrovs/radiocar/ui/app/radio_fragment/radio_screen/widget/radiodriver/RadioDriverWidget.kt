@@ -86,7 +86,7 @@ fun RadioDriverWidget(
         DynamicShadowCard(
             modifier = Modifier
                 // .padding(16.dp)
-                , contentColor = primary, backgroundColor = Color.DarkGray
+                , contentColor = primary,
         ) {
             LottieLoader()
 

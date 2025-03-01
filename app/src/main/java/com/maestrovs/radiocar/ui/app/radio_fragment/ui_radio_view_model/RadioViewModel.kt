@@ -14,6 +14,7 @@ import com.maestrovs.radiocar.data.entities.radio.BitrateOption
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.manager.bluetooth.BluetoothStateManager
+import com.maestrovs.radiocar.manager.location.LocationStateManager
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.manager.radio.PlaylistManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepository
@@ -32,6 +33,8 @@ class RadioViewModel @Inject constructor(
     private val sharedPreferencesRepository: SharedPreferencesRepository
 ) : ViewModel() {
 
+  //  private val _currentCountry = MutableStateFlow<String>("UK")
+
     private val _currentListType = MutableStateFlow<ListType>(ListType.All)
     val currentListType: StateFlow<ListType> = _currentListType
 
@@ -47,6 +50,12 @@ class RadioViewModel @Inject constructor(
     private var fetchStationsJob: Job? = null
 
     init {
+       // _currentCountry.value = sharedPreferencesRepository.getCountryCode()
+
+
+       // LocationStateManager.updateCountryCode(_currentCountry.value)
+
+
         _currentListType.value = sharedPreferencesRepository.getListType()
         fetchStations()
 
@@ -82,12 +91,11 @@ class RadioViewModel @Inject constructor(
             val flow = when (_currentListType.value) {
                 ListType.Recent -> repository.getRecentStationDetailsByLastTimeGrouped()
                 ListType.Favorites -> repository.getFavoriteStationDetailsByLastTimeGrouped()
-                else -> repository.getGroupedStationsFlow(
-                    countryCode = "UA",
-                    offset = 0,
-                    limit = 100,
-                    listType = ListType.All
-                )
+                else ->   repository.getPagedStationsFlow(
+                        country = sharedPreferencesRepository.getCountryCode(),
+                        offset = 0,
+                        limit = 100
+                    )
             }
 
             flow.collectLatest { resource ->
@@ -98,10 +106,11 @@ class RadioViewModel @Inject constructor(
 
 
     private fun processResources(response: Resource<List<StationGroup>>) {
+        Log.d("StationRepositoryIml", "processResources... 2")
         _isLoading.value = false
         when (response.status) {
             Resource.Status.SUCCESS -> {
-
+                Log.d("StationRepositoryIml", "processResources... 4 ${response.data}")
 
                 _stations.value = response.data ?: emptyList()
                 PlaylistManager.updateStationGroups(response.data ?: emptyList())

@@ -50,7 +50,7 @@ fun StationGroupItem(
         DynamicShadowCard(
             modifier = Modifier
                 // .padding(16.dp)
-                .fillMaxSize(), contentColor = primary, backgroundColor = primary,
+                .fillMaxSize(), contentColor = primary,
             elevation = 5
         ) {
 
@@ -94,14 +94,14 @@ fun StationGroupItem(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
-                    maxLines = 1
+                    maxLines = 2
                 )
-                Text(
-                    text = "Ukraine",
+                /*Text(
+                    text = item.countryCode?:"",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Thin,
                     color = Color.White
-                )
+                )*/
             }
 
 
@@ -121,7 +121,8 @@ fun StationGroupItemPreview() {
         name = "Test FM",
         streams = listOf<StationStream>(),
         favicon = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPZ-WDFZ5Pz-lBPZj9GSU2LbBSEmlTVOtRmQ&s",
-        isFavorite = true
+        isFavorite = true,
+        stations = listOf(),
     ), onItemClick = {}, onItemLongClick = {})
 
 }

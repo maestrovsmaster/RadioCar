@@ -38,6 +38,16 @@ fun SearchBar(
     onClear: () -> Unit,
     onBackClick: () -> Unit
 ) {
+Row(
+    verticalAlignment = Alignment.CenterVertically
+
+){
+    IconButton(onClick = { onBackClick() }) {
+        Icon(imageVector = Icons.Default.ArrowBack,
+            contentDescription = "Back",
+            tint = Color.White)
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -47,11 +57,7 @@ fun SearchBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        IconButton(onClick = { onBackClick() }) {
-            Icon(imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
-                tint = Color.White)
-        }
+
 
 
         TextField(
@@ -96,6 +102,9 @@ fun SearchBar(
             )
         }
     }
+}
+
+
 }
 
 @Preview

@@ -36,12 +36,14 @@ class MockStationRepository : StationRepository() {
                     name = "Mock Station 1",
                     streams = listOf(StationStream(stationUuid = "124", url = "http://mock1.com", bitrate = BitrateOption.LOW)),
                     favicon = "https://mock1.com/favicon.png",
+                    stations = listOf(),
                     isFavorite = true
                 ),
                 StationGroup(
                     name = "Mock Station 2",
                     streams = listOf(StationStream(stationUuid = "123", url = "http://mock2.com", bitrate = BitrateOption.HD)),
                     favicon = "https://mock2.com/favicon.png",
+                    stations = listOf(),
                     isFavorite = false
                 )
             )))
@@ -151,6 +153,14 @@ class MockStationRepository : StationRepository() {
     }
 
     override fun getFavoriteStationDetailsByLastTimeGrouped(): Flow<Resource<List<StationGroup>>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPagedStationsFlow(
+        country: String,
+        offset: Int,
+        limit: Int
+    ): Flow<Resource<List<StationGroup>>> {
         TODO("Not yet implemented")
     }
 }

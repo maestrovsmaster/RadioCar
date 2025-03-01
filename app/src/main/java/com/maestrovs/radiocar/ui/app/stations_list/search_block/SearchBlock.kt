@@ -19,8 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arpitkatiyarprojects.countrypicker.models.CountryDetails
 import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
+import com.maestrovs.radiocar.manager.location.LocationStateManager
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.ControlBackgroundLight
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
 import com.maestrovs.radiocar.ui.app.stations_list.RadioListViewModel
 import com.maestrovs.radiocar.ui.app.stations_list.widgets.CountryPickerWidget
@@ -33,99 +37,105 @@ import com.maestrovs.radiocar.ui.app.ui.theme.primary
 fun SearchBlock(
     viewModel: RadioListViewModel,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    currentCountryCode: String? = null
 ) {
 
-    var latestCountry by remember { mutableStateOf<CountryDetails?>(null) }
+   // val currentCountryCode by LocationStateManager.currentCountryCode.collectAsStateWithLifecycle()
+   // var useCountryForSearch by remember { mutableStateOf(false) }
 
     var searchQuery by remember { mutableStateOf("") }
-    var selectedCountry by remember { mutableStateOf<CountryDetails?>(null) }
+    var selectedCountryForSearch by remember { mutableStateOf<String?>(currentCountryCode) }
+
     var selectedTag by remember { mutableStateOf(Pair("", "")) }
 
-    val showCountryPicker = remember { mutableStateOf(false) }
+    val showCountryPicker = remember { mutableStateOf(true) }
 
     fun search() {
         viewModel.searchStations(
             searchQuery,
-            selectedCountry?.countryCode ?: "",
+            if(showCountryPicker.value) selectedCountryForSearch ?: "" else "",
             selectedTag.first
         )
     }
 
 
 
-        DynamicShadowCard(
-            modifier = modifier.fillMaxWidth(),
-            contentColor = primary, backgroundColor = primary
+    DynamicShadowCard(
+        modifier = modifier.fillMaxWidth(),
+        contentColor = primary,
+    ) {
+
+
+        Column(
+            modifier = Modifier
+                .height(160.dp)
+                .fillMaxWidth()
         ) {
 
-            Column(
-                modifier = Modifier.height(160.dp).fillMaxWidth()
-            ) {
+            Spacer(modifier = Modifier.height(8.dp))
+            SearchBar(
+                searchQuery = searchQuery,
+                onSearch = {
+                    searchQuery = it
+                    search()
+                },
+                onClear = {
+                    searchQuery = ""
+                    search()
+                },
+                onBackClick = onBackClick
+            )
 
-                Spacer(modifier = Modifier.height(8.dp))
-                SearchBar(
-                    searchQuery = searchQuery,
-                    onSearch = {
-                        searchQuery = it
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                CountryPickerWidget(
+                    defaultCountryCode = currentCountryCode,
+                    onCountrySelected = {
+                        selectedCountryForSearch = it.countryCode
+                        viewModel.updateCurrentCountry(it.countryCode)
                         search()
+
+
                     },
-                    onClear = {
-                        searchQuery = ""
+                    onShowCountryPicker = {
+
+                        showCountryPicker.value = it
+
                         search()
+
                     },
-                    onBackClick = onBackClick
+                    modifier = Modifier.weight(6f),
+                    showCountryPicker = showCountryPicker.value
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    CountryPickerWidget(
-                        selectedCountry = selectedCountry,
-                        onCountrySelected = {
-                            selectedCountry = it
-                            search()
-                        },
-                        onShowCountryPicker = {
-
-                                showCountryPicker.value = it
-                                selectedCountry = if (it) {
-                                    latestCountry
-                                } else {
-                                    latestCountry = selectedCountry
-                                    null
-                                }
-                                search()
-
-                        },
-                        modifier = Modifier.weight(6f),
-                        showCountryPicker = showCountryPicker.value
-                    )
-
-                    TagSelector(
-                        selectedTag = selectedTag.second,
-                        onTagSelected = {
-                            selectedTag = it
-                            search()
-                        },
-                        onTagCleared = {
-                            selectedTag = Pair("", "")
-                            search()
-                        },
-                        modifier = Modifier.weight(4f).padding(end = 8.dp, bottom = 6.dp).height(40.dp)
-                    )
-                }
+                TagSelector(
+                    selectedTag = selectedTag.second,
+                    onTagSelected = {
+                        selectedTag = it
+                        search()
+                    },
+                    onTagCleared = {
+                        selectedTag = Pair("", "")
+                        search()
+                    },
+                    modifier = Modifier
+                        .weight(4f)
+                        .padding(end = 8.dp, bottom = 6.dp)
+                        .height(40.dp)
+                )
             }
         }
     }
-
+}
 
 
 @Preview
 @Composable
 fun SearchBlockPreview() {
     SearchBlock(
-        RadioListViewModel(MockStationRepository()),
+        RadioListViewModel(MockStationRepository(), SharedPreferencesRepositoryMock()),
         onBackClick = {}
     )
 }

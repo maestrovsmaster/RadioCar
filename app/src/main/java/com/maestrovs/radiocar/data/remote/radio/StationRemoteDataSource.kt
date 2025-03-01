@@ -24,7 +24,13 @@ class StationRemoteDataSource @Inject constructor(
         country: String = "UA",
         offset: Int = 0,
         limit: Int = PAGE_SIZE
-    ) = getResult { stationService.getStations(country = country, offset = offset, limit = limit) }
+    ) = getResult {
+        val result = stationService.getStations(country = country, offset = offset, limit = limit)
+        Log.d("StationRepositoryIml", "getGroupedStationsFlow: ${result.body().toString()}")
+        result
+
+
+    }
 
     suspend fun getStationsByName(
         searchterm: String,

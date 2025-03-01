@@ -12,13 +12,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
+import com.maestrovs.radiocar.manager.location.LocationStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.MiniPlayerWidget
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 import com.maestrovs.radiocar.ui.app.stations_list.list_widget.ListWidget
 import com.maestrovs.radiocar.ui.app.stations_list.search_block.SearchBlock
 
@@ -28,6 +32,8 @@ import com.maestrovs.radiocar.ui.app.stations_list.search_block.SearchBlock
 
 @Composable
 fun RadioListScreen(viewModel: RadioListViewModel,   onBackClick: () -> Unit = {},) {
+
+
 
     Scaffold(
         containerColor = Color.Black,
@@ -60,6 +66,8 @@ fun RadioListVerticalOrientation(
     viewModel: RadioListViewModel,
     onBackClick: () -> Unit,
 ) {
+
+    val countryCode = viewModel.currentCountry.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,6 +77,7 @@ fun RadioListVerticalOrientation(
 
         SearchBlock(viewModel,
             onBackClick = onBackClick,
+            currentCountryCode = countryCode.value,
             modifier = Modifier
                 .padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp).fillMaxWidth()
         )
@@ -95,6 +104,8 @@ fun RadioListHorizontalOrientation(
     viewModel: RadioListViewModel,
     onBackClick: () -> Unit,
 ) {
+
+    val countryCode = viewModel.currentCountry.collectAsStateWithLifecycle()
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -107,6 +118,7 @@ fun RadioListHorizontalOrientation(
         Column(modifier = Modifier.fillMaxHeight().width(340.dp)) {
             SearchBlock(viewModel,
                 onBackClick = onBackClick,
+                currentCountryCode = countryCode.value,
                 modifier = Modifier
                     .padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 8.dp).fillMaxWidth()
             )
@@ -143,7 +155,7 @@ fun RadioListHorizontalOrientation(
 @Composable
 fun RadioListScreenPreview() {
     RadioListScreen(
-        RadioListViewModel(MockStationRepository())
+        RadioListViewModel(MockStationRepository(), SharedPreferencesRepositoryMock())
 
     )
 }

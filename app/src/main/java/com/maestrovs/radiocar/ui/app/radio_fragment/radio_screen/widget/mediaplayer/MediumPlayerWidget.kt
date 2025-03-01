@@ -79,7 +79,7 @@ fun MediumPlayerWidget(
             modifier = Modifier,
             // .padding(16.dp)
             // .fillMaxWidth(),
-            contentColor = primary, backgroundColor = primary
+            contentColor = primary,
         ) {
 
             currentGroup?.favicon?.let { imgUrl ->
