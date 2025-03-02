@@ -80,7 +80,7 @@ class RadioViewModel @Inject constructor(
         fetchStations()
     }
 
-    private fun fetchStations() {
+     fun fetchStations() {
         _errorMessage.value = null
         _isLoading.value = true
 

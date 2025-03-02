@@ -109,7 +109,7 @@ fun RadioVerticalOrientation(
             viewModel,
             modifier = Modifier.padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp).weight(1f),
 
-            onSelectAllClick = onSelectAllClick
+            onSelectAllClick = onSelectAllClick, navController
         )
     }
 }
@@ -156,7 +156,7 @@ fun RadioHorizontalOrientation(
                 viewModel,
                 modifier = Modifier.weight(1f)
                     .padding(top = 8.dp, bottom = 16.dp, start = 8.dp, end = 16.dp),
-                onSelectAllClick = onSelectAllClick
+                onSelectAllClick = onSelectAllClick, navController
             )
         }
 

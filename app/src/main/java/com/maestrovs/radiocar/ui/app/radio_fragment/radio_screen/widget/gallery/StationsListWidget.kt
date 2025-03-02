@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,8 +22,11 @@ import com.maestrovs.radiocar.ui.radio.ListType
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.manager.radio.PlaylistManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.ConfirmDeleteDialog
@@ -40,11 +44,17 @@ fun StationsListWidget(
     viewModel: RadioViewModel,
     modifier: Modifier = Modifier,
     onSelectAllClick: () -> Unit = {},
+    navController: NavController
 ) {
 
     val currentListType by viewModel.currentListType.collectAsState()
     val stationsGroupFlow by PlaylistManager.stationGroups.collectAsState(emptyList())
     Log.d("StationRepositoryIml", "StationsListWidget: $stationsGroupFlow")
+    val navBackStackEntry = rememberUpdatedState(navController.currentBackStackEntry)
+
+    LaunchedEffect(navBackStackEntry) {
+        viewModel.fetchStations()
+    }
 
     var showDialog by remember { mutableStateOf(false) }
     var selectedStation by remember { mutableStateOf<StationGroup?>(null) }
@@ -119,6 +129,7 @@ fun StationsListWidgetPreview() {
             SharedPreferencesRepositoryMock()
         ),
         modifier = Modifier,
+        navController = NavController(LocalContext.current)
     )
 
 }
