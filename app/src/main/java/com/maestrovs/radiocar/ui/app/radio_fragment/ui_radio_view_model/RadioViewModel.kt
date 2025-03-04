@@ -44,8 +44,8 @@ class RadioViewModel @Inject constructor(
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
+    private val _isLoading = MutableStateFlow<Boolean>(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
     private var fetchStationsJob: Job? = null
 
@@ -106,7 +106,7 @@ class RadioViewModel @Inject constructor(
 
 
     private fun processResources(response: Resource<List<StationGroup>>) {
-        Log.d("StationRepositoryIml", "processResources... 2")
+        Log.d("MediumPlayerWidget", "processResources... 2")
         _isLoading.value = false
         when (response.status) {
             Resource.Status.SUCCESS -> {
@@ -117,11 +117,11 @@ class RadioViewModel @Inject constructor(
             }
 
             Resource.Status.ERROR -> {
-                _errorMessage.value = response.message ?: "Сталася помилка"
+                _errorMessage.value = response.message ?: "Error"
             }
 
             Resource.Status.LOADING -> {
-                _isLoading.value = true
+                //_isLoading.value = true
             }
         }
     }
@@ -160,6 +160,7 @@ class RadioViewModel @Inject constructor(
 
     private fun setRecent(stationGroup: StationGroup) {
         viewModelScope.launch {
+            repository.insertStations(stationGroup.stations)
             repository.setRecent(stationGroup.streams.map { it.stationUuid })
             sharedPreferencesRepository.saveRecentStationGroup(stationGroup)
         }
@@ -168,7 +169,7 @@ class RadioViewModel @Inject constructor(
     fun setIsLike(stationGroup: StationGroup, isFavorite: Boolean) {
         PlayerStateManager.setLiked(isFavorite)
         viewModelScope.launch {
-
+            repository.insertStations(stationGroup.stations)
             if (isFavorite) {
                 repository.setFavorite(stationGroup.streams.map { it.stationUuid })
             } else {

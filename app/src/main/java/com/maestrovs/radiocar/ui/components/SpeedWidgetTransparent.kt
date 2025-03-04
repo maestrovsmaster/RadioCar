@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.shared_managers.SpeedUnit
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.widget.convertToMph
 import kotlin.math.round
 
 
@@ -81,7 +82,7 @@ open class SpeedWidgetTransparent : FrameLayout {
 
     }
 
-    private fun convertToMph(kmh: Float) = kmh*0.6213711922
+
 
     fun setUnit(unit: String){
         tvUnit.text = "$unit"

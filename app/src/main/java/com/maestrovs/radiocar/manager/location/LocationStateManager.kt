@@ -62,7 +62,7 @@ object LocationStateManager {
     }
 
     fun updateLocation(context: Context,location: Location) {
-        Log.d("LocationStateManager", "-------updateLocation: , location: $location")
+       // Log.d("LocationStateManager", "-------updateLocation: , location: $location")
         val newSpeed = location.speed * 3.6f // Convert m/s to km/h
         val smoothedSpeed = getSmoothedSpeed(newSpeed)
 
@@ -85,13 +85,13 @@ object LocationStateManager {
                 lastLocation.first, lastLocation.second,
                 location.latitude, location.longitude
             )
-            Log.d("LocationStateManager", "-------distance: : $distance")
+           // Log.d("LocationStateManager", "-------distance: : $distance")
             if (distance >= 5.0) {
                 _latestWeatherLocation = location.latitude to location.longitude
                 _locationWeatherState.value = location
             }
         } ?: run {
-            // Якщо ще не було жодної збереженої локації
+
             _latestWeatherLocation = location.latitude to location.longitude
         }
     }

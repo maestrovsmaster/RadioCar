@@ -15,12 +15,12 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 //car_infinite_road.json
 //night_radio.json
 @Composable
-fun LottieLoader() {
+fun LottieLoader(speed: Float = 0.2f) {
     val composition by rememberLottieComposition(LottieCompositionSpec.Asset("car_infinite_road.json"))
     val progress by animateLottieCompositionAsState(
         composition = composition,
         iterations = LottieConstants.IterateForever,
-        speed = 0.2f
+        speed = speed
     )
 
     LottieAnimation(

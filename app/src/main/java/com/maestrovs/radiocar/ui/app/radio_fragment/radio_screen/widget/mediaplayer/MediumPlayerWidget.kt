@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,9 +67,12 @@ fun MediumPlayerWidget(
 
     val volumeFlow by PlayerStateManager.volumeFlow.collectAsStateWithLifecycle(1f)
 
-
-
     var showDialog by remember { mutableStateOf(false) }
+
+    val isPlaying = if (isPlayingFlow == null) false else isPlayingFlow!!.first
+    val isLoadingData by viewModel.isLoading.collectAsStateWithLifecycle()
+
+    val isLoading = isBufferingFlow || isLoadingData;
 
 
     Box(
@@ -154,14 +158,14 @@ fun MediumPlayerWidget(
             }
 
 
-            val isPlaying = if (isPlayingFlow == null) false else isPlayingFlow!!.first
+
 
             PlayControlWidget(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(16.dp),
                 isPlaying = isPlaying,
-                isLoading = isBufferingFlow || viewModel.isLoading.value == true,
+                isLoading = isLoading,
                 onPrevClick = {
                     viewModel.prev()
                 },

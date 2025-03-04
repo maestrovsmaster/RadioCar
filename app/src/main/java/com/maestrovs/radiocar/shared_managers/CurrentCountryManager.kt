@@ -19,13 +19,14 @@ object CurrentCountryManager {
     }
 
     fun readCountry(context: Context): CPCountry? {
-        val countryJson = SharedManager.readStringOptions(context, CURRENT_COUNTRY_KEY)
+       /* val countryJson = SharedManager.readStringOptions(context, CURRENT_COUNTRY_KEY)
 
         return if (countryJson == null) {
             null
         } else {
             Gson().fromJson(countryJson, CPCountry::class.java)
-        }
+        }*/
+        return null
     }
 
 

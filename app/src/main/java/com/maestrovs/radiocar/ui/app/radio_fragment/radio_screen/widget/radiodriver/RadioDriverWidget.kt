@@ -35,6 +35,8 @@ import com.maestrovs.radiocar.ui.app.ui.theme.primary
 import com.maestrovs.radiocar.shared_managers.SettingsManager
 import com.maestrovs.radiocar.shared_managers.SpeedUnit
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.widget.BtStatusWidget
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.widget.calculateLottieSpeedAnimation
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.widget.calculateSpeedColor
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.weather.WeatherWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.weather.WeatherWidgetLocation
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.weather.WeatherWidgetMini
@@ -63,6 +65,9 @@ fun RadioDriverWidget(
     val baseGray = Color(0xFFF6F7F8)
 
     val speedValue = if (locationAvailability) locationState.speed.toInt() else null
+    val speedColor = calculateSpeedColor(LocalContext.current, locationState.speed)
+
+    val animationSpeed = calculateLottieSpeedAnimation(locationState.speed)
 
     when (SettingsManager.getSpeedUnit(LocalContext.current)) {
         SpeedUnit.kmh -> LocalContext.current.getString(R.string.km_h)
@@ -84,11 +89,6 @@ fun RadioDriverWidget(
 
     Box(
         modifier = modifier
-        //.fillMaxWidth()
-        //.height(280.dp)
-        //.background(Color.Black)
-        //.padding(16.dp),
-        //contentAlignment = Alignment.Center
     ) {
 
         DynamicShadowCard(
@@ -96,7 +96,7 @@ fun RadioDriverWidget(
             // .padding(16.dp)
             contentColor = primary,
         ) {
-            LottieLoader()
+            LottieLoader(speed = animationSpeed)
 
             //BackgroundCover()
 
@@ -139,7 +139,7 @@ fun RadioDriverWidget(
                     .padding(start = 30.dp, top = 32.dp),
 
                 ) {
-                SevenSegmentSpeedometer(speedValue, "mph", Color.White)
+                SevenSegmentSpeedometer(speedValue,  speedColor)
             }
 
             WeatherWidgetLocation(
@@ -147,26 +147,6 @@ fun RadioDriverWidget(
                 modifier = Modifier
                     .align(Alignment.BottomStart).padding(16.dp)
             )
-
-            /*Box(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(16.dp),
-
-                ) {
-                SpeedUnitText(unit = "Ukraine", color = displayColor, fontSize = 14.sp)
-            }*/
-
-            /* Box(
-                 modifier = Modifier
-                     .align(Alignment.BottomEnd)
-                     .padding(16.dp),
-
-                 ) {
-                 DigitalWeatherWidget(-14.0, "C", color = displayColor)
-             }*/
-
-
         }
 
 

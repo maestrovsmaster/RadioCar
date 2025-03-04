@@ -35,7 +35,7 @@ object PlayerStateManager {
 
     // val stationsGroupFlow = playerState.map { it.stationGroups }.distinctUntilChanged()
 
-    //val isPlayingFlow = playerState.map { it.isPlaying }.distinctUntilChanged()
+    val isPlayingBoolFlow = playerState.map { it.isPlaying }.distinctUntilChanged()
     val isPlayingFlow = combine(
         playerState.map { it.isPlaying }.distinctUntilChanged(),
         playerState.map { it.currentGroup }.distinctUntilChanged()

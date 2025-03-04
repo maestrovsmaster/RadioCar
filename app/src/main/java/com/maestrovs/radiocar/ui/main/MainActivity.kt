@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
 
         WeatherWorker.startWeatherWorker(this)
 
-       // startMockLocationUpdates(scope)
+       // startMockLocationUpdates(this, scope) //Emulate location speed change
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding!!.root)

@@ -1,5 +1,7 @@
 package com.maestrovs.radiocar.manager.location
 
+import android.app.Activity
+import android.content.Context
 import android.location.Location
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +16,7 @@ import kotlin.random.Random
 
 
 
- fun startMockLocationUpdates(scope: CoroutineScope) {
+ fun startMockLocationUpdates(context: Context, scope: CoroutineScope) {
     scope.launch {
         val baseLat = 51.5074 // Лондон, наприклад
         val baseLon = -0.1278
@@ -29,16 +31,16 @@ import kotlin.random.Random
                 speed += Random.nextFloat() * 5
                 latitude += 0.0001
                 longitude += 0.0001
-                updateMockLocation(latitude, longitude, speed)
+                updateMockLocation(context, latitude, longitude, speed)
                 delay(1000)
             }
 
-            // Етап 2: Їзда на швидкості 100-120 км/год протягом 20 секунд
+            // Етап 2: Їзда на швидкості 100-130 км/год протягом 20 секунд
             repeat(20) {
                 speed = 100f + Random.nextFloat() * 20
                 latitude += 0.0002
                 longitude += 0.0002
-                updateMockLocation(latitude, longitude, speed)
+                updateMockLocation(context,latitude, longitude, speed)
                 delay(1000)
             }
 
@@ -47,7 +49,7 @@ import kotlin.random.Random
                 speed -= Random.nextFloat() * 5
                 latitude += 0.00005
                 longitude += 0.00005
-                updateMockLocation(latitude, longitude, speed)
+                updateMockLocation(context,latitude, longitude, speed)
                 delay(1000)
             }
 
@@ -56,25 +58,25 @@ import kotlin.random.Random
                 speed = 50f + Random.nextFloat() * 5
                 latitude += 0.0001
                 longitude += 0.0001
-                updateMockLocation(latitude, longitude, speed)
+                updateMockLocation(context,latitude, longitude, speed)
                 delay(1000)
             }
 
             // Етап 5: Зупинка протягом 5 секунд
             repeat(5) {
                 speed = 0f
-                updateMockLocation(latitude, longitude, speed)
+                updateMockLocation(context,latitude, longitude, speed)
                 delay(1000)
             }
         }
     }
 }
 
-private fun updateMockLocation(lat: Double, lon: Double, speed: Float) {
+private fun updateMockLocation(context: Context, lat: Double, lon: Double, speed: Float) {
     val mockLocation = Location("mock").apply {
         latitude = lat
         longitude = lon
         this.speed = (speed / 3.6f) // Переводимо в м/с
     }
-  //  LocationStateManager.updateLocation( mockLocation)  /!!!! add context
+    LocationStateManager.updateLocation(context,  mockLocation)
 }

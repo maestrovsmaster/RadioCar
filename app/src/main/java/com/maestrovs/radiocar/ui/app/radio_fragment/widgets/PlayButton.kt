@@ -35,13 +35,11 @@ fun PlayButton(
 ) {
 
     var parentSize by remember { mutableStateOf(IntSize.Zero) }
-    Log.d("PlayButton", "parentSize: $parentSize")
 
     Box(
         modifier = modifier.onSizeChanged { parentSize = it },
         contentAlignment = Alignment.Center
     ) {
-        //val radius = maxOf((parentSize.height / 4).dp, 10.dp)
 
         PlayProgressWidget(
             isLoading = isLoading, numDots = 50, radius = radius, baseColor = Color(

@@ -1,6 +1,7 @@
 package com.maestrovs.radiocar.shared_managers
 
 import android.content.Context
+import android.os.Build
 
 object SettingsManager {
 
@@ -8,6 +9,20 @@ object SettingsManager {
     private const val IS_AUTOPLAY = "IS_AUTOPLAY"
     private const val SPEED_UNIT = "SPEED_UNIT"
     private const val TEMPERATURE_UNIT = "TEMPERATURE_UNIT"
+
+    private val MILE_BASED_COUNTRIES = setOf(
+        "US",
+        "GB",
+        "MM",
+        "LR"
+    )
+
+    private val FAHRENHEIT_BASED_COUNTRIES = setOf(
+        "US",
+        "BS",
+        "KY",
+        "PW"
+    )
 
     private const val SHOW_STATION_NAME_IN_BACKGROUND = "SHOW_STATION_NAME_IN_BACKGROUND"
 
@@ -30,15 +45,36 @@ object SettingsManager {
         SharedManager.writeStringOption(context, SPEED_UNIT, speedUnit.name)
     }
 
-    fun getSpeedUnit(context: Context): SpeedUnit =
-        SpeedUnit.valueOf(SharedManager.readStringOptions(context, SPEED_UNIT) ?: "kmh")
+    fun getSpeedUnit(context: Context): SpeedUnit {
+        val country = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            context.resources.configuration.locales[0].country // API 24+
+        } else {
+            @Suppress("DEPRECATION")
+            context.resources.configuration.locale.country // API 23
+        }
+
+        val defaultUnit = if (country in MILE_BASED_COUNTRIES) SpeedUnit.mph else SpeedUnit.kmh
+        return SpeedUnit.valueOf(SharedManager.readStringOptions(context, SPEED_UNIT) ?: defaultUnit.name)
+    }
+
 
     fun setTemperatureUnit(context: Context, temperatureUnit: TemperatureUnit) {
         SharedManager.writeStringOption(context, TEMPERATURE_UNIT, temperatureUnit.name)
     }
 
-    fun getTemperatureUnit(context: Context): TemperatureUnit =
-        TemperatureUnit.valueOf(SharedManager.readStringOptions(context, TEMPERATURE_UNIT) ?: "C")
+    fun getTemperatureUnit(context: Context): TemperatureUnit {
+
+        val country = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            context.resources.configuration.locales[0].country // API 24+
+        } else {
+            @Suppress("DEPRECATION")
+            context.resources.configuration.locale.country // API 23
+        }
+
+        val defaultUnit = if (country in FAHRENHEIT_BASED_COUNTRIES) TemperatureUnit.F else TemperatureUnit.C
+        return TemperatureUnit.valueOf(SharedManager.readStringOptions(context, TEMPERATURE_UNIT) ?: defaultUnit.name)
+    }
+
 
 
     fun setShowStationNameInBackground(context: Context, showStation: Boolean) {
