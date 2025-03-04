@@ -30,8 +30,10 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioVie
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.maestrovs.radiocar.data.repository.MockWeatherRepository
 import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
 import com.maestrovs.radiocar.manager.location.LocationStateManager
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.WeatherViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 
 
@@ -43,10 +45,10 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.reposito
 @Composable
 fun RadioScreen(
     viewModel: RadioViewModel,
+    weatherViewModel: WeatherViewModel,
     navController: NavController,
     onSelectAllClick: () -> Unit = {},
 ) {
-
 
 
     Scaffold(
@@ -60,9 +62,21 @@ fun RadioScreen(
             configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT
 
         if (isPortrait) {
-            RadioVerticalOrientation(padding, viewModel, navController, onSelectAllClick)
+            RadioVerticalOrientation(
+                padding,
+                viewModel,
+                weatherViewModel,
+                navController,
+                onSelectAllClick
+            )
         } else {
-            RadioHorizontalOrientation(padding, viewModel, navController, onSelectAllClick)
+            RadioHorizontalOrientation(
+                padding,
+                viewModel,
+                weatherViewModel,
+                navController,
+                onSelectAllClick
+            )
         }
 
 
@@ -74,6 +88,7 @@ fun RadioScreen(
 fun RadioVerticalOrientation(
     padding: PaddingValues,
     viewModel: RadioViewModel,
+    weatherViewModel: WeatherViewModel,
     navController: NavController,
     onSelectAllClick: () -> Unit = {},
 ) {
@@ -84,17 +99,23 @@ fun RadioVerticalOrientation(
 
         ) {
         RadioDriverWidget(
-            viewModel = viewModel, modifier = Modifier
+            viewModel = viewModel,
+            weatherViewModel = weatherViewModel,
+            modifier = Modifier
                 .weight(1f)
                 .padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
         )
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .weight(1.5f)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1.5f)
         ) {
-            ApplicationsWidget(navController, modifier = Modifier.width(120.dp)
-                .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 8.dp))
+            ApplicationsWidget(
+                navController, modifier = Modifier
+                    .width(120.dp)
+                    .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 8.dp)
+            )
 
             MediumPlayerWidget(
                 viewModel = viewModel,
@@ -107,7 +128,9 @@ fun RadioVerticalOrientation(
 
         StationsListWidget(
             viewModel,
-            modifier = Modifier.padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp).weight(1f),
+            modifier = Modifier
+                .padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                .weight(1f),
 
             onSelectAllClick = onSelectAllClick, navController
         )
@@ -119,6 +142,7 @@ fun RadioVerticalOrientation(
 fun RadioHorizontalOrientation(
     padding: PaddingValues,
     viewModel: RadioViewModel,
+    weatherViewModel: WeatherViewModel,
     navController: NavController,
     onSelectAllClick: () -> Unit = {},
 ) {
@@ -147,6 +171,7 @@ fun RadioHorizontalOrientation(
         Column(modifier = Modifier.fillMaxWidth()) {
             RadioDriverWidget(
                 viewModel = viewModel,
+                weatherViewModel = weatherViewModel,
                 modifier = Modifier
                     .weight(1f)
                     .padding(top = 16.dp, bottom = 8.dp, start = 8.dp, end = 16.dp)
@@ -154,7 +179,8 @@ fun RadioHorizontalOrientation(
             StationsListWidget(
 
                 viewModel,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
                     .padding(top = 8.dp, bottom = 16.dp, start = 8.dp, end = 16.dp),
                 onSelectAllClick = onSelectAllClick, navController
             )
@@ -171,7 +197,9 @@ fun RadioScreenPreviewPortrait() {
     RadioScreen(
         RadioViewModel(
             MockStationRepository(), SharedPreferencesRepositoryMock()
-        ), NavController(LocalContext.current)
+        ),
+        WeatherViewModel(MockWeatherRepository()),
+        NavController(LocalContext.current)
     )
 }
 
@@ -181,6 +209,8 @@ fun RadioScreenPreviewLandscape() {
     RadioScreen(
         RadioViewModel(
             MockStationRepository(), SharedPreferencesRepositoryMock()
-        ), NavController(LocalContext.current)
+        ),
+        WeatherViewModel(MockWeatherRepository()),
+        NavController(LocalContext.current)
     )
 }

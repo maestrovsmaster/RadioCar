@@ -20,9 +20,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.gms.ads.MobileAds
 import com.google.firebase.FirebaseApp
 import com.maestrovs.radiocar.BuildConfig
+import com.maestrovs.radiocar.data.remote.weather.WeatherWorker
 import com.maestrovs.radiocar.databinding.ActivityMainBinding
 import com.maestrovs.radiocar.events.ActivityStatus
 import com.maestrovs.radiocar.manager.bluetooth.BluetoothStateManager
@@ -37,6 +43,7 @@ import com.maestrovs.radiocar.service.location.LocationManager
 import com.maestrovs.radiocar.shared_managers.SettingsManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.LaunchViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.WeatherViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -44,6 +51,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 
 @UnstableApi
@@ -76,6 +84,8 @@ class MainActivity : AppCompatActivity() {
     private val radioViewModel: RadioViewModel by viewModels()
     private val launchViewModel: LaunchViewModel by viewModels()
 
+    private val weatherViewModel: WeatherViewModel by viewModels()
+
     companion object {
 
          const val PERMISSIONS_REQUEST_LOCATION = 124
@@ -97,6 +107,8 @@ class MainActivity : AppCompatActivity() {
                     .build()
             )
         }
+
+        WeatherWorker.startWeatherWorker(this)
 
        // startMockLocationUpdates(scope)
 
@@ -270,5 +282,7 @@ class MainActivity : AppCompatActivity() {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
+
+
 
 }

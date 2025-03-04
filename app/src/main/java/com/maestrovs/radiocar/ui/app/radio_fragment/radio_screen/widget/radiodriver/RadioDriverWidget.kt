@@ -6,6 +6,7 @@ import android.provider.Settings
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maestrovs.radiocar.R
+import com.maestrovs.radiocar.data.repository.MockWeatherRepository
 import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
 import com.maestrovs.radiocar.manager.location.LocationStateManager
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
@@ -33,6 +35,10 @@ import com.maestrovs.radiocar.ui.app.ui.theme.primary
 import com.maestrovs.radiocar.shared_managers.SettingsManager
 import com.maestrovs.radiocar.shared_managers.SpeedUnit
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.radiodriver.widget.BtStatusWidget
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.weather.WeatherWidget
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.weather.WeatherWidgetLocation
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.weather.WeatherWidgetMini
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.WeatherViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PowerButton
 
@@ -44,6 +50,7 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PowerButton
 fun RadioDriverWidget(
 
     viewModel: RadioViewModel,
+    weatherViewModel: WeatherViewModel,
     modifier: Modifier = Modifier,
 ) {
 
@@ -53,8 +60,9 @@ fun RadioDriverWidget(
     val locationAvailability by LocationStateManager.locationAvailability.collectAsStateWithLifecycle()
 
     val displayColor = Color(0xFF10CAE5)
+    val baseGray = Color(0xFFF6F7F8)
 
-    val speedValue = if(locationAvailability) locationState.speed.toInt() else null
+    val speedValue = if (locationAvailability) locationState.speed.toInt() else null
 
     when (SettingsManager.getSpeedUnit(LocalContext.current)) {
         SpeedUnit.kmh -> LocalContext.current.getString(R.string.km_h)
@@ -62,13 +70,13 @@ fun RadioDriverWidget(
     }
     val context = LocalContext.current
 
-    fun onCloseApp(){
+    fun onCloseApp() {
         //Finish application process
         android.os.Process.killProcess(android.os.Process.myPid())
         System.exit(1)
     }
 
-    fun onLaunchBluetoothSettingsIntent(){
+    fun onLaunchBluetoothSettingsIntent() {
         val intent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
         context.startActivity(intent)
     }
@@ -76,57 +84,48 @@ fun RadioDriverWidget(
 
     Box(
         modifier = modifier
-            //.fillMaxWidth()
-            //.height(280.dp)
-            //.background(Color.Black)
-            //.padding(16.dp),
+        //.fillMaxWidth()
+        //.height(280.dp)
+        //.background(Color.Black)
+        //.padding(16.dp),
         //contentAlignment = Alignment.Center
     ) {
 
         DynamicShadowCard(
-            modifier = Modifier
-                // .padding(16.dp)
-                , contentColor = primary,
+            modifier = Modifier,
+            // .padding(16.dp)
+            contentColor = primary,
         ) {
             LottieLoader()
 
             //BackgroundCover()
 
             LottieCover()
-            Box(
+
+
+            Row(
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(start = 30.dp, top = 40.dp),
-
-                ) {
-                SevenSegmentSpeedometer(speedValue, "mph", Color.White, )
-            }
-
-          /*  Box(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(16.dp),
-
-                ) {
-                SpeedUnitText(unit = "Ukraine", color = displayColor, fontSize = 14.sp)
-            }
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp),
-
-                ) {
-                DigitalWeatherWidget(-14.0, "C", color = displayColor)
-            }*/
-
-            Row(modifier = Modifier
-                .align(Alignment.TopEnd).padding(8.dp),
+                    .align(Alignment.TopEnd)
+                    .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
-                ){
-                BtStatusWidget(viewModel, {
-                    onLaunchBluetoothSettingsIntent()
-                })
+            ) {
+
+                WeatherWidgetMini(
+                    weatherViewModel,
+                    modifier = Modifier,
+                    // .padding(16.dp),
+                    color = baseGray
+                )
+                Spacer(modifier = Modifier.weight(1f))
+
+                BtStatusWidget(
+                    viewModel,
+
+                    {
+                        onLaunchBluetoothSettingsIntent()
+                    },
+                    color = baseGray,
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 PowerButton({
                     onCloseApp()
@@ -134,7 +133,43 @@ fun RadioDriverWidget(
             }
 
 
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(start = 30.dp, top = 32.dp),
+
+                ) {
+                SevenSegmentSpeedometer(speedValue, "mph", Color.White)
+            }
+
+            WeatherWidgetLocation(
+                viewModel = weatherViewModel,  color = Color.Cyan,
+                modifier = Modifier
+                    .align(Alignment.BottomStart).padding(16.dp)
+            )
+
+            /*Box(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(16.dp),
+
+                ) {
+                SpeedUnitText(unit = "Ukraine", color = displayColor, fontSize = 14.sp)
+            }*/
+
+            /* Box(
+                 modifier = Modifier
+                     .align(Alignment.BottomEnd)
+                     .padding(16.dp),
+
+                 ) {
+                 DigitalWeatherWidget(-14.0, "C", color = displayColor)
+             }*/
+
+
         }
+
+
     }
 
 
@@ -145,8 +180,10 @@ fun RadioDriverWidget(
 fun RadioDriverWidgetPreview() {
     RadioDriverWidget(
         viewModel = RadioViewModel(
-            MockStationRepository(),  SharedPreferencesRepositoryMock()
-        )
+            MockStationRepository(),
+            SharedPreferencesRepositoryMock()
+        ),
+        weatherViewModel = WeatherViewModel(MockWeatherRepository())
     )
 }
 

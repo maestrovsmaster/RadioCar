@@ -19,6 +19,7 @@ import com.maestrovs.radiocar.data.remote.weather.WeatherService
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.data.repository.StationRepositoryIml
 import com.maestrovs.radiocar.data.repository.WeatherRepository
+import com.maestrovs.radiocar.data.repository.WeatherRepositoryIml
 import com.maestrovs.radiocar.service.player.ExoPlayerManager
 import com.maestrovs.radiocar.service.player.MediaSessionHelper2
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepository
@@ -137,9 +138,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideWeatherRepository(
+        @ApplicationContext context: Context,
         remoteDataSource: WeatherRemoteDataSource,
-    ) =
-        WeatherRepository(remoteDataSource)
+    ): WeatherRepository =
+        WeatherRepositoryIml(context, remoteDataSource)
 
     @Singleton
     @Provides

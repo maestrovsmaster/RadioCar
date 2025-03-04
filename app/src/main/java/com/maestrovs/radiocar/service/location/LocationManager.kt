@@ -38,7 +38,7 @@ object LocationManager {
             override fun onLocationResult(locationResult: LocationResult) {
 
                 for (location in locationResult.locations) {
-                    LocationStateManager.updateLocation(location)
+                    LocationStateManager.updateLocation(activity, location)
                     //Log.d("LocationManager", "Location: ${location.latitude}, ${location.longitude}")
                 }
             }

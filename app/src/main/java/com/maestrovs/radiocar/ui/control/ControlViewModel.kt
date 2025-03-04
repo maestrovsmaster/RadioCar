@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrovs.radiocar.shared_managers.CurrentCountryManager
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
-import com.maestrovs.radiocar.data.repository.WeatherRepository
+import com.maestrovs.radiocar.data.repository.WeatherRepositoryIml
 import com.maestrovs.radiocar.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ControlViewModel @Inject constructor(
-    private val weatherRepository: WeatherRepository,)
+    private val weatherRepository: WeatherRepositoryIml,)
 : ViewModel() {
 
 
@@ -60,7 +60,7 @@ class ControlViewModel @Inject constructor(
                 Log.d("Weather","fetchWeather $countryName")
                 weatherRepository.getWeatherDataByCity(countryName)
             }
-            when (response.status) {
+           /* when (response.status) {
                 Resource.Status.SUCCESS -> {
                     response.data.let { weatherResp ->
                         weatherResp?.let {
@@ -76,7 +76,7 @@ class ControlViewModel @Inject constructor(
                 Resource.Status.LOADING -> {
                     // binding.progressBar.visibility = View.VISIBLE
                 }
-            }
+            }*/
         }
    }
 

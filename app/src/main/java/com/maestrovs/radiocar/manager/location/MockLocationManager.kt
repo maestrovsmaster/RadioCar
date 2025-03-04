@@ -76,5 +76,5 @@ private fun updateMockLocation(lat: Double, lon: Double, speed: Float) {
         longitude = lon
         this.speed = (speed / 3.6f) // Переводимо в м/с
     }
-    LocationStateManager.updateLocation(mockLocation)
+  //  LocationStateManager.updateLocation( mockLocation)  /!!!! add context
 }

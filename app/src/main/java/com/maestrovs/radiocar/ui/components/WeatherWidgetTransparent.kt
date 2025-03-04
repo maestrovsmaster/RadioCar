@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
+import com.maestrovs.radiocar.data.remote.weather.convertCelsiumToFahrenheit
 import com.maestrovs.radiocar.extensions.setVisible
 import com.maestrovs.radiocar.shared_managers.TemperatureUnit
 import com.squareup.picasso.Picasso
@@ -142,6 +143,7 @@ open class WeatherWidgetTransparent : FrameLayout {
             }
 
 
+
             var textColorRes = R.color.black
 
             var tempPref = ""
@@ -191,7 +193,7 @@ open class WeatherWidgetTransparent : FrameLayout {
     }
 
 
-    private fun convertCelsiumToFahrenheit(celsium: Float) = ((celsium*(9.0 / 5.0))+32)
+
 
     public fun setOnBack(l: OnClickListener?) {
         /* ivBackCard?.setOnClickListener {

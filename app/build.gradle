@@ -75,6 +75,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-compose-android:2.8.7'
     implementation 'androidx.compose.runtime:runtime-livedata:1.7.8'
     implementation 'androidx.compose.runtime:runtime-saved-instance-state:1.0.0-alpha11'
+    implementation 'androidx.test.espresso:espresso-core:3.6.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
@@ -106,6 +107,9 @@ dependencies {
     def coroutines_android_version = '1.10.1'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_android_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_android_version"
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
+
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     //Hilt
 

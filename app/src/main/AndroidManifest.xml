@@ -61,14 +61,6 @@
         android:theme="@style/Theme.RadioCar">
 
 
-        <activity
-            android:name=".ui.app.MainActivityV2"
-            android:exported="true"
-            android:label="@string/title_activity_main_v2"
-            android:theme="@style/Theme.RadioCar" >
-
-        </activity>
-
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3109852779138325~2311177105" />

@@ -68,5 +68,16 @@ object SharedManager {
 
 
 
+    fun writeFloatOption(context: Context, key: String, value: Float) {
+        val editor =
+            context.getSharedPreferences(RADIOCAR_PREFS, Context.MODE_PRIVATE).edit()
+        editor.putFloat(key, value)
+        editor.apply()
+    }
+
+    fun readFloatOptions(context: Context, key: String, defValue: Float): Float {
+        val prefs = context.getSharedPreferences(RADIOCAR_PREFS, Context.MODE_PRIVATE)
+        return prefs.getFloat(key, defValue)
+    }
 
 }

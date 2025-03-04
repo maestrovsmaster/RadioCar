@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.RadioScreen
 
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.WeatherViewModel
 import com.maestrovs.radiocar.ui.app.stations_list.RadioListScreen
 import com.maestrovs.radiocar.ui.app.stations_list.RadioListViewModel
 import com.maestrovs.radiocar.ui.splash_start_fragment.SplashFragmentDirections
@@ -29,6 +30,7 @@ class RadioFragment : Fragment() {
 
     private val viewModel: RadioViewModel by activityViewModels()
     private val radioListViewModel : RadioListViewModel by viewModels()
+    private val weatherViewModel: WeatherViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +42,7 @@ class RadioFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 val navController = findNavController()
-                RadioScreen(viewModel, navController = navController,
+                RadioScreen(viewModel, weatherViewModel ,navController = navController,
                     onSelectAllClick = {
                          navController.navigate(RadioFragmentDirections.actionRadioFragmentToRadioListFragment())
                     }

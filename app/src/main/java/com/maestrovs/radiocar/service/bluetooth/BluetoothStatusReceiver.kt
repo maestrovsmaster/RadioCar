@@ -22,7 +22,7 @@ class BluetoothStatusReceiver : BroadcastReceiver(){
             BluetoothAdapter.ACTION_STATE_CHANGED -> {
 
                 val isEnabled = isBluetoothEnabled(intent)
-                BluetoothStateManager.setBluetoothState(context!!, if(isEnabled == true) BluetoothAdapter.STATE_ON else BluetoothAdapter.STATE_OFF, StateSender.Receiver)//setBluetoothEnabled(context!!,isEnabled == true)
+                BluetoothStateManager.setBluetoothState(context!!, if(isEnabled == true) BluetoothAdapter.STATE_ON else BluetoothAdapter.STATE_OFF, StateSender.Receiver)
 
                 if (isEnabled == true) {
                     context?.let {

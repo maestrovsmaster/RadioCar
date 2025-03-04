@@ -28,7 +28,7 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.reposito
  */
 
 @Composable
-fun BtStatusWidget(radioViewModel: RadioViewModel, onClick: () -> Unit = {}, modifier: Modifier = Modifier){
+fun BtStatusWidget(radioViewModel: RadioViewModel, onClick: () -> Unit = {}, color: Color = Color.White, modifier: Modifier = Modifier){
 
     val btState by radioViewModel.isBluetoothEnabled.collectAsState()
     val currentBtDevice by radioViewModel.currentBluetoothDevice.collectAsState()
@@ -47,18 +47,18 @@ fun BtStatusWidget(radioViewModel: RadioViewModel, onClick: () -> Unit = {}, mod
         else -> R.drawable.ic_settings_bluetooth_24
     }
 
-    val baseGray = Color(0xFFC6CFD5)
+
 
     val tint = when(btState){
-        BluetoothAdapter.STATE_OFF -> baseGray
+        BluetoothAdapter.STATE_OFF -> color
         BluetoothAdapter.STATE_ON ->{
             if(currentBtDevice.isNullOrEmpty()){
-                baseGray
+                color
             }else{
                 Color.White
             }
         }
-        else -> baseGray
+        else -> color
     }
 
     Row(modifier = modifier.clickable { onClick() }, verticalAlignment = Alignment.CenterVertically) {
