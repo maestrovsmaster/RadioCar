@@ -37,7 +37,7 @@ fun ListTypeSelector(
     onChangeType: (ListType) -> Unit,
 ) {
 
-    val haptic = LocalHapticFeedback.current
+   // val haptic = LocalHapticFeedback.current
 
     val listTypes =
         ListType.values().filter { it != ListType.Searched } // Перелічуємо всі типи списків
@@ -68,7 +68,7 @@ fun ListTypeSelector(
                 listType = type,
                 isActive = isActive,
                 onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                  //  haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     onChangeType(type)
                 },
                 modifier = Modifier.weight(1f)

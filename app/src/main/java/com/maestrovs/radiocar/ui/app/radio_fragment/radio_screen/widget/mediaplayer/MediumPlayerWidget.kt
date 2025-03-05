@@ -81,8 +81,6 @@ fun MediumPlayerWidget(
 
         DynamicShadowCard(
             modifier = Modifier,
-            // .padding(16.dp)
-            // .fillMaxWidth(),
             contentColor = primary,
         ) {
 
@@ -110,13 +108,13 @@ fun MediumPlayerWidget(
             ) {
                 Text(
                     text = currentGroup?.name ?: "Choose station",
-                    fontSize = 14.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
                 Text(
                     text = songMetadataFlow ?: "",
-                    fontSize = 12.sp,
+                    fontSize = 13.sp,
                     fontWeight = FontWeight.Thin,
                     color = Color.White
                 )

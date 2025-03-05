@@ -44,7 +44,7 @@ fun CenteredCarousel(
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-    val haptic = LocalHapticFeedback.current // Вібрація
+   // val haptic = LocalHapticFeedback.current // Вібрація
 
     Box(modifier = modifier
         .height(itemHeight * 1.5f)
@@ -106,7 +106,7 @@ fun CenteredCarousel(
         snapshotFlow { listState.firstVisibleItemIndex }
             .distinctUntilChanged()
             .collect {
-                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+              //  haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             }
     }
 }

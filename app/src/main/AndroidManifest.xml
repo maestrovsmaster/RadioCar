@@ -80,6 +80,15 @@ activity
             </intent-filter>
         </service>
 
+        <receiver android:name=".ui.main.PipActionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ACTION_PLAY"/>
+                <action android:name="ACTION_PAUSE"/>
+            </intent-filter>
+        </receiver>
+
+
         <activity
             android:name=".ui.splash_activity.SplashActivity"
             android:exported="true"
@@ -96,7 +105,10 @@ activity
             android:exported="true"
             android:label="@string/app_name"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/Theme.RadioCar" />
+            android:theme="@style/Theme.RadioCar"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            />
     </application>
 
 </manifest>

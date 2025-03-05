@@ -42,19 +42,18 @@ import com.maestrovs.radiocar.ui.app.ui.theme.primary
 @Composable
 fun ApplicationsWidget(
     navController: NavController,
+    onSelectNavigationClick: () -> Unit = {},
+    onSelectPhotoClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
     val icons = listOf(
         Triple(  R.drawable.img_phone, "Phone") {
-            val intent = Intent(Intent.ACTION_DIAL) // Відкриває екран набору номера
-            context.startActivity(intent)
+            onSelectPhotoClick()
         },
         Triple(R.drawable.img_maps, "Google Maps") {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q="))
-            intent.setPackage("com.google.android.apps.maps")
-            context.startActivity(intent)
+            onSelectNavigationClick()
         },
         Triple(R.drawable.img_settings, "Settings") {
             navController.navigate(R.id.action_radioFragment_to_settingsFragment)

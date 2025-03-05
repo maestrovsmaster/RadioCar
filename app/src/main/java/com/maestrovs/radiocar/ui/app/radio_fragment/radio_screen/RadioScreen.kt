@@ -48,6 +48,8 @@ fun RadioScreen(
     weatherViewModel: WeatherViewModel,
     navController: NavController,
     onSelectAllClick: () -> Unit = {},
+    onSelectNavigationClick: () -> Unit,
+    onSelectPhotoClick: () -> Unit,
 ) {
 
 
@@ -67,7 +69,9 @@ fun RadioScreen(
                 viewModel,
                 weatherViewModel,
                 navController,
-                onSelectAllClick
+                onSelectAllClick,
+                onSelectNavigationClick = onSelectNavigationClick,
+                onSelectPhotoClick = onSelectPhotoClick
             )
         } else {
             RadioHorizontalOrientation(
@@ -75,7 +79,9 @@ fun RadioScreen(
                 viewModel,
                 weatherViewModel,
                 navController,
-                onSelectAllClick
+                onSelectAllClick,
+                onSelectNavigationClick = onSelectNavigationClick,
+                onSelectPhotoClick = onSelectPhotoClick
             )
         }
 
@@ -90,7 +96,9 @@ fun RadioVerticalOrientation(
     viewModel: RadioViewModel,
     weatherViewModel: WeatherViewModel,
     navController: NavController,
-    onSelectAllClick: () -> Unit = {},
+    onSelectAllClick: () -> Unit,
+    onSelectNavigationClick: () -> Unit,
+    onSelectPhotoClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -112,7 +120,10 @@ fun RadioVerticalOrientation(
                 .weight(1.5f)
         ) {
             ApplicationsWidget(
-                navController, modifier = Modifier
+                navController,
+                onSelectNavigationClick = onSelectNavigationClick,
+                onSelectPhotoClick = onSelectPhotoClick,
+                modifier = Modifier
                     .width(120.dp)
                     .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 8.dp)
             )
@@ -145,6 +156,8 @@ fun RadioHorizontalOrientation(
     weatherViewModel: WeatherViewModel,
     navController: NavController,
     onSelectAllClick: () -> Unit = {},
+    onSelectNavigationClick: () -> Unit,
+    onSelectPhotoClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -153,7 +166,11 @@ fun RadioHorizontalOrientation(
 
         ) {
         ApplicationsWidget(
-            navController, modifier = Modifier
+            navController,
+            onSelectNavigationClick = onSelectNavigationClick,
+            onSelectPhotoClick = onSelectPhotoClick,
+
+            modifier = Modifier
                 .width(110.dp)
                 .fillMaxHeight()
                 .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 8.dp)
@@ -199,7 +216,10 @@ fun RadioScreenPreviewPortrait() {
             MockStationRepository(), SharedPreferencesRepositoryMock()
         ),
         WeatherViewModel(MockWeatherRepository()),
-        NavController(LocalContext.current)
+        NavController(LocalContext.current),
+        onSelectAllClick = {},
+        onSelectNavigationClick = {},
+        onSelectPhotoClick = {}
     )
 }
 
@@ -211,6 +231,9 @@ fun RadioScreenPreviewLandscape() {
             MockStationRepository(), SharedPreferencesRepositoryMock()
         ),
         WeatherViewModel(MockWeatherRepository()),
-        NavController(LocalContext.current)
+        NavController(LocalContext.current),
+        onSelectAllClick = {},
+        onSelectNavigationClick = {},
+        onSelectPhotoClick = {}
     )
 }
