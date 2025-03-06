@@ -58,8 +58,6 @@ fun StationGroupItem(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                    //.background(Color.Green)
-                    //.padding(bottom = 40.dp, top = 0.dp, )
                 ) {
                     BackgroundCover(imageUrl = imgUrl)
                 }
@@ -76,13 +74,10 @@ fun StationGroupItem(
                                 Color(0x8F27272A),
                                 Color(0xFF1E2A34)
                             ),
-                            startY = 0f,
-                            endY = 800f
                         )
                     )
             )
 
-            // Назва станції (внизу від кнопок)
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -91,17 +86,12 @@ fun StationGroupItem(
             ) {
                 Text(
                     text = item.name ?: "Unknown Station",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
                     color = Color.White,
                     maxLines = 2
                 )
-                /*Text(
-                    text = item.countryCode?:"",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Thin,
-                    color = Color.White
-                )*/
+
             }
 
 

@@ -34,7 +34,7 @@ fun BackgroundCover(
 
     val alphaAnim by animateFloatAsState(
         targetValue = if (imageBitmap != null) 1f else 0f,
-        animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing),
+        animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
         label = "fade-in"
     )
 
@@ -42,13 +42,13 @@ fun BackgroundCover(
         imageBitmap = null
         Glide.with(context)
             .asBitmap()
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .skipMemoryCache(true)
             .load(currentImageUrl)
             .into(object : CustomTarget<android.graphics.Bitmap>() {
                 override fun onResourceReady(resource: android.graphics.Bitmap, transition: Transition<in android.graphics.Bitmap>?) {
                     CoroutineScope(Dispatchers.Main).launch {
-                        delay(100)
+                        delay(10)
                         imageBitmap = resource
                     }
                 }

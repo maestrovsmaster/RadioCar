@@ -27,6 +27,7 @@ import com.maestrovs.radiocar.service.ACTION_PREV
 import com.maestrovs.radiocar.service.ACTION_STOP
 import com.maestrovs.radiocar.service.AudioPlayerService
 import com.maestrovs.radiocar.service.NotificationStatus
+import com.maestrovs.radiocar.ui.main.MainActivity
 import com.maestrovs.radiocar.utils.getBitmapFromDrawable
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -142,6 +143,14 @@ class PlayerNotificationManagerHelper @Inject constructor(
 
 
 
+        /*  builder.addAction(
+              NotificationCompat.Action(
+                  R.drawable.ic_stop, "Stop", stopPendingIntent
+              )
+          )*/
+
+
+
 
 
         builder.addAction(
@@ -150,13 +159,19 @@ class PlayerNotificationManagerHelper @Inject constructor(
             )
         )
 
+        val contentIntent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        val contentPendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            contentIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        builder.setContentIntent(contentPendingIntent)
 
 
-      /*  builder.addAction(
-            NotificationCompat.Action(
-                R.drawable.ic_stop, "Stop", stopPendingIntent
-            )
-        )*/
 
 
 

@@ -70,13 +70,14 @@ class RadioFragment : Fragment() {
         val mainActivity = (requireActivity() as MainActivity)
         mainActivity.enterPiPMode()
         //val gmmIntentUri = Uri.parse("google.navigation:q=50.4501,30.5234") // Київ як приклад
-        //val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-        //mapIntent.setPackage("com.google.android.apps.maps")
-        //startActivity(mapIntent)
+        val gmmIntentUri = Uri.parse("google.navigation:q=&zoom=17")
+        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+        mapIntent.setPackage("com.google.android.apps.maps")
+        startActivity(mapIntent)
 
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q="))
+       /* val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q="))
         intent.setPackage("com.google.android.apps.maps")
-        startActivity(intent)
+        startActivity(intent)*/
     }
 
     @OptIn(UnstableApi::class)

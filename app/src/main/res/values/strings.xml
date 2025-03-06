@@ -56,7 +56,7 @@
 
     <string name="description"><b>Radio Car:</b> Your ideal travel companion on the road!</string>
 
-    <string name="created_by"><b>© 2023 Vasyl Horodetskyi</b></string>
+    <string name="created_by" translatable="false"><b>© 2025 Maestro Creations</b></string>
     <string name="app_version"><b>App version</b></string>
 
 

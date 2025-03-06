@@ -13,7 +13,8 @@ import com.maestrovs.radiocar.R
  */
 
 @Composable
-fun LikeWidget(isLiked: Boolean, onLikeClick: () -> Unit, modifier: Modifier = Modifier){
+fun LikeWidget(isLiked: Boolean?, onLikeClick: () -> Unit, modifier: Modifier = Modifier){
+    if(isLiked == null) return
     IconButton(onClick = onLikeClick, modifier = modifier) {
         Icon(
             painter = painterResource(id = if(isLiked) R.drawable.ic_favorite_24 else R.drawable.ic_favorite_stroke_24),

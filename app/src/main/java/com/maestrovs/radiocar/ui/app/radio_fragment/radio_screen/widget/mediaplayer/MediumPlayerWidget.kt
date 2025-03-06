@@ -2,12 +2,15 @@ package com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediapl
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +39,8 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioVie
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.visualizers.AudioVisualizerScreen
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
+import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.FaviconCard
+import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.MarqueeText
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PlayControlWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.VolumeBar
 import com.maestrovs.radiocar.ui.app.ui.theme.baseBlue
@@ -75,6 +80,9 @@ fun MediumPlayerWidget(
     val isLoading = isBufferingFlow || isLoadingData;
 
 
+    val firstBitrate = currentGroup?.streams?.first()?.bitrate
+
+
     Box(
         modifier = modifier
     ) {
@@ -84,7 +92,7 @@ fun MediumPlayerWidget(
             contentColor = primary,
         ) {
 
-            currentGroup?.favicon?.let { imgUrl ->
+            /*currentGroup?.favicon?.let { imgUrl ->
                 Box(
                     modifier = Modifier
                         //.fillMaxWidth()
@@ -95,7 +103,8 @@ fun MediumPlayerWidget(
                 }
 
 
-            }
+            }*/
+
 
             ControlBackground()
 
@@ -106,43 +115,68 @@ fun MediumPlayerWidget(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.Start
             ) {
-                Text(
-                    text = currentGroup?.name ?: "Choose station",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-                Text(
-                    text = songMetadataFlow ?: "",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Thin,
-                    color = Color.White
-                )
-            }
-            currentGroup?.let {
+
+
                 Row(
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(6.dp)
+                        .fillMaxWidth()
+                        .height(90.dp)
+                        .align(Alignment.Start),
+                    //.background(Color.Blue)
+                    verticalAlignment = Alignment.Top
                 ) {
-                    LikeWidget(isLiked = isLikedFlow, onLikeClick = {
-                        viewModel.setIsLike(currentGroup!!, !isLikedFlow)
-                    })
+                    FaviconCard(
+                        currentGroup?.favicon,
+                        modifier = Modifier
+                            .width(90.dp)
+                            .height(90.dp)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
 
-                    /*BitrateWidget(bitrate = bitrate, onClick = {
-                    showDialog = true
-                })*/
+
+                    Column {
+                        Text(
+                            text = currentGroup?.name ?: "Choose station",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFF1FFFF), //Color.White,
+                            maxLines = 2,
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start,
+                        ) {
+                            BitrateWidget(bitrate = firstBitrate, onClick = {
+                                // showDialog = true
+                            }, modifier = Modifier)
+                            //Spacer(modifier = Modifier.weight(1f))
+                            LikeWidget(isLiked = isLikedFlow, onLikeClick = {
+                                viewModel.setIsLike(currentGroup!!, !isLikedFlow)
+                            }, modifier = Modifier.background(Color.Transparent))
+                        }
+
+
+                    }
+
 
                 }
 
-            }
+                Spacer(modifier = Modifier.height(10.dp))
 
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 66.dp)
-                    .padding(16.dp)
-            ) {
+                MarqueeText(
+                    text = " ${songMetadataFlow ?: ""}", //🎵
+                    color = Color(0xFFECEEF1),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal,
+                    gradientEdgeColor = Color(0xFF272E33).copy(alpha = 0.9f),
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+
                 if (audioSessionIdFlow != null) {
                     AudioVisualizerScreen()
                 }
@@ -153,31 +187,48 @@ fun MediumPlayerWidget(
                         .height(36.dp)
                         .fillMaxWidth()
                 )
+                Spacer(modifier = Modifier.height(10.dp))
+
+                PlayControlWidget(
+                    modifier =Modifier.padding(top = 16.dp) ,
+                        //.align(Alignment.BottomCenter)
+                       // .padding(16.dp),
+                    isPlaying = isPlaying,
+                    isLoading = isLoading,
+                    onPrevClick = {
+                        viewModel.prev()
+                    },
+                    onPlayPauseClick = {
+                        currentGroup?.let { group ->
+                            if (isPlaying) viewModel.stop() else viewModel.playGroup(
+                                group
+                            )
+                        }
+
+                    },
+                    onNextClick = {
+                        viewModel.next()
+                    })
             }
 
 
 
 
-            PlayControlWidget(
+
+
+           /* Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(16.dp),
-                isPlaying = isPlaying,
-                isLoading = isLoading,
-                onPrevClick = {
-                    viewModel.prev()
-                },
-                onPlayPauseClick = {
-                    currentGroup?.let { group ->
-                        if (isPlaying) viewModel.stop() else viewModel.playGroup(
-                            group
-                        )
-                    }
+                    .padding(bottom = 66.dp)
+                    .padding(16.dp)
+            ) {
 
-                },
-                onNextClick = {
-                    viewModel.next()
-                })
+            }*/
+
+
+
+
+
 
         }
 

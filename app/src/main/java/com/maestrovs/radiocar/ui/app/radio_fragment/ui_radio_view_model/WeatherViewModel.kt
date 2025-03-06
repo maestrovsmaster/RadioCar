@@ -18,29 +18,7 @@ import javax.inject.Inject
 /**
  * Created by maestromaster$ on 02/03/2025$.
  */
-/*
-@HiltViewModel
-class WeatherViewModel @Inject constructor(
-    private val weatherRepository: WeatherRepository
-) : ViewModel() {
 
-    private val _weather = MutableStateFlow(weatherRepository.getCachedWeather())
-    val weather: StateFlow<WeatherResponse> = _weather
-
-    fun refreshWeather(context: Context) {
-        viewModelScope.launch {
-            val location = LocationStateManager.locationState.value
-            Log.d("WeatherViewModel", "Location: $location")
-            location?.let {
-                val updatedWeather = weatherRepository.getWeatherDataByCoordinates(it.latitude, it.longitude)
-                updatedWeather?.let {
-                    _weather.value = updatedWeather
-                }
-
-            }
-        }
-    }
-}*/
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(

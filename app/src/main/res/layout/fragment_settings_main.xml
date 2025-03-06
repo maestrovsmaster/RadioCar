@@ -57,7 +57,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/country"
                 android:textColor="@color/white"
-                android:textSize="@dimen/settings_text_main_size" />
+                android:textSize="@dimen/settings_text_main_size"
+                android:visibility="gone"
+                />
 
             <com.maestrovs.radiocar.ui.components.SettingsButton
                 android:id="@+id/tvSelectedCountry"
@@ -66,7 +68,9 @@
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                app:title="@string/country_not_selected" />
+                app:title="@string/country_not_selected"
+                android:visibility="gone"
+                />
 
 
 
@@ -76,13 +80,16 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/car_logo"
                 android:textColor="@color/white"
-                android:textSize="@dimen/settings_text_main_size" />
+                android:textSize="@dimen/settings_text_main_size"
+                android:visibility="gone"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:visibility="gone"
                 >
 
                 <ImageView
