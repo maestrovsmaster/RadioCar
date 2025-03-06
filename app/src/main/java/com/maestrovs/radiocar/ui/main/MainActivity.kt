@@ -12,6 +12,7 @@ import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.drawable.Icon
+import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -213,7 +214,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d("MainActivityPip", "onCreate")
+        Log.d("BluetoothStatusReceiver", "onCreate ${this.hashCode()}")
+
+
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val outputDevice = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+
+        outputDevice.forEach {
+            Log.d("BluetoothStatusReceiver", "Output device: ${it.productName} (${it.type})")
+        }
         PlayerStateManager.isPlayingFlow.asLiveData().observe(this) { isPlaying ->
             updatePiPControls(isPlaying.first)
         }
@@ -229,7 +238,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        WeatherWorker.startWeatherWorker(this)
+            //WeatherWorker.startWeatherWorker(this)!!Fix it
 
         // startMockLocationUpdates(this, scope) //Emulate location speed change
 
@@ -312,7 +321,7 @@ class MainActivity : AppCompatActivity() {
         val viewModelState = launchViewModel.firstTimeLaunch.value
         val stateSender = if (viewModelState) StateSender.Initial else StateSender.Activity
         getBluetoothAdapter(this)?.let {
-            BluetoothReceiverManager.registerReceiver(this)
+            //BluetoothReceiverManager.registerReceiver(this)
 
             radioViewModel.setBluetoothState(it.state)
             getActiveBluetoothAudioDevice(this@MainActivity) { dev ->
@@ -339,7 +348,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         mainViewModel.updateActivityStatus(ActivityStatus.VISIBLE)
-        BluetoothReceiverManager.registerReceiver(this)
+       // BluetoothReceiverManager.registerReceiver(this)
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isInPictureInPictureMode) {
@@ -357,13 +366,16 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         // Unregister the receiver
-        BluetoothReceiverManager.unregisterReceiver(this)
+        Log.d("BluetoothStatusReceiver","mainActivity onPause")
+      //  BluetoothReceiverManager.unregisterReceiver(this)
     }
 
 
     override fun onDestroy() {
         super.onDestroy()
-        BluetoothReceiverManager.unregisterReceiver(this)
+        Log.d("BluetoothStatusReceiver","mainActivity onDestroy")
+
+       // BluetoothReceiverManager.unregisterReceiver(this)
         scope.cancel()
         if (serviceBound) {
             unbindService(serviceConnection)
@@ -408,6 +420,33 @@ class MainActivity : AppCompatActivity() {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
+
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        val changes = StringBuilder()
+        if (newConfig.fontScale != 1.0f) changes.append("Font Scale Changed, ")
+        if (newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK != Configuration.UI_MODE_NIGHT_UNDEFINED)
+            changes.append("Night Mode Changed, ")
+        if (newConfig.keyboard != Configuration.KEYBOARD_NOKEYS) changes.append("Keyboard Connected, ")
+        if (newConfig.keyboardHidden == Configuration.KEYBOARDHIDDEN_NO) changes.append("Keyboard Shown, ")
+        if (newConfig.navigationHidden == Configuration.NAVIGATIONHIDDEN_NO) changes.append("Navigation Changed, ")
+
+        Log.d("BluetoothStatusReceiver", "onConfigurationChanged: $changes")
+    }
+
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        Log.d("BluetoothStatusReceiver", "onTrimMemory level: $level")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d("BluetoothStatusReceiver", "onSaveInstanceState() called")
+    }
+
 
 
 }

@@ -167,6 +167,8 @@ fun getActiveBluetoothAudioDevice(context: Context, callback: (String?) -> Unit)
 
     adapter.getProfileProxy(context, object : BluetoothProfile.ServiceListener {
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
+            Log.d("BluetoothStatusReceiver", "--BluetoothProfile is $profile")
+
             if (profile == BluetoothProfile.A2DP) {
                 val a2dp = proxy as BluetoothA2dp
 

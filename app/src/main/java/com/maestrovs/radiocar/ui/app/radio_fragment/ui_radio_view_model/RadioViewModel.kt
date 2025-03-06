@@ -204,10 +204,10 @@ class RadioViewModel @Inject constructor(
     ) { managerState, manualState ->
 
         val actualState = managerState ?: manualState
-        Log.d(
-            "BluetoothStatusReceiver",
-            "Combined Bluetooth state: Manager - $managerState, Manual - $manualState Actual - $actualState"
-        )
+       // Log.d(
+        //    "BluetoothStatusReceiver",
+        //    "Combined Bluetooth state: Manager - $managerState, Manual - $manualState Actual - $actualState"
+        //)
         actualState
     }.stateIn(viewModelScope, SharingStarted.Lazily, BluetoothAdapter.STATE_OFF)
 

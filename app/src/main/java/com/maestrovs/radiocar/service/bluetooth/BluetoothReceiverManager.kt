@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.content.IntentFilter
+import android.util.Log
 
 /**
  * Created by maestromaster$ on 24/02/2025$.
@@ -17,6 +18,7 @@ object BluetoothReceiverManager {
 
 
     fun registerReceiver(context: Context) {
+        Log.d("BluetoothStatusReceiver", "registerReceiver")
         if (bluetoothStatusReceiver == null) {
             bluetoothStatusReceiver = BluetoothStatusReceiver()
         }
@@ -32,6 +34,7 @@ object BluetoothReceiverManager {
     }
 
     fun unregisterReceiver(context: Context) {
+        Log.d("BluetoothStatusReceiver", "unregisterReceiver")
         if (isReceiverRegistered) {
             bluetoothStatusReceiver?.let {
                 context.unregisterReceiver(it)
