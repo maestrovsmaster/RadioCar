@@ -1,8 +1,9 @@
 # RadioCar
 
 <p float="left">
-![first_portr](https://github.com/user-attachments/assets/3f34b072-3d1f-4bd6-b056-ec6a12e2e89a)
-![second_port](https://github.com/user-attachments/assets/27bf05bb-c6ae-4e01-abc6-2fad7ad5d78a)
+<img width="357" alt="image" src="https://github.com/user-attachments/assets/67886d8d-9e21-4d65-b61c-66a20c3871af" />
+<img width="355" alt="image" src="https://github.com/user-attachments/assets/5bb5800d-2698-485c-8444-39cd84bb3448" />
+
 
 </p>
 
