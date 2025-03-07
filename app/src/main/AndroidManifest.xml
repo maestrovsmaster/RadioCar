@@ -90,6 +90,9 @@ activity
         </receiver>
 
 
+
+
+
         <activity
             android:name=".ui.splash_activity.SplashActivity"
             android:exported="true"

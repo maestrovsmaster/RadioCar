@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.tools.compressFfa
 import com.maestrovs.radiocar.ui.app.ui.theme.baseBlue
 
 @Composable
@@ -61,18 +62,4 @@ fun AudioSpectrumBarGraphMicro(
     }
 }
 
-private fun compressFfa(fftData: List<Float>, parts: Int): List<Float>{
-    val compressedData = mutableListOf<Float>()
 
-    for(i in 0 until parts){
-        val start = i * (fftData.size / parts)
-        val end = (i + 1) * (fftData.size / parts)
-
-        val subList = fftData.subList(start, end)
-        val mediumValueOfSublist = subList.sum() / subList.size
-        compressedData.add(mediumValueOfSublist)
-    }
-
-
-    return compressedData
-}

@@ -30,7 +30,7 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.ControlBackgroundLight
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.visualizers.AudioVisualizerScreenTiny
+import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreenTiny
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.MarqueeText
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PlayButton

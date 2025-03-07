@@ -31,7 +31,7 @@ import com.maestrovs.radiocar.data.entities.radio.StationStream
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.LikeWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.visualizers.AudioVisualizerScreenMicro
+import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreenMicro
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.MarqueeText
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PlayButton
 import com.maestrovs.radiocar.ui.app.ui.theme.primary

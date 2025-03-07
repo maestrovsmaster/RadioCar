@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
 
-        Log.d("MainActivityPip", "onPictureInPictureModeChanged: $isInPictureInPictureMode")
+            //Log.d("MainActivityPip", "onPictureInPictureModeChanged: $isInPictureInPictureMode")
 
         val navHostFragment = findViewById<View>(R.id.nav_host_fragment_activity_main)
         val pipFragmentContainer = findViewById<View>(R.id.pip_fragment_container)
@@ -217,12 +217,12 @@ class MainActivity : AppCompatActivity() {
         Log.d("BluetoothStatusReceiver", "onCreate ${this.hashCode()}")
 
 
-        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        /*val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val outputDevice = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
 
         outputDevice.forEach {
             Log.d("BluetoothStatusReceiver", "Output device: ${it.productName} (${it.type})")
-        }
+        }*/
         PlayerStateManager.isPlayingFlow.asLiveData().observe(this) { isPlaying ->
             updatePiPControls(isPlaying.first)
         }

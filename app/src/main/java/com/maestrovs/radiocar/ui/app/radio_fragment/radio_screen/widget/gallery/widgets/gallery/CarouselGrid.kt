@@ -34,6 +34,9 @@ import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 
 /**
  * Created by maestromaster$ on 28/02/2025$.
@@ -52,6 +55,23 @@ fun CenteredCarousel2(
     val coroutineScope = rememberCoroutineScope()
    // val haptic = LocalHapticFeedback.current // Вібрація
 
+
+    val currentPlayingGroup by PlayerStateManager.currentGroup.collectAsStateWithLifecycle(null)
+
+    val activeIndex = items.indexOfFirst { it.name == currentPlayingGroup?.name }
+
+// Створюємо `LazyListState` для управління прокруткою
+
+
+// Автоматична прокрутка при зміні `currentPlayingGroup`
+    LaunchedEffect(activeIndex) {
+        if (activeIndex >= 0) {
+            coroutineScope.launch {
+                listState.animateScrollToItem(activeIndex)
+            }
+        }
+    }
+
     Box(
         modifier = modifier
             .height(itemHeight * 3f)
@@ -68,10 +88,6 @@ fun CenteredCarousel2(
         ) {
             itemsIndexed(items) { index, item ->
                 val layoutInfo = listState.layoutInfo
-
-
-
-
                 Box(
                     modifier = Modifier
                         .width(itemWidth )

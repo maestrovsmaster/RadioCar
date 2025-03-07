@@ -1,7 +1,5 @@
 package com.maestrovs.radiocar.ui.app.pip_screen
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,27 +24,19 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.radio.BitrateOption
 import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
-import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.getImageResId
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.visualizers.AudioVisualizerScreen
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.visualizers.AudioVisualizerScreenTiny
+import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreenTiny
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.MarqueeText
-import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PlayControlWidget
-import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.VolumeBar
-import com.maestrovs.radiocar.ui.app.ui.theme.baseBlueLight
-import com.maestrovs.radiocar.ui.app.ui.theme.primary
 
 /**
  * Created by maestromaster$ on 04/03/2025$.

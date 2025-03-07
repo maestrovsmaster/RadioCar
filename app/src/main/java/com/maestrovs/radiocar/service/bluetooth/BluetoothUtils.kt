@@ -68,16 +68,16 @@ fun getBluetoothDeviceNameIfAudio(device: BluetoothDevice, context: Context): St
         null // Return null if is not audio
     }
 }
-
+/*
 fun getBluetoothState(intent: Intent): Int? {
     val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
     Log.d("BluetoothStatusReceiver", "Bluetooth state changed: $state")
     return state
 }
-
+*/
 fun isBluetoothEnabled(intent: Intent): Boolean? {
     val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
-    Log.d("BluetoothStatusReceiver", "Bluetooth state changed: $state")
+   // Log.d("BluetoothStatusReceiver", "Bluetooth state changed: $state")
     return when (state) {
         BluetoothAdapter.STATE_ON -> true  // Bluetooth enabled
         BluetoothAdapter.STATE_OFF -> false // Bluetooth disabled
@@ -86,7 +86,7 @@ fun isBluetoothEnabled(intent: Intent): Boolean? {
     }
 }
 
-
+/*
 fun checkIsConnectedAudioBluetoothDevices(
     context: Context,
     onConnectedDevices: (List<String>) -> Unit
@@ -144,7 +144,7 @@ fun checkIsConnectedAudioBluetoothDevices(
     } else {
         println("Bluetooth is not enabled.")
     }
-}
+}*/
 
 
 fun getActiveBluetoothAudioDevice(context: Context, callback: (String?) -> Unit) {
@@ -181,8 +181,10 @@ fun getActiveBluetoothAudioDevice(context: Context, callback: (String?) -> Unit)
                 }
 
                 val connectedDevices = a2dp.connectedDevices // Отримуємо підключені A2DP пристрої
-                val activeDevice = connectedDevices.firstOrNull() // Беремо перший активний пристрій, якщо є
 
+
+                val activeDevice = connectedDevices.firstOrNull() // Беремо перший активний пристрій, якщо є
+                Log.d("BtStatusWidget", "--activeDevice = $activeDevice , name = ${activeDevice?.name} ")
                 callback(activeDevice?.name ?: "")
             }
             adapter.closeProfileProxy(profile, proxy)

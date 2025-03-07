@@ -10,11 +10,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,18 +30,16 @@ import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
 import com.maestrovs.radiocar.manager.radio.PlayerStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.BitrateWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.LikeWidget
-import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.ChooseBitratesDialog
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.ControlBackground
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
-import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.visualizers.AudioVisualizerScreen
+import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreen
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.FaviconCard
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.MarqueeText
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PlayControlWidget
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.VolumeBar
-import com.maestrovs.radiocar.ui.app.ui.theme.baseBlue
 import com.maestrovs.radiocar.ui.app.ui.theme.baseBlueLight
 import com.maestrovs.radiocar.ui.app.ui.theme.primary
 

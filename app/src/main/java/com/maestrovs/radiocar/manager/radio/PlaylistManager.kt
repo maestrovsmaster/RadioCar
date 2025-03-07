@@ -1,6 +1,7 @@
 package com.maestrovs.radiocar.manager.radio
 
 
+import android.util.Log
 import com.maestrovs.radiocar.data.entities.radio.StationGroup
 import com.maestrovs.radiocar.data.entities.radio.StationStream
 import com.maestrovs.radiocar.data.entities.radio.tables.Favorites
@@ -43,14 +44,27 @@ object PlaylistManager {
     }
 
 
+
     fun updateStationGroups(groups: List<StationGroup>) {
+        val currentGroups = _stationGroups.value
+
+
+
+        val isDifferent = currentGroups.size != groups.size ||
+                currentGroups.map { it.name }.toSet() != groups.map { it.name }.toSet()
+
+        if (!isDifferent) {
+            return
+        }
+
         _stationGroups.value = groups
-        if(_stationGroups.value.isNotEmpty()) {
-            if(PlayerStateManager.playerState.value.currentGroup == null) {
-                PlayerStateManager.updateStationGroup(_stationGroups.value[0])
-            }
-       }
+
+        if (_stationGroups.value.isNotEmpty() && PlayerStateManager.playerState.value.currentGroup == null) {
+            PlayerStateManager.updateStationGroup(_stationGroups.value[0])
+        }
     }
+
+
 
     fun getGroupForStation(station: StationStream): Int? {
         return _stationGroups.value.indexOfFirst { it.streams.contains(station) }

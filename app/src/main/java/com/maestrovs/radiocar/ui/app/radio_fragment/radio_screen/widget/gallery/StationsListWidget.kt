@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
-import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.gallery.CenteredCarousel
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.widgets.ListTypeSelector
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.RadioViewModel
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
