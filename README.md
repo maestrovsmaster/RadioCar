@@ -1,8 +1,9 @@
 # RadioCar
 
 <p float="left">
-  <img src="https://play-lh.googleusercontent.com/st_fiS0E-RXNKdWUmKvQwnknGPPBWPAWHp9F_TRhIaTeb9hOwZsvllJRhIqmhgWnnbU=w1052-h592-rw" width="200" />
-  <img src="https://play-lh.googleusercontent.com/e9cDxGle6DMtQHBISLUrv3sQ8X8nZH-FtXHPuk_1TfWceepoglWlOmlPuQLEK8vm-1Y=w1052-h592-rw" width="200" /> 
+![first_portr](https://github.com/user-attachments/assets/3f34b072-3d1f-4bd6-b056-ec6a12e2e89a)
+![second_port](https://github.com/user-attachments/assets/27bf05bb-c6ae-4e01-abc6-2fad7ad5d78a)
+
 </p>
 
 
