@@ -53,17 +53,15 @@ fun CenteredCarousel2(
 ) {
     val listState = rememberLazyGridState()
     val coroutineScope = rememberCoroutineScope()
-   // val haptic = LocalHapticFeedback.current // Вібрація
+   // val haptic = LocalHapticFeedback.current
 
 
     val currentPlayingGroup by PlayerStateManager.currentGroup.collectAsStateWithLifecycle(null)
 
     val activeIndex = items.indexOfFirst { it.name == currentPlayingGroup?.name }
 
-// Створюємо `LazyListState` для управління прокруткою
 
 
-// Автоматична прокрутка при зміні `currentPlayingGroup`
     LaunchedEffect(activeIndex) {
         if (activeIndex >= 0) {
             coroutineScope.launch {

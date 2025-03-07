@@ -6,7 +6,7 @@ import com.maestrovs.radiocar.data.repository.filters.excludedCountries
  * Created by maestromaster$ on 20/02/2025$.
  */
 
-val countryCodes = listOf(
+val countryCodes = listOf("ALL",
     "AF", "AX", "AL", "DZ", "AS", "AD", "AO", "AI", "AQ", "AG", "AR", "AM", "AW", "AU", "AT", "AZ",
     "BS", "BH", "BD", "BB", "BY", "BE", "BZ", "BJ", "BM", "BT", "BO", "BQ", "BA", "BW", "BV", "BR",
     "IO", "BN", "BG", "BF", "BI", "CV", "KH", "CM", "CA", "KY", "CF", "TD", "CL", "CN", "CX", "CC",
@@ -25,7 +25,7 @@ val countryCodes = listOf(
     "VE", "VN", "VG", "VI", "WF", "EH", "YE", "ZM", "ZW"
 )
 
-val prioritizedCountries = listOf("UA", "UK", "US", "DE", "PL", "IT", "ES")
+val prioritizedCountries = listOf("ALL","IT", "DE", "PL", "RO", "ES", "UA", "GB", "US")
 
 
 val sortedCountries = countryCodes

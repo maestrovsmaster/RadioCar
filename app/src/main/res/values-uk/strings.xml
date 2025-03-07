@@ -109,6 +109,6 @@
         <item>Рок</item>
         <item>Подкасти / Розмовні шоу</item>
     </string-array>
-
+    <string name="all_countries">Усі країни</string>
 
 </resources>

@@ -23,6 +23,7 @@ import com.arpitkatiyarprojects.countrypicker.models.CountryPickerDialogTextStyl
 import com.arpitkatiyarprojects.countrypicker.models.SelectedCountryDisplayProperties
 import com.arpitkatiyarprojects.countrypicker.models.SelectedCountryProperties
 import com.maestrovs.radiocar.R
+import com.maestrovs.radiocar.ui.country_picker.CountryPicker
 
 /**
  * Created by maestromaster$ on 20/02/2025$.
@@ -31,9 +32,7 @@ import com.maestrovs.radiocar.R
 @Composable
 fun CountryPickerWidget(
     defaultCountryCode: String?,
-    showCountryPicker: Boolean,
     onCountrySelected: (CountryDetails) -> Unit,
-    onShowCountryPicker: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -45,16 +44,10 @@ fun CountryPickerWidget(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Switch(onCheckedChange = {
-                    onShowCountryPicker(it)
-                }, checked = defaultCountryCode != null)
-
-                Spacer(modifier = Modifier.width(4.dp))
-
-                if(showCountryPicker) {
 
 
-                    com.arpitkatiyarprojects.countrypicker.CountryPicker(
+
+                    CountryPicker(
                         defaultCountryCode = defaultCountryCode,
                         selectedCountryDisplayProperties = SelectedCountryDisplayProperties(
                             properties = SelectedCountryProperties(
@@ -67,15 +60,13 @@ fun CountryPickerWidget(
                                 countryPhoneCodeTextStyle = TextStyle(color = Color.Transparent)
                             )
                         ),
+                       selectedCountryColor = Color.White,
                         countriesList = sortedCountries,
                         onCountrySelected = { country ->
                             onCountrySelected(country)
                         })
 
-                }else{
-                    Text(LocalContext.current.getString(R.string.select_country),
-                        color = Color.White)
-                }
+
 
 
             }

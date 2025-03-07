@@ -148,6 +148,10 @@ dependencies {
     implementation "com.airbnb.android:lottie:$lottieVersion"
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+
+
+
+
     //speedmeter
     implementation 'com.github.anastr:speedviewlib:1.6.0'
 

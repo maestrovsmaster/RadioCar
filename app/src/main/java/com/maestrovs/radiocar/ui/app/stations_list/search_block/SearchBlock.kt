@@ -41,20 +41,17 @@ fun SearchBlock(
     currentCountryCode: String? = null
 ) {
 
-   // val currentCountryCode by LocationStateManager.currentCountryCode.collectAsStateWithLifecycle()
-   // var useCountryForSearch by remember { mutableStateOf(false) }
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedCountryForSearch by remember { mutableStateOf<String?>(currentCountryCode) }
 
     var selectedTag by remember { mutableStateOf(Pair("", "")) }
 
-    val showCountryPicker = remember { mutableStateOf(true) }
 
     fun search() {
         viewModel.searchStations(
             searchQuery,
-            if(showCountryPicker.value) selectedCountryForSearch ?: "" else "",
+            if (selectedCountryForSearch != "all") selectedCountryForSearch ?: "" else "",
             selectedTag.first
         )
     }
@@ -99,15 +96,8 @@ fun SearchBlock(
 
 
                     },
-                    onShowCountryPicker = {
+                    modifier = Modifier.weight(1f)
 
-                        showCountryPicker.value = it
-
-                        search()
-
-                    },
-                    modifier = Modifier.weight(6f),
-                    showCountryPicker = showCountryPicker.value
                 )
 
                 TagSelector(
@@ -121,7 +111,7 @@ fun SearchBlock(
                         search()
                     },
                     modifier = Modifier
-                        .weight(4f)
+                        .weight(1f)
                         .padding(end = 8.dp, bottom = 6.dp)
                         .height(40.dp)
                 )
