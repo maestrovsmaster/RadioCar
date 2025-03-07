@@ -88,6 +88,14 @@ class RadioListViewModel @Inject constructor(
         PlayerStateManager.pause()
     }
 
+    fun next() {
+        PlaylistManager.next()
+    }
+
+    fun prev() {
+        PlaylistManager.prev()
+    }
+
     private fun setRecent(stationGroup: StationGroup) {
         viewModelScope.launch {
             repository.insertStations(stationGroup.stations)

@@ -1,6 +1,7 @@
-package com.maestrovs.radiocar.ui.country_picker
+package com.maestrovs.radiocar.ui.app.stations_list.widgets.country_picker
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -46,8 +47,8 @@ import com.arpitkatiyarprojects.countrypicker.enums.CountryListDisplayType
 import com.arpitkatiyarprojects.countrypicker.models.CountriesListDialogDisplayProperties
 import com.arpitkatiyarprojects.countrypicker.models.CountryDetails
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.ui.country_picker.utils.FunctionHelper.searchForCountry
-import com.maestrovs.radiocar.ui.country_picker.widgets.CountriesListItem
+import com.maestrovs.radiocar.ui.app.stations_list.widgets.country_picker.utils.FunctionHelper.searchForCountry
+import com.maestrovs.radiocar.ui.app.stations_list.widgets.country_picker.widgets.CountriesListItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -181,7 +182,8 @@ private fun CountrySelectionList(
                 }
             }
         }
-    }) {
+    }
+    ) {
         CountriesListSection(
             countriesList = if (searchValue.isEmpty()) countriesList else filteredCountries,
             countriesListDialogDisplayProperties = countriesListDialogDisplayProperties,
@@ -319,7 +321,7 @@ private fun CountriesListSection(
 
         Column(modifier = modifier) {
 
-            LazyColumn {
+            LazyColumn(modifier = Modifier.background(Color.Green)) {
 
                 if (countriesList.isEmpty()) {
                     item {

@@ -23,7 +23,7 @@ import com.arpitkatiyarprojects.countrypicker.models.CountryPickerDialogTextStyl
 import com.arpitkatiyarprojects.countrypicker.models.SelectedCountryDisplayProperties
 import com.arpitkatiyarprojects.countrypicker.models.SelectedCountryProperties
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.ui.country_picker.CountryPicker
+import com.maestrovs.radiocar.ui.app.stations_list.widgets.country_picker.CountryPicker
 
 /**
  * Created by maestromaster$ on 20/02/2025$.

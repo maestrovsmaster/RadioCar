@@ -1,4 +1,4 @@
-package com.maestrovs.radiocar.ui.country_picker.widgets
+package com.maestrovs.radiocar.ui.app.stations_list.widgets.country_picker.widgets
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -74,7 +74,8 @@ fun CountriesListItem(
                         }
                         append(")")
                     }
-                })
+                }
+                )
             },
             trailingContent = {
                 Text(

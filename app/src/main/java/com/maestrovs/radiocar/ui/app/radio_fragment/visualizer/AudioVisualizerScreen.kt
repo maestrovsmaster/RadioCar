@@ -20,11 +20,11 @@ import com.maestrovs.radiocar.ui.app.ui.theme.baseBlue
  */
 
 @Composable
-fun AudioVisualizerScreen() {
+fun AudioVisualizerScreen(modifier: Modifier = Modifier) {
 
     val spectrumData by AudioVisualizerStateManager.spectrumData.collectAsState()
 
-    AudioSpectrumBarGraphMini(fftData = spectrumData, modifier = Modifier.width(200.dp).height(70.dp))
+    AudioSpectrumBarGraphMini(fftData = spectrumData, modifier = modifier,)
 }
 
 @Composable

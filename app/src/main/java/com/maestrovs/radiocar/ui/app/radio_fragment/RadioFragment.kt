@@ -43,11 +43,11 @@ class RadioFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        findNavController().navigate(RadioFragmentDirections.actionRadioFragmentToRadioListFragment())
+        //findNavController().navigate(RadioFragmentDirections.actionRadioFragmentToRadioListFragment())
 
         return ComposeView(requireContext()).apply {
             setContent {
-                /*val navController = findNavController()
+                val navController = findNavController()
                 RadioScreen(viewModel, weatherViewModel ,navController = navController,
                     onSelectAllClick = {
                          navController.navigate(RadioFragmentDirections.actionRadioFragmentToRadioListFragment())
@@ -58,9 +58,8 @@ class RadioFragment : Fragment() {
                     onSelectPhotoClick = {
                         openPhoneIntent()
                     }
-                )*/
+                )
 
-                //RadioListScreen(viewModel = radioListViewModel)
             }
         }
     }

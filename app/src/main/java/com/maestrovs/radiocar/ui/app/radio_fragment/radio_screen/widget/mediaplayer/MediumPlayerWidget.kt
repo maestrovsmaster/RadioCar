@@ -174,7 +174,7 @@ fun MediumPlayerWidget(
 
 
                 if (audioSessionIdFlow != null) {
-                    AudioVisualizerScreen()
+                    AudioVisualizerScreen(modifier = Modifier.fillMaxWidth().height(40.dp))
                 }
                 VolumeBar(
                     volume = volumeFlow, segmentsCount = 10, onValueChange = {

@@ -30,10 +30,12 @@ import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.gallery.
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.BackgroundCover
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.widget.ControlBackgroundLight
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
+import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreen
 import com.maestrovs.radiocar.ui.app.radio_fragment.visualizer.AudioVisualizerScreenTiny
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.DynamicShadowCard
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.MarqueeText
 import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PlayButton
+import com.maestrovs.radiocar.ui.app.radio_fragment.widgets.PlayControlWidget
 import com.maestrovs.radiocar.ui.app.stations_list.RadioListViewModel
 import com.maestrovs.radiocar.ui.app.ui.theme.primary
 
@@ -42,7 +44,7 @@ import com.maestrovs.radiocar.ui.app.ui.theme.primary
  */
 
 @Composable
-fun MiniPlayerWidget(
+fun MiniPlayerWidgetHorizontal(
     viewModel: RadioListViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -67,66 +69,49 @@ fun MiniPlayerWidget(
             contentColor = primary,
         ) {
 
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
+            Column {
+                Row(
+                    modifier = Modifier
+                        //.fillMaxSize()
                     ,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(90.dp)
-                        .height(90.dp)
-                        .background(Color.LightGray)
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    currentGroup?.favicon?.let {
-                        BackgroundCover(imageUrl = currentGroup!!.favicon)
+                    Box(
+                        modifier = Modifier
+                            .width(90.dp)
+                            .height(90.dp)
+                            .background(Color.LightGray)
+                    ) {
+                        currentGroup?.favicon?.let {
+                            BackgroundCover(imageUrl = currentGroup!!.favicon)
+                        }
                     }
-                }
 
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .weight(1f),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Text(
-                        text = currentGroup?.name ?: "Unknown Station",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        maxLines = 1
-                    )
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .weight(1f),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = currentGroup?.name ?: "Unknown Station",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            maxLines = 1
+                        )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                    MarqueeText(
-                        text = "\uD83C\uDFB5 ${songMetadataFlow ?: "Unknown song"}",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal,
-                        gradientEdgeColor = Color(0xFF343E46),
-                    )
-                }
-                currentGroup?.let {
-                    PlayButton(
-                        isPlaying = isPlaying,
-                        isLoading = isBufferingFlow,
-                        onPlayPauseClick = {
-                            if (isPlaying) {
-                                viewModel.stop()
-                            } else {
-                                viewModel.playGroup(currentGroup!!)
+                        MarqueeText(
+                            text = "\uD83C\uDFB5 ${songMetadataFlow ?: "Unknown song"}",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
+                            gradientEdgeColor = Color(0xFF343E46),
+                        )
+                    }
 
-                            }
-                        },
-                        tintColor = Color(0xFFB0DCF5),
-                        modifier = Modifier.size(50.dp),
-                        radius = 24.dp
-                    )
-                }
-
-                currentGroup?.let {
 
                     Row(
                         modifier = Modifier
@@ -137,34 +122,64 @@ fun MiniPlayerWidget(
                             stationList.refresh()
                         })
                     }
+
                 }
+
+                PlayControlWidget(
+                    modifier =Modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp).fillMaxWidth() ,
+                    //.align(Alignment.BottomCenter)
+                    // .padding(16.dp),
+                    isPlaying = isPlaying,
+                    isLoading = isBufferingFlow,
+                    onPrevClick = {
+                        viewModel.prev()
+                    },
+                    onPlayPauseClick = {
+                        currentGroup?.let { group ->
+                            if (isPlaying) viewModel.stop() else viewModel.playGroup(
+                                group
+                            )
+                        }
+
+                    },
+                    onNextClick = {
+                        viewModel.next()
+                    })
+
+
+                if (audioSessionIdFlow != null) {
+
+                    Box(
+                        modifier = Modifier
+                            //.align(Alignment.BottomStart)
+                            .padding(bottom = 0.dp)
+                            .padding(0.dp)
+
+                            .height(50.dp)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color(0x0027272A),
+                                        Color(0x3227272A),
+                                        Color(0x4027272A),
+                                        Color(0xC927272A),
+                                    ),
+                                )
+                            )
+                    ) {
+                        AudioVisualizerScreenTiny( modifier = Modifier.fillMaxWidth().height(50.dp))
+                    }
+                }
+
             }
+
+
+
+
+
 
             ControlBackgroundLight()
 
-            if (audioSessionIdFlow != null) {
-
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(bottom = 0.dp)
-                        .padding(0.dp)
-                        .width(90.dp)
-                        .height(40.dp)
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    Color(0x0027272A),
-                                    Color(0x3227272A),
-                                    Color(0x4027272A),
-                                    Color(0xC927272A),
-                                ),
-                            )
-                        )
-                ) {
-                    AudioVisualizerScreenTiny( modifier = Modifier.width(90.dp).height(40.dp))
-                }
-            }
         }
     }
 }
@@ -172,15 +187,15 @@ fun MiniPlayerWidget(
 
 @Composable
 @Preview
-fun MiniPlayerWidgetPreview() {
+fun MiniPlayerWidgetHorizontalPreview() {
 
-    MiniPlayerWidget(
+    MiniPlayerWidgetHorizontal(
         RadioListViewModel(
             MockStationRepository(),
             SharedPreferencesRepositoryMock()
 
         ),
         modifier = Modifier.fillMaxWidth()
-            .height(90.dp)
+            .height(190.dp)
     )
 }

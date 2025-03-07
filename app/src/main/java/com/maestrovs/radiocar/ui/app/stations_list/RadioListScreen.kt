@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maestrovs.radiocar.data.repository.mock.MockStationRepository
 import com.maestrovs.radiocar.manager.location.LocationStateManager
 import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.MiniPlayerWidget
+import com.maestrovs.radiocar.ui.app.radio_fragment.radio_screen.widget.mediaplayer.MiniPlayerWidgetHorizontal
 import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryMock
 import com.maestrovs.radiocar.ui.app.stations_list.list_widget.ListWidget
 import com.maestrovs.radiocar.ui.app.stations_list.search_block.SearchBlock
@@ -122,7 +123,7 @@ fun RadioListHorizontalOrientation(
                 modifier = Modifier
                     .padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 8.dp).fillMaxWidth()
             )
-            MiniPlayerWidget(
+            MiniPlayerWidgetHorizontal(
                 viewModel,
                 modifier = Modifier
                     .fillMaxWidth()

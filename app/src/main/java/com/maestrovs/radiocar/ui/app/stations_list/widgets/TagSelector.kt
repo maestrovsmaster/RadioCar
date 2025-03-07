@@ -1,5 +1,7 @@
 package com.maestrovs.radiocar.ui.app.stations_list.widgets
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,7 +34,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.maestrovs.radiocar.R
+import com.maestrovs.radiocar.ui.app.ui.theme.backgroundBrush
 import com.maestrovs.radiocar.ui.app.ui.theme.primary
 
 
@@ -57,7 +61,9 @@ fun TagSelector(
         if (selectedTag.isNullOrEmpty()) {
             OutlinedButton(
                 onClick = { expanded = true },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                //colors = ButtonDefaults.buttonColors(containerColor = primary, ),
+                border = BorderStroke(1.dp, primary)
             ) {
                 Text(text = LocalContext.current.getString(R.string.select_tag), color = Color.White)
             }
@@ -85,7 +91,10 @@ fun TagSelector(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().background(
+                shape = RoundedCornerShape(0.dp),
+                brush = backgroundBrush
+            ),
 
         ) {
 
@@ -98,13 +107,14 @@ fun TagSelector(
                 IconButton(onClick = { expanded = false }) {
                     Icon(imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = Color.Black)
+                        tint = Color.White)
                 }
                 OutlinedTextField(
                     value = customTag,
                     onValueChange = { customTag = it },
-                    label = { Text(LocalContext.current.getString(R.string.enter_custom_tag)) },
+                    label = { Text(LocalContext.current.getString(R.string.enter_custom_tag), color = Color.White, maxLines = 1, fontSize = 11.sp) },
                     singleLine = true,
+
                     modifier = Modifier.weight(1f)
                 )
 
@@ -121,18 +131,18 @@ fun TagSelector(
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = "Search",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint =  Color.White
                     )
                 }
             }
 
 
-            HorizontalDivider()
+           // HorizontalDivider()
 
 
             tagValues.forEach { tagValue ->
                 DropdownMenuItem(
-                    text = { Text(tagValue) },
+                    text = { Text(tagValue, color = Color.White) },
                     onClick = {
                         val tagKey = tagMap.entries.find { it.value == tagValue }?.key ?: ""
                         onTagSelected(Pair(tagKey, tagValue))

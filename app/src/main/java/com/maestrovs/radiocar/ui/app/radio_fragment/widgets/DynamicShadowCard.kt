@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.maestrovs.radiocar.ui.app.ui.theme.backgroundBrush
 
 /**
  * Created by maestromaster$ on 13/02/2025$.
@@ -23,12 +24,7 @@ import androidx.compose.ui.unit.dp
 fun DynamicShadowCard(
     modifier: Modifier = Modifier,
     contentColor: Color,
-    brush: Brush = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF3A4A57),
-            Color(0xFF1E2A34)
-        ),
-    ),
+    brush: Brush = backgroundBrush,
     elevation: Int = 10,
     content: @Composable () -> Unit,
 
