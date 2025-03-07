@@ -1,6 +1,8 @@
 package com.maestrovs.radiocar.di
 
 import android.content.Context
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.maestrovs.radiocar.common.Constants.BASE_RADIO_URL
@@ -9,17 +11,24 @@ import com.maestrovs.radiocar.data.local.radio.AppDatabase
 import com.maestrovs.radiocar.data.local.radio.FavoritesDao
 import com.maestrovs.radiocar.data.local.radio.RecentDao
 import com.maestrovs.radiocar.data.local.radio.StationDao
+import com.maestrovs.radiocar.data.net.CustomLoggingInterceptor
 import com.maestrovs.radiocar.data.remote.radio.StationRemoteDataSource
 import com.maestrovs.radiocar.data.remote.radio.StationService
 import com.maestrovs.radiocar.data.remote.weather.WeatherRemoteDataSource
 import com.maestrovs.radiocar.data.remote.weather.WeatherService
 import com.maestrovs.radiocar.data.repository.StationRepository
+import com.maestrovs.radiocar.data.repository.StationRepositoryIml
 import com.maestrovs.radiocar.data.repository.WeatherRepository
+import com.maestrovs.radiocar.data.repository.WeatherRepositoryIml
+import com.maestrovs.radiocar.service.player.ExoPlayerManager
+import com.maestrovs.radiocar.service.player.MediaSessionHelper2
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepository
+import com.maestrovs.radiocar.ui.app.radio_fragment.ui_radio_view_model.repositories.SharedPreferencesRepositoryIml
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -29,14 +38,13 @@ import javax.inject.Singleton
 
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 object AppModule {
 
     //Common
 
     @Provides
     fun provideGson(): Gson = GsonBuilder().create()
-
 
 
     //Radio
@@ -46,8 +54,8 @@ object AppModule {
     @Named("radio")
     fun provideRadioRetrofit(gson: Gson): Retrofit {
 
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        val interceptor = CustomLoggingInterceptor()//HttpLoggingInterceptor()
+        //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         val client: OkHttpClient = OkHttpClient.Builder().addInterceptor(interceptor).build()
 
 
@@ -90,10 +98,14 @@ object AppModule {
     fun provideRadioRepository(
         remoteDataSource: StationRemoteDataSource,
         localDataSource: StationDao, recentSource: RecentDao, favoritesSource: FavoritesDao
-    ) =
-        StationRepository(remoteDataSource, localDataSource, recentSource, favoritesSource)
+    ): StationRepository =
+        StationRepositoryIml(remoteDataSource, localDataSource, recentSource, favoritesSource)
 
 
+    @Singleton
+    @Provides
+    fun provideSharedPreferencesRepository(@ApplicationContext context: Context,localDataSource: StationDao,): SharedPreferencesRepository =
+        SharedPreferencesRepositoryIml(context = context, localDataSource = localDataSource)
 
     //Weather
 
@@ -113,9 +125,10 @@ object AppModule {
     }
 
     @Provides
-    fun provideWeatherService(@Named("weather") retrofit: Retrofit): WeatherService = retrofit.create(
-        WeatherService::class.java
-    )
+    fun provideWeatherService(@Named("weather") retrofit: Retrofit): WeatherService =
+        retrofit.create(
+            WeatherService::class.java
+        )
 
     @Singleton
     @Provides
@@ -125,8 +138,28 @@ object AppModule {
     @Singleton
     @Provides
     fun provideWeatherRepository(
+        @ApplicationContext context: Context,
         remoteDataSource: WeatherRemoteDataSource,
-    ) =
-        WeatherRepository(remoteDataSource)
+    ): WeatherRepository =
+        WeatherRepositoryIml(context, remoteDataSource)
+
+    @Singleton
+    @Provides
+    fun provideMediaSessionHelper1(
+        @ApplicationContext context: Context
+    ): MediaSessionHelper2 = MediaSessionHelper2(context)
+
+
+    @OptIn(UnstableApi::class)
+    @Singleton
+    @Provides
+    fun provideExoPlayerManager(
+        @ApplicationContext context: Context,
+        mediaSessionHelper: MediaSessionHelper2
+    ): ExoPlayerManager = ExoPlayerManager(context, mediaSessionHelper)
 
 }
+
+
+
+

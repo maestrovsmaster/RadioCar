@@ -12,15 +12,12 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
+import com.maestrovs.radiocar.data.remote.weather.convertCelsiumToFahrenheit
 import com.maestrovs.radiocar.extensions.setVisible
-import com.maestrovs.radiocar.ui.settings.TemperatureUnit
+import com.maestrovs.radiocar.shared_managers.TemperatureUnit
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.component_weather.view.layError
 
-import kotlinx.android.synthetic.main.component_weather.view.rootCard
-import kotlinx.android.synthetic.main.component_weather.view.tvErrText
-import kotlinx.android.synthetic.main.component_weather_transparent.view.layWeather
-import kotlinx.android.synthetic.main.component_weather_transparent.view.progress
+
 import kotlin.math.roundToInt
 
 
@@ -114,7 +111,7 @@ open class WeatherWidgetTransparent : FrameLayout {
     )
 
     fun setWeatherELoading() {
-        progress.setVisible(true)
+        mRootView?.findViewById<View>(R.id.progress)?.setVisible(true)
 
 
         val colors = intArrayOf(
@@ -125,15 +122,15 @@ open class WeatherWidgetTransparent : FrameLayout {
         )
 
         val myList = ColorStateList(states, colors)
-        rootCard.setCardBackgroundColor(myList)
+       // mRootView?.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.rootCard)?.setBackgroundColor(R.color.white) //etCardBackgroundColor(myList)
     }
 
     private fun refreshUI(weatherResponse: WeatherResponse?, errorMessage: String? = null) {
 
-        layWeather.setVisible(weatherResponse != null)
-        layError.setVisible(weatherResponse == null)
+        mRootView?.findViewById<View>(R.id.layWeather)?.setVisible(weatherResponse != null)
+        mRootView?.findViewById<View>(R.id.tvErrText)?.setVisible(weatherResponse == null)
 
-        progress.setVisible(false)
+        mRootView?.findViewById<View>(R.id.progress)?.setVisible(false)
 
         weatherResponse?.let {
 
@@ -146,6 +143,7 @@ open class WeatherWidgetTransparent : FrameLayout {
             }
 
 
+
             var textColorRes = R.color.black
 
             var tempPref = ""
@@ -156,7 +154,7 @@ open class WeatherWidgetTransparent : FrameLayout {
                 if (temperatureFloat > 0.0f) {
                     tempPref = "+"
                 } else if (temperatureFloat < 0) {
-                    tempPref = "-"
+                    tempPref = ""
                     textColorRes
                 }
 
@@ -190,12 +188,12 @@ open class WeatherWidgetTransparent : FrameLayout {
                     .into(ivWeatherIcon)
             }
         } ?: kotlin.run {
-            tvErrText.text = errorMessage ?: "Weather service isn't available"
+            mRootView?.findViewById<TextView>(R.id.tvErrText)?.text = errorMessage ?: "Weather service isn't available"
         }
     }
 
 
-    private fun convertCelsiumToFahrenheit(celsium: Float) = ((celsium*(9.0 / 5.0))+32)
+
 
     public fun setOnBack(l: OnClickListener?) {
         /* ivBackCard?.setOnClickListener {

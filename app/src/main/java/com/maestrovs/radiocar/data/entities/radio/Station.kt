@@ -1,5 +1,6 @@
 package com.maestrovs.radiocar.data.entities.radio
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -7,6 +8,7 @@ import androidx.room.PrimaryKey
 data class Station(
     val bitrate: Int,
     val changeuuid: String,
+    @ColumnInfo(defaultValue = "") val serveruuid: String?,
     val clickcount: Int,
     val clicktimestamp: String,
    // val clicktimestamp_iso8601: Any?,
@@ -43,4 +45,6 @@ data class Station(
     val votes: Int,
 
     var isFavorite: Int? = null,
+    var isRecent: Int? = null
+
 )

@@ -1,145 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="0dp"
-    app:cardBackgroundColor="@color/transparent"
-    app:strokeWidth="1dp"
-    app:strokeColor="@color/black_15"
     android:layout_margin="0dp"
-    tools:layout_width="200dp"
+    tools:background="@color/black"
+    app:cardElevation="0dp"
     tools:cardBackgroundColor="@color/black"
-    >
+    tools:layout_width="200dp">
+
+
+    <LinearLayout
+        android:id="@+id/layWeather"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
 
 
         <LinearLayout
-            android:id="@+id/layWeather"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:orientation="vertical"
-            tools:visibility="visible"
-            android:gravity="center|start"
-            android:layout_gravity="center"
-            >
+            android:gravity="center"
+            android:orientation="horizontal">
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivWeatherIcon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:alpha="0.80"
+                android:elevation="4dp"
+                android:scaleType="fitCenter"
+                app:tint="@color/white"
+                tools:src="@drawable/ic_favorite"
 
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="start|bottom"
-                android:orientation="horizontal">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/ivWeatherIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:elevation="4dp"
-                    tools:src="@drawable/ic_favorite"
-                    android:scaleType="fitCenter"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginEnd="1dp"
-                    app:tint="@color/white"
-                    android:alpha="0.80"
-
-                    />
-
-
-                <TextView
-                    android:id="@+id/tvTemperature"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="4dp"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    tools:text="+25"
-                    android:textSize="26sp"
-                    android:fontFamily="sans-serif-medium"
-                    />
-
-                <TextView
-                    android:id="@+id/tvUnit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                   android:layout_marginBottom="8dp"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:text="°C"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:alpha="0.7"
-                    />
-
-
-
-
-
-            </LinearLayout>
+                />
 
 
             <TextView
-                android:id="@+id/tvCity"
-                android:layout_width="match_parent"
+                android:id="@+id/tvTemperature"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:gravity="start"
+                android:layout_marginStart="0dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="12sp"
-                android:layout_gravity="center"
-                android:layout_marginTop="1dp"
-                tools:text="CityName wery wery  "
+                android:textSize="24sp"
+                tools:text="+25" />
+
+            <TextView
+                android:id="@+id/tvUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginBottom="2dp"
                 android:alpha="0.7"
-                />
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:text="°C"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
 
 
         </LinearLayout>
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layError"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="4dp"
-        android:visibility="gone"
-        tools:visibility="invisible"
-        >
-
-        <ImageView
-            android:id="@+id/ivErrIcon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:elevation="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_no_weather"
-            android:scaleType="fitCenter"
-            android:layout_margin="4dp"
-            app:tint="@color/red" />
-
         <TextView
-            android:id="@+id/tvErrText"
-            android:layout_width="0dp"
+            android:id="@+id/tvCity"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/ivErrIcon"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="4dp"
-            android:gravity="start"
-            android:textColor="@color/red"
-            android:textSize="12sp"
-            android:text="Weather service isn't available" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_gravity="center"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:paddingHorizontal="2dp"
+            android:alpha="0.7"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            tools:text="CityName very very very very loooong " />
 
 
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvErrText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxWidth="65dp"
+        android:maxLines="2"
+        android:text="Weather service isn't available dsdfsdfsdf sdfsdf"
+        android:textColor="@color/gray"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="invisible"
+        />
 
 
     <com.airbnb.lottie.LottieAnimationView
@@ -150,16 +121,19 @@
         android:background="@color/transparent"
         android:elevation="0dp"
         android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_fileName="weather.json"
         app:lottie_loop="true"
         app:lottie_speed="1"
-        tools:visibility="visible"
-
+        tools:visibility="invisible"
         />
 
 
-    </com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 
 

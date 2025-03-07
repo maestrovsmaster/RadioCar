@@ -6,7 +6,7 @@ object Constants {
 
     const val ABOUT_RADIO_URL =  "http://de1.api.radio-browser.info/#General"
 
-    const val PAGE_SIZE = 200
+    const val PAGE_SIZE = 50
 
 
     const val BASE_WEATHER_URL = "https://api.openweathermap.org/"
@@ -18,4 +18,6 @@ object Constants {
     const val PRIVACY_URL = "https://radiocartunes.wixsite.com/radiocar/privacy"
 
     const val CONTACT_EMAIL = "radiocar.tunes@gmail.com"
+
+    const val PLAY_MARKET_URL = "https://play.google.com/store/apps/details?id=com.maestrovs.radiocar"
 }

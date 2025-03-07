@@ -12,4 +12,5 @@ data class Recent(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     var stationuuid: String,
+    var lastPlayedTime: Long
 )

@@ -22,6 +22,12 @@
             app:destination="@id/chooseCountryFragment"
             app:popUpToInclusive="true"
             />
+        <action
+            android:id="@+id/action_splashFragment_to_magnitolaFragment"
+            app:destination="@id/magnitolaFragment" />
+        <action
+            android:id="@+id/action_splashFragment_to_radioFragment"
+            app:destination="@id/radioFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
@@ -40,7 +46,7 @@
     </fragment>
     <fragment
         android:id="@+id/chooseCountryFragment"
-        android:name="com.maestrovs.radiocar.ui.splash_start_fragment.current_country.ChooseCountryFragment"
+        android:name="com.maestrovs.radiocar.ui.current_country.ChooseCountryFragment"
         android:label="ChooseCountryFragment"
         tools:layout="@layout/fragment_country"
         >
@@ -84,10 +90,42 @@
     </fragment>
     <fragment
         android:id="@+id/carLogoFragment"
-        android:name="com.maestrovs.radiocar.ui.settings.logos_fragment.LogosFragment"
+        android:name="com.maestrovs.radiocar.ui.logos_fragment.LogosFragment"
         android:label="TestFragment"
         tools:layout="@layout/fragment_logos"
         />
+    <fragment
+        android:id="@+id/magnitolaFragment"
+        android:name="com.maestrovs.radiocar.ui.splash_start_fragment.magnitola_style.MagnitolaFragment"
+        android:label="MagnitolaFragment"
+        tools:layout="@layout/content_magnitola"
+        />
+    <fragment
+        android:id="@+id/radioFragment"
+        android:name="com.maestrovs.radiocar.ui.app.radio_fragment.RadioFragment"
+        android:label="RadioFragment" >
+        <action
+            android:id="@+id/action_radioFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+        <action
+            android:id="@+id/action_radioFragment_to_radioListFragment"
+            app:destination="@id/radioListFragment"
+
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/radioListFragment"
+        android:name="com.maestrovs.radiocar.ui.app.stations_list.RadioListFragment"
+        android:label="RadioListFragment" />
 
 
 </navigation>

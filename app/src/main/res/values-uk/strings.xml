@@ -17,6 +17,7 @@
 
     <string name="settings_display_on">" Не вимикати екран"</string>
     <string name="settings_autoplay">Автоматично грати, коли Bluetooth пристрій під\'єднано</string>
+    <string name="settings_show_station_in_back">Відображати спливаючу назву станції у фоновому режимі</string>
     <string name="settings_display_speed_units">Показувати швидкість в:</string>
 
     <string name="km_h">км/год</string>
@@ -41,12 +42,13 @@
     <string name="open_api">Open API</string>
 
     <string name="contact_us">"Зв'яжіться з нами"</string>
+    <string name="open_play_market">Залишити відгук</string>
 
     <string name="about_app">Про додаток</string>
 
     <string name="description"><b>Radio Car:</b> Ваш ідеальний супутник у дорожній подорожі!</string>
 
-    <string name="created_by">© 2023 Vasyl Horodetskyi</string>
+
     <string name="app_version">Версія додатку</string>
 
     <string name="playback_error">Помилка відтворення</string>
@@ -55,6 +57,58 @@
     <string name="close">Закрити</string>
     <string name="choose_country">Обрати країну</string>
 
+    <string name="remove">Видалити</string>
+    <string name="cancel">Скасувати</string>
+    <string name="remove_ask">Видалити?</string>
 
+    <string name="done">Готово</string>
+
+    <string name="enter_custom_tag">Введіть власний тег (англійською)</string>
+    <string name="enter_station_name">Введіть назву станції</string>
+    <string name="select_country">Оберіть країну</string>
+    <string name="select_tag">Оберіть тег</string>
+
+    <string name="delete_station_title">Видалення станції</string>
+    <string name="delete_station_message">Ви справді хочете видалити станцію %1$s?</string>
+    <string name="confirm">Видалити</string>
+
+    <string-array name="tag_keys">
+        <item>ambient</item>
+        <item>bible</item>
+        <item>christ</item>
+        <item>classical</item>
+        <item>children</item>
+        <item>dance</item>
+        <item>electronic</item>
+        <item>hiphop</item>
+        <item>jazz</item>
+        <item>metal</item>
+        <item>music</item>
+        <item>news</item>
+        <item>pop</item>
+        <item>relax</item>
+        <item>rock</item>
+        <item>talk</item>
+    </string-array>
+
+    <string-array name="tag_values">
+        <item>Ембієнт</item>
+        <item>Біблія</item>
+        <item>Християнська</item>
+        <item>Класична</item>
+        <item>Дитяча</item>
+        <item>Танці</item>
+        <item>Електронна</item>
+        <item>Хіп-хоп</item>
+        <item>Джаз</item>
+        <item>Метал</item>
+        <item>Музика</item>
+        <item>Новини</item>
+        <item>Поп</item>
+        <item>Релакс</item>
+        <item>Рок</item>
+        <item>Подкасти / Розмовні шоу</item>
+    </string-array>
+    <string name="all_countries">Усі країни</string>
 
 </resources>

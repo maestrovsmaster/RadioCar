@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+
+    tools:layout_height="300dp">
+
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animationView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:background="@color/gray_dark"
+        android:elevation="0dp"
+        android:visibility="visible"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="car_infinite_road.json"
+        app:lottie_loop="true"
+        app:lottie_speed="0.2"
+        tools:visibility="visible" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/shape_magnitola_background"
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:weightSum="3"
+        tools:visiblity="gone"
+        >
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_weight="2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp"
+            android:weightSum="2">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
+                android:gravity="center|top"
+                android:orientation="vertical">
+
+                <com.maestrovs.radiocar.ui.components.WeatherWidgetTransparent
+                    android:id="@+id/weatherWidget"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?selectableItemBackground"
+                    />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginEnd="12dp"
+                android:gravity="center|top"
+                android:orientation="vertical">
+
+                <com.maestrovs.radiocar.ui.components.SpeedWidgetTransparent
+                    android:id="@+id/speedView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="-8dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="36sp"
+                    />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <com.maestrovs.radiocar.ui.components.CarLogo
+            android:id="@+id/ivCarLogo"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="30dp"
+            android:visibility="visible"
+            app:stroke_color="@color/gray30a"
+            app:background_tint="@drawable/ripple_logo_round"
+            app:stroke_width="3"
+            android:alpha="0.94"
+            android:layout_marginStart="0dp"
+            android:contentDescription="City"
+            />
+
+
+
+        <ImageView
+            android:id="@+id/icExit"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_close2"
+            app:tint="@color/red"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:alpha="0.8"
+            />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_car6"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="20dp"
+        android:alpha="0.8"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

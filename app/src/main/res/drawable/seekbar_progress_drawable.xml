@@ -1,0 +1,26 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape>
+            <solid android:color="@android:color/transparent" /> <!-- фоновий колір трека -->
+            <corners android:radius="0dp" /> <!-- радіус скруглення -->
+            <size
+                android:width="70dp"
+                android:height="70dp" /> <!-- бажана висота і ширина трека -->
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip>
+            <!-- Градієнт для заповнення трека -->
+            <shape>
+                <gradient
+                    android:startColor="#801A1F24"
+                android:endColor="#52728D"
+                android:angle="0" />
+                <corners android:radius="0dp" />
+                <size
+                    android:width="70dp"
+                    android:height="70dp" /> <!-- висота і ширина, щоб відповідати фону -->
+            </shape>
+        </clip>
+    </item>
+</layer-list>

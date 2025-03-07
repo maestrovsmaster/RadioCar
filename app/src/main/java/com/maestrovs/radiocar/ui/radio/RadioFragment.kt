@@ -10,16 +10,14 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.JustifyContent
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.common.CurrentCountryManager
+import com.maestrovs.radiocar.shared_managers.CurrentCountryManager
 import com.maestrovs.radiocar.data.default_podcasts.bbc_uk_json
 import com.maestrovs.radiocar.data.default_podcasts.cowboys_juke_json
 import com.maestrovs.radiocar.data.default_podcasts.jaz_fm_json
@@ -29,14 +27,16 @@ import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.databinding.FragmentRadioBinding
 import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.extensions.setVisible
-import com.maestrovs.radiocar.ui.components.WrapFlexboxLayoutManager
+import com.maestrovs.radiocar.ui.components.showDeleteStationDialog
 import com.maestrovs.radiocar.ui.radio.utils.RadioErrorType
 import com.maestrovs.radiocar.ui.radio.utils.errorMapper
 import com.maestrovs.radiocar.ui.radio.utils.filterAll
 import com.maestrovs.radiocar.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Arrays
-
+import android.content.res.Configuration
+import com.maestrovs.radiocar.common.Constants.PAGE_SIZE
+import com.maestrovs.radiocar.ui.components.PaginationScrollListener
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -66,11 +66,16 @@ class RadioFragment : Fragment() {
 
 
     private lateinit var adapter: StationAdapter
-    private lateinit var layoutManager: WrapFlexboxLayoutManager
+    //private lateinit var layoutManager: WrapFlexboxLayoutManager
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private var currentPage = 0
+    private var isLastPage = false
+
+    private var isLoading = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -84,17 +89,17 @@ class RadioFragment : Fragment() {
         binding.adView.adListener = object : AdListener() {
             override fun onAdFailedToLoad(p0: LoadAdError) {
                 super.onAdFailedToLoad(p0)
-                Log.d("AdMob", "AdMob onAdFailedToLoad = $p0")
+               // Log.d("AdMob", "AdMob onAdFailedToLoad = $p0")
             }
 
             override fun onAdLoaded() {
                 super.onAdLoaded()
-                Log.d("AdMob", "AdMob onAdLoaded")
+               // Log.d("AdMob", "AdMob onAdLoaded")
             }
 
             override fun onAdClicked() {
                 // Code to be executed when the user clicks on an ad.
-                Log.d("AdMob", "AdMob onAdClicked")
+                //Log.d("AdMob", "AdMob onAdClicked")
             }
 
             override fun onAdClosed() {
@@ -126,36 +131,67 @@ class RadioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter = StationAdapter(object : StationAdapter.ItemListener {
-            override fun onClickedCharacter(station: Station?) {
-                Log.d("Station", "~~~~~~~~~~ Station Url \uD83C\uDFB5  ${station?.url}")
-                ///   mainViewModel.switchStationState(item)
-                // if(item != null) {
-                // adapter.setSelectedStation(item)
-                // }
 
+            override fun onClickedItem(station: Station?, mustUpdateList: Boolean) {
                 station?.let {
-                    mainViewModel.setStation(it)
+                    mainViewModel.setStation(it, mustUpdateList)
+                }
+            }
+
+            override fun onLongClickedItem(station: Station?) {
+                station?.let {
+                    if (currentListType == ListType.Recent) {
+                        showDeleteStationDialog(requireContext(), station.name) {
+                            mainViewModel.deleteRecent(it.stationuuid)
+                        }
+                        radioViewModel.fetchRecent()
+                    }
+                }
+            }
+
+        })
+
+        val spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            3
+        } else if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            4
+        } else {
+            3
+        }
+
+        val gridLayoutManager = GridLayoutManager(context, spanCount)
+
+        binding.recycler.layoutManager = gridLayoutManager
+
+        binding.recycler.adapter = adapter
+        adapter.setRecyclerView(binding.recycler)
+
+        binding.recycler.addOnScrollListener(object :
+            PaginationScrollListener(gridLayoutManager) {
+            override fun isLastPage(): Boolean {
+                return this@RadioFragment.isLastPage
+            }
+
+            override fun loadMoreItems() {
+                this@RadioFragment.isLoading = true
+              //  mustReplaceTransactionsList = false
+
+             //   mainViewModel.getTransactions(this@RadioFragment.currentPage)
+
+               // Log.d("RadioFragment","LoadMoreItems page = $currentPage")
+                if(currentListType == ListType.All){
+                    fetchAllStations(false)
+                    this@RadioFragment.currentPage += 1
                 }
 
             }
 
+            override fun isLoading(): Boolean {
+                return this@RadioFragment.isLoading
+            }
         })
-        // binding.recycler.layoutManager = LinearLayoutManager(requireContext())
 
 
-        layoutManager = WrapFlexboxLayoutManager(context)
-        layoutManager.flexDirection = FlexDirection.ROW
-        layoutManager.justifyContent = JustifyContent.FLEX_START
-        binding.recycler.layoutManager = layoutManager
-        binding.recycler.itemAnimator = null
-
-        binding.recycler.setHasFixedSize(true)
-        binding.recycler.setItemViewCacheSize(20)
-        binding.recycler.isDrawingCacheEnabled = true
-        binding.recycler.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
-
-
-        binding.recycler.adapter = adapter
 
         mainViewModel.selectedStation.observe(viewLifecycleOwner) { it ->
             val station = it ?: return@observe
@@ -178,6 +214,18 @@ class RadioFragment : Fragment() {
                     //TODO write to corrupt stations
                 }
 
+                is PlayAction.Next -> {
+                    mainViewModel.selectedStation.let {
+                        adapter.nextStation(it.value)
+                    }
+                }
+
+                is PlayAction.Previous -> {
+                    mainViewModel.selectedStation.let {
+                        adapter.previousStation(it.value)
+                    }
+                }
+
                 else -> {
 
                 }
@@ -187,9 +235,7 @@ class RadioFragment : Fragment() {
 
 
         radioViewModel.stations.observe(viewLifecycleOwner) {
-            Log.d("ApiError", "Server *  ${it} ")
             it?.let {
-                Log.d("ApiError", "Server *2  ${it} ")
                 if (currentListType == ListType.All) {
                     processResources(it)
                 }
@@ -215,9 +261,7 @@ class RadioFragment : Fragment() {
         }
 
         radioViewModel.searched.observe(viewLifecycleOwner) {
-            Log.d("Searched", "Searched 1")
             it?.let {
-                Log.d("Searched", "Searched 2")
                 if (currentListType == ListType.Searched) {
                     processResources(it)
                 }
@@ -227,10 +271,7 @@ class RadioFragment : Fragment() {
 
 
         mainViewModel.mustRefreshStatus.observe(viewLifecycleOwner) {
-            radioViewModel.fetchStations(
-                CurrentCountryManager.readCountry(requireContext())?.alpha2
-                    ?: CurrentCountryManager.DEFAULT_COUNTRY
-            )
+            fetchAllStations(true)
         }
 
 
@@ -241,31 +282,32 @@ class RadioFragment : Fragment() {
 
         binding.btAll.setOnClickListener {
             currentListType = ListType.All
-            layoutManager.justifyContent = JustifyContent.SPACE_AROUND
+            //   layoutManager.justifyContent = JustifyContent.SPACE_AROUND
             updateButtons(ListType.All)
-            radioViewModel.fetchStations(
-                CurrentCountryManager.readCountry(requireContext())?.alpha2
-                    ?: CurrentCountryManager.DEFAULT_COUNTRY
-            )
+            fetchAllStations(true)
+            mainViewModel.setListType(ListType.All)
         }
 
         binding.btRecent.setOnClickListener {
             currentListType = ListType.Recent
-            layoutManager.justifyContent = JustifyContent.FLEX_START
+            // layoutManager.justifyContent = JustifyContent.FLEX_START
             updateButtons(ListType.Recent)
             radioViewModel.fetchRecent()
+            mainViewModel.setListType(ListType.Recent)
         }
 
         binding.btFavorite.setOnClickListener {
             currentListType = ListType.Favorites
-            layoutManager.justifyContent = JustifyContent.FLEX_START
+            // layoutManager.justifyContent = JustifyContent.FLEX_START
             updateButtons(ListType.Favorites)
             radioViewModel.fetchFavorites()
+            mainViewModel.setListType(ListType.Favorites)
         }
 
         binding.btSearch.setOnClickListener {
+            mainViewModel.setListType(ListType.All)
             currentListType = ListType.Searched
-            layoutManager.justifyContent = JustifyContent.FLEX_START
+            //   layoutManager.justifyContent = JustifyContent.FLEX_START
             updateButtons(ListType.Searched)
 
             radioViewModel.searched.value?.let { lastSearchResult ->
@@ -303,35 +345,82 @@ class RadioFragment : Fragment() {
 
     private fun updateButtons(listType: ListType) {
 
-        var colorRecent = R.drawable.ripple_gray_round
-        var colorFavorites = R.drawable.ripple_gray_round
-        var colorAll = R.drawable.ripple_gray_round
-        var colorSearched = R.drawable.ripple_gray_round
+        /* var colorRecent = R.drawable.ripple_gray_round
+         var colorFavorites = R.drawable.ripple_gray_round
+         var colorAll = R.drawable.ripple_gray_round
+         var colorSearched = R.drawable.ripple_gray_round
+
+         when (listType) {
+             ListType.Recent -> colorRecent = R.drawable.ripple_pink_round
+             ListType.Favorites -> colorFavorites = R.drawable.ripple_pink_round
+             ListType.All -> colorAll = R.drawable.ripple_pink_round
+             ListType.Searched -> colorSearched = R.drawable.ripple_pink_round
+         }*/
+
+        val inactiveColor = R.color.gray
+        val activeColor = R.color.blue
+        var colorRecent = inactiveColor
+        var colorFavorites = inactiveColor
+        var colorAll = inactiveColor
+        var colorSearched = inactiveColor
 
         when (listType) {
-            ListType.Recent -> colorRecent = R.drawable.ripple_pink_round
-            ListType.Favorites -> colorFavorites = R.drawable.ripple_pink_round
-            ListType.All -> colorAll = R.drawable.ripple_pink_round
-            ListType.Searched -> colorSearched = R.drawable.ripple_pink_round
+            ListType.Recent -> colorRecent = activeColor
+            ListType.Favorites -> colorFavorites = activeColor
+            ListType.All -> colorAll = activeColor
+            ListType.Searched -> colorSearched = activeColor
         }
 
-        binding.btRecent.setCardBackground(colorRecent)
-        binding.btFavorite.setCardBackground(colorFavorites)
-        binding.btAll.setCardBackground(colorAll)
-        binding.btSearch.setCardBackground(colorSearched)
+        // binding.btRecent.setCardBackground(colorRecent)
+        // binding.btFavorite.setCardBackground(colorFavorites)
+        // binding.btAll.setCardBackground(colorAll)
+        // binding.btSearch.setCardBackground(colorSearched)
+
+        binding.btRecent.setColorFilter(
+            ContextCompat.getColor(
+                requireContext(),
+                colorRecent
+            ), android.graphics.PorterDuff.Mode.SRC_IN
+        )
+        binding.btFavorite.setColorFilter(
+            ContextCompat.getColor(
+                requireContext(),
+                colorFavorites
+            ), android.graphics.PorterDuff.Mode.SRC_IN
+        )
+        binding.btAll.setColorFilter(
+            ContextCompat.getColor(
+                requireContext(),
+                colorAll
+            ), android.graphics.PorterDuff.Mode.SRC_IN
+        )
+        binding.btSearch.setColorFilter(
+            ContextCompat.getColor(
+                requireContext(),
+                colorSearched
+            ), android.graphics.PorterDuff.Mode.SRC_IN
+        )
+
 
         binding.etSearch.setVisible(listType == ListType.Searched)
 
     }
 
 
-    private fun processResources(response: Resource<List<Station>>) {
 
+    private fun processResources(response: Resource<List<Station>>) {
+        this@RadioFragment.isLoading = false
         when (response.status) {
             Resource.Status.SUCCESS -> {
                 binding.progressBar.visibility = View.GONE
                 binding.tvError.setVisible(false)
                 showList(response.data)
+                /*if(response.data.isNullOrEmpty()){
+                    lastPageCount+=1
+                    if(lastPageCount>=5) {
+                        isLastPage = true
+                    }
+                }*/
             }
 
             Resource.Status.ERROR -> {
@@ -389,21 +478,29 @@ class RadioFragment : Fragment() {
         }
     }
 
+    private var lastSubmitSize = 0
+
     private fun showList(list: List<Station>?) {
         if (list != null) {
 
             val filteredList = filterAll(list)
 
+            if(list.size == lastSubmitSize && list.isNotEmpty()){
+                lastPageCount += 1
+                if(lastPageCount>5) {
+                    isLastPage = true
+                }
+            }else {
+                lastSubmitSize = list.size
+            }
             adapter.submitList(filteredList)
             if (currentListType == ListType.Recent && firstStart) {
                 if (filteredList.isNullOrEmpty()) {
                     currentListType = ListType.All
-                    layoutManager.justifyContent = JustifyContent.FLEX_START
+                    //  layoutManager.justifyContent = JustifyContent.FLEX_START
                     firstStart = false
-                    radioViewModel.fetchStations(
-                        CurrentCountryManager.readCountry(requireContext())?.alpha2
-                            ?: CurrentCountryManager.DEFAULT_COUNTRY
-                    )
+                    currentPage = 0
+                    fetchAllStations(true)
                     updateButtons(ListType.All)
                 } else if (filteredList.isNotEmpty()) {
                     mainViewModel.setIfNeedInitStation(filteredList[0])
@@ -414,11 +511,33 @@ class RadioFragment : Fragment() {
         }
     }
 
+    private var lastPageCount = 0
+    fun fetchAllStations(fromFirstPage: Boolean){
+
+        if(fromFirstPage) {
+            currentPage = 0
+            lastPageCount = 0
+            isLastPage = false
+        }
+       val query = StationQuery(
+           CurrentCountryManager.readCountry(requireContext())?.alpha2
+            ?: CurrentCountryManager.DEFAULT_COUNTRY,
+           currentPage * PAGE_SIZE,
+           PAGE_SIZE
+            )
+        radioViewModel.fetchStations(
+            query
+        )
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+
+
 }
 
 enum class ListType {

@@ -7,8 +7,12 @@ import androidx.room.RoomDatabase
 import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.entities.radio.tables.Favorites
 import com.maestrovs.radiocar.data.entities.radio.tables.Recent
+import com.maestrovs.radiocar.data.local.migrations.MIGRATION_1_2
+import com.maestrovs.radiocar.data.local.migrations.MIGRATION_1_5
+import com.maestrovs.radiocar.data.local.migrations.MIGRATION_1_6
+import com.maestrovs.radiocar.data.local.migrations.MIGRATION_1_7
 
-@Database(entities = [Station::class, Recent::class, Favorites::class], version = 3, exportSchema = false)
+@Database(entities = [Station::class, Recent::class, Favorites::class], version = 7, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun stationDao(): StationDao
@@ -25,6 +29,10 @@ abstract class AppDatabase : RoomDatabase() {
 
         private fun buildDatabase(appContext: Context) =
             Room.databaseBuilder(appContext, AppDatabase::class.java, "radio_car_db")
+                .addMigrations(MIGRATION_1_2) // version = 4,
+                .addMigrations(MIGRATION_1_5)// version = 5,
+                .addMigrations(MIGRATION_1_6)//version 6
+                .addMigrations(MIGRATION_1_7)
                 .fallbackToDestructiveMigration()
                 .build()
     }

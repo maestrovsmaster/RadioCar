@@ -30,3 +30,17 @@ class ExitDialog(context: Context) : Dialog(context) {
 
     }
 }
+
+
+ fun showDeleteStationDialog(context: Context, name: String, onDelete: ()->(Unit)) {
+    MaterialAlertDialogBuilder(context)
+        .setTitle(context.resources.getString(R.string.remove_ask))
+        .setMessage(name)
+        .setNegativeButton(context.resources.getString(R.string.cancel)) { dialog, which ->
+
+        }
+        .setPositiveButton(context.resources.getString(R.string.remove)) { dialog, which ->
+            onDelete.invoke()
+        }
+        .show()
+}

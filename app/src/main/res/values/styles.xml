@@ -38,4 +38,10 @@
         <item name="colorControlNormal">#FFFFFF</item>
     </style>
 
+
+    <style name="ShapeAppearance.App.MediumComponent" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
 </resources>

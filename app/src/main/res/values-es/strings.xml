@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RadioCar</string>
+
+    <string name="action_settings">Configuración</string>
+    <!-- Strings used for fragments for navigation -->
+
+    <string name="next">Siguiente</string>
+    <string name="previous">Anterior</string>
+
+    <string name="station_detail_bitrate" translatable="false">%1$1d kbps</string>
+    <string name="station_detail_broken" translatable="false">INDISPONIBLE</string>
+    <string name="station_detail_deleted_on_server" translatable="false">ELIMINADO</string>
+
+    <string name="symbol_radio" translatable="false">&#128251;</string>
+    <string name="notification_radio_description">La mejor radio para el coche 🚗</string>
+
+    <string name="weather_unavailable">El servicio meteorológico no está disponible</string>
+
+    <string name="confirm_exit">¿Estás seguro de que deseas salir de la aplicación?</string>
+
+    <string name="yes">SÍ</string>
+    <string name="no">NO</string>
+
+    <string name="connected">Conectado</string>
+    <string name="disconnected">Desconectado</string>
+
+    <string name="settings_display_on">Mantener la pantalla activa</string>
+    <string name="settings_autoplay">Reproducir automáticamente cuando se conecta un dispositivo Bluetooth</string>
+    <string name="settings_show_station_in_back">Mostrar el nombre de la estación en segundo plano</string>
+    <string name="settings_display_speed_units">Mostrar la velocidad en unidades:</string>
+    <string name="km_h">km/h</string>
+    <string name="mph">MPH</string>
+
+    <string name="settings_display_temperature_units">Mostrar la temperatura en unidades:</string>
+    <string name="celsium_unit" translatable="false">°C</string>
+    <string name="fahrenheit_unit" translatable="false">°F</string>
+
+    <string name="error_500">Error interno del servidor</string>
+    <string name="error_503">Servicio temporalmente no disponible</string>
+    <string name="radio_service_not_available">Nuestra búsqueda de radio está temporalmente inactiva. ¡Disfruta de estas estaciones seleccionadas!</string>
+    <string name="error_no_address">No hay dirección asociada con el host</string>
+
+    <string name="country">País</string>
+    <string name="country_not_selected">No seleccionado</string>
+
+    <string name="car_logo">Logotipo</string>
+    <string name="car_logo_not_selected">No seleccionado</string>
+
+    <string name="privacy_policy">Política de privacidad</string>
+    <string name="open_api">Abrir API</string>
+    <string name="open_play_market">Dejar una reseña</string>
+
+    <string name="contact_us">Contáctanos</string>
+
+    <string name="about_app">Acerca de la aplicación</string>
+
+    <string name="description"><b>Radio Car:</b> ¡Tu compañero ideal de viaje en la carretera!</string>
+
+
+    <string name="app_version"><b>Versión de la aplicación</b></string>
+
+    <string name="playback_error">Error de reproducción</string>
+    <string name="radio_stream_unavailable">Esta transmisión está temporalmente no disponible</string>
+
+    <string name="close">Cerrar</string>
+    <string name="choose_country">Elegir país</string>
+
+    <string name="remove">Eliminar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="remove_ask">¿Eliminar?</string>
+
+    <string name="done">Hecho</string>
+
+
+    <string name="enter_custom_tag">Ingrese su etiqueta personalizada (en inglés)</string>
+    <string name="enter_station_name">Ingrese el nombre de la estación</string>
+
+    <string name="select_country">Seleccione un país</string>
+    <string name="select_tag">Seleccione una etiqueta</string>
+
+    <string name="delete_station_title">Eliminar estación</string>
+    <string name="delete_station_message">¿Está seguro de que desea eliminar la estación %1$s?</string>
+    <string name="confirm">Eliminar</string>
+
+
+    <string-array name="tag_keys">
+        <item>ambient</item>
+        <item>bible</item>
+        <item>christ</item>
+        <item>classical</item>
+        <item>children</item>
+        <item>dance</item>
+        <item>electronic</item>
+        <item>hiphop</item>
+        <item>jazz</item>
+        <item>metal</item>
+        <item>music</item>
+        <item>news</item>
+        <item>pop</item>
+        <item>relax</item>
+        <item>rock</item>
+        <item>talk</item>
+    </string-array>
+
+    <string-array name="tag_values">
+        <item>Ambiente</item>
+        <item>Bible</item>
+        <item>Cristiana</item>
+        <item>Clásica</item>
+        <item>Infantil</item>
+        <item>Baile</item>
+        <item>Electrónica</item>
+        <item>Hip-hop</item>
+        <item>Jazz</item>
+        <item>Metal</item>
+        <item>Música</item>
+        <item>Noticias</item>
+        <item>Pop</item>
+        <item>Relajación</item>
+        <item>Rock</item>
+        <item>Podcasts / Talk Show</item>
+    </string-array>
+
+    <string name="all_countries">Todos los países</string>
+</resources>

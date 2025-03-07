@@ -10,12 +10,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.maestrovs.radiocar.R
-import com.maestrovs.radiocar.common.CarLogoManager
+import com.maestrovs.radiocar.shared_managers.CarLogoManager
 import com.maestrovs.radiocar.common.Constants.ABOUT_RADIO_URL
 import com.maestrovs.radiocar.common.Constants.CONTACT_EMAIL
+import com.maestrovs.radiocar.common.Constants.PLAY_MARKET_URL
 import com.maestrovs.radiocar.common.Constants.PRIVACY_URL
-import com.maestrovs.radiocar.common.CurrentCountryManager
+import com.maestrovs.radiocar.shared_managers.CurrentCountryManager
 import com.maestrovs.radiocar.databinding.FragmentSettingsMainBinding
+import com.maestrovs.radiocar.shared_managers.SettingsManager
+import com.maestrovs.radiocar.shared_managers.SpeedUnit
+import com.maestrovs.radiocar.shared_managers.TemperatureUnit
 import com.maestrovs.radiocar.ui.main.MainViewModel
 
 
@@ -70,6 +74,11 @@ class SettingsFragment : Fragment() {
         binding.swAutoplay.isChecked = SettingsManager.isAutoplay(requireContext())
         binding.swAutoplay.setOnCheckedChangeListener { _, isChecked ->
             SettingsManager.setAutoplay(requireContext(), isChecked)
+        }
+
+        binding.swShowStation.isChecked = SettingsManager.getShowStationNameInBackground(requireContext())
+        binding.swShowStation.setOnCheckedChangeListener { _, isChecked ->
+            SettingsManager.setShowStationNameInBackground(requireContext(), isChecked)
         }
 
         val speedUnit = SettingsManager.getSpeedUnit(requireContext())
@@ -131,6 +140,10 @@ class SettingsFragment : Fragment() {
         binding.tvVersion.text = "${getString(R.string.app_version)}: ${viewModel.versionDisplay}"
 
 
+        binding.tvPlayMarket.setOnClickListener {
+            startPlayMarketIntent()
+        }
+
 
         binding.tvPrivacyPolicy.setOnClickListener {
             startPrivacyIntent()
@@ -147,7 +160,7 @@ class SettingsFragment : Fragment() {
 
     }
 
-    fun startPrivacyIntent() {
+    private fun startPrivacyIntent() {
         try {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_URL))
             startActivity(browserIntent)
@@ -155,7 +168,15 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    fun startOpenApiIntent() {
+    private fun startPlayMarketIntent() {
+        try {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_MARKET_URL))
+            startActivity(browserIntent)
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun startOpenApiIntent() {
         try {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(ABOUT_RADIO_URL))
             startActivity(browserIntent)

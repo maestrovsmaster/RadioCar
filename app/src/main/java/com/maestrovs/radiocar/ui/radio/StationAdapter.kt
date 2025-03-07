@@ -5,28 +5,30 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.maestrovs.radiocar.R
 import com.maestrovs.radiocar.data.entities.radio.Station
+import com.maestrovs.radiocar.databinding.ItemRadioBinding
 import com.maestrovs.radiocar.enums.radio.PlayAction
 import com.maestrovs.radiocar.extensions.addRipple
 import com.maestrovs.radiocar.extensions.setVisible
 import com.murgupluoglu.flagkit.FlagKit
 import com.squareup.picasso.Picasso
+//import kotlinx.android.synthetic.main.item_radio.view.btFavorite
+//import kotlinx.android.synthetic.main.item_radio.view.ivCountry
+//import kotlinx.android.synthetic.main.item_radio.view.ivCover
+//import kotlinx.android.synthetic.main.item_radio.view.root
+//import kotlinx.android.synthetic.main.item_radio.view.tvName
 
-import kotlinx.android.synthetic.main.item_radio.view.btFavorite
-import kotlinx.android.synthetic.main.item_radio.view.ivCountry
-import kotlinx.android.synthetic.main.item_radio.view.ivCover
-import kotlinx.android.synthetic.main.item_radio.view.root
-import kotlinx.android.synthetic.main.item_radio.view.tvName
 
-
-class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAdapter.StationViewHolder>()
-   // PagingDataAdapter<Station, StationAdapter.StationViewHolder>(diffCallback)
-{
+class StationAdapter(val onItem: ItemListener) :
+    RecyclerView.Adapter<StationAdapter.StationViewHolder>() {
 
     companion object {
         val diffCallback = object : DiffUtil.ItemCallback<Station>() {
@@ -41,161 +43,116 @@ class StationAdapter(val onItem: ItemListener) : RecyclerView.Adapter<StationAda
     }
 
     private val differ = AsyncListDiffer(this, diffCallback)
-
-
     private var station: Station? = null
     private var playAction: PlayAction? = null
+    private var recyclerView: RecyclerView? = null
 
     interface ItemListener {
-        fun onClickedCharacter(item: Station?)
+        fun onClickedItem(station: Station?, mustUpdateList: Boolean)
+        fun onLongClickedItem(station: Station?)
     }
 
-    inner class StationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-
+    inner class StationViewHolder(val binding: ItemRadioBinding) : RecyclerView.ViewHolder(binding.root)
 
     fun submitList(list: List<Station>) {
         differ.submitList(list)
     }
 
-    /**
-     * Set station event about last selected Station
-     */
     fun setStation(station: Station) {
         this.station = station
         notifyDataSetChanged()
     }
 
-
-    /**
-     * Set station event about last selected Station
-     */
-    fun setPlayAction( playAction: PlayAction) {
+    fun setPlayAction(playAction: PlayAction) {
         this.playAction = playAction
         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StationViewHolder {
-        return StationViewHolder(
-            LayoutInflater.from(
-                parent.context
-            ).inflate(
-                R.layout.item_radio,
-                parent,
-                false
-            )
-        )
+        val binding = ItemRadioBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return StationViewHolder(binding)
     }
 
-    override fun getItemCount(): Int {
-        return differ.currentList.size
-    }
+    override fun getItemCount(): Int = differ.currentList.size
 
     override fun onBindViewHolder(holder: StationViewHolder, position: Int) {
-
         val item = differ.currentList[position]
+        val binding = holder.binding
 
-        holder.itemView.apply {
-
-            var favoriteImgRes = R.drawable.ic_empty_24
-
-            root.setOnClickListener {
-                onItem.onClickedCharacter(item)
-            }
-
-           // Log.d("RadioCountry","country = ${item.country}   code = ${item.countrycode}  name = ${item.name}")
-
-            val flagId =  FlagKit.getResId(context, item.countrycode)
-            ivCountry.setImageResource(flagId)
-
-            ivCountry.setVisible(!item.countrycode.isNullOrEmpty())
-
-           // val drawable = FlagKit.getDrawable(this, "tr")
-
-            item.isFavorite?.let {
-                if(it == 1) {
-                    favoriteImgRes = R.drawable.ic_favorite
-                }
-            }
-            btFavorite.setImageDrawable(ContextCompat.getDrawable(context, favoriteImgRes))
-
-
-            var selected = false
-            var selectedColor = ContextCompat.getColor(context, R.color.transparent)
-
-            var drawPlayingAnim = false
-
-            var loadSuccess = true
-
-            station?.let {  selectedStation ->
-                    if (selectedStation.stationuuid == item.stationuuid) {
-                        selected = true
-
-                        playAction?.let { playAction ->
-                            Log.d("Station", "+++2 $playAction")
-                            selectedColor = if(playAction is PlayAction.Resume) {
-                                ContextCompat.getColor(context, R.color.pink)
-                            }else{
-                                ContextCompat.getColor(context, R.color.pink_gray)
-                            }
-
-                            loadSuccess = !(playAction is PlayAction.Error)
-
-                            drawPlayingAnim = playAction is PlayAction.Resume
-                        }
-                    }
-            }
-
-            if (selected) {
-               // root.setBackgroundColor(selectedColor)
-
-                root.background =
-                    if(loadSuccess) {
-                        ContextCompat.getDrawable(context, R.drawable.ripple_stroke_white)
-                    }else{
-                        ContextCompat.getDrawable(context, R.drawable.ripple_yellow_err)
-                    }
-            } else {
-                root.addRipple().apply {
-                    background = with(TypedValue()) {
-                        context.theme.resolveAttribute(
-                            android.R.attr.selectableItemBackground, this, true
-                        )
-                        ContextCompat.getDrawable(context, resourceId)
-                    }
-                }
-            }
-
-
-            tvName.text = "${item.name}"
-
-           // animationView.setVisible(drawPlayingAnim)
-
-            var imgUrl: String? = null
-
-            //Log.d("Picasso", "icon = ${item.favicon}")
-            item.favicon.let { icon ->
-                if (!icon.isNullOrEmpty()) {
-                    imgUrl = item.favicon
-                }
-            }
-            if (imgUrl != null) {
-
-                Picasso.get()
-                    .load(imgUrl)
-                    .fit()
-                    .centerCrop()
-                    .into(ivCover)
-            } else {
-                Picasso.get()
-                    .load(R.drawable.bg_music)
-                    .resize(120, 120)
-                    .centerCrop()
-                    .into(ivCover)
-            }
-
+        binding.root.setOnClickListener { onItem.onClickedItem(item, true) }
+        binding.root.setOnLongClickListener {
+            onItem.onLongClickedItem(item)
+            false
         }
 
+        val flagId = FlagKit.getResId(binding.root.context, item.countrycode)
+        binding.ivCountry.setImageResource(flagId)
+        binding.ivCountry.isVisible = !item.countrycode.isNullOrEmpty()
+
+        val favoriteImgRes = if (item.isFavorite == 1) R.drawable.ic_favorite else R.drawable.ic_empty_24
+        binding.btFavorite.setImageDrawable(ContextCompat.getDrawable(binding.root.context, favoriteImgRes))
+
+        var selected = false
+        var drawPlayingAnim = false
+        var loadSuccess = true
+
+        station?.let { selectedStation ->
+            if (selectedStation.stationuuid == item.stationuuid) {
+                selected = true
+                playAction?.let { playAction ->
+                    loadSuccess = playAction !is PlayAction.Error
+                    drawPlayingAnim = playAction is PlayAction.Resume
+                }
+            }
+        }
+
+        binding.root.background = if (selected) {
+            ContextCompat.getDrawable(binding.root.context, R.drawable.ripple_stroke_white)
+        } else {
+            with(TypedValue()) {
+                binding.root.context.theme.resolveAttribute(
+                    android.R.attr.selectableItemBackground, this, true
+                )
+                ContextCompat.getDrawable(binding.root.context, resourceId)
+            }
+        }
+
+        binding.tvName.text = item.name
+       // binding.animationView.isVisible = drawPlayingAnim
+
+        val imgUrl = item.favicon.takeIf { !it.isNullOrEmpty() }
+        if (imgUrl != null) {
+            Picasso.get().load(imgUrl).fit().centerCrop().into(binding.ivCover)
+            binding.ivCover.scaleType = ImageView.ScaleType.CENTER_INSIDE
+        } else {
+            binding.ivCover.setImageDrawable(AppCompatResources.getDrawable(binding.root.context, R.drawable.ic_podcasts))
+            binding.ivCover.scaleType = ImageView.ScaleType.CENTER_INSIDE
+        }
     }
 
+    fun setRecyclerView(recyclerView: RecyclerView) {
+        this.recyclerView = recyclerView
+    }
 
+    fun nextStation(currentStation: Station?) {
+        if (differ.currentList.isEmpty()) return
+        currentStation?.let { station ->
+            val currentPosition = differ.currentList.indexOf(station)
+            val nextPosition = if (currentPosition == -1) 0 else (currentPosition + 1) % differ.currentList.size
+            val nextStation = differ.currentList[nextPosition]
+            onItem.onClickedItem(nextStation, false)
+            recyclerView?.scrollToPosition(nextPosition)
+        }
+    }
+
+    fun previousStation(currentStation: Station?) {
+        if (differ.currentList.isEmpty()) return
+        currentStation?.let { station ->
+            val currentPosition = differ.currentList.indexOf(station)
+            val previousPosition = if (currentPosition > 0) currentPosition - 1 else differ.currentList.size - 1
+            val previousStation = differ.currentList[previousPosition]
+            onItem.onClickedItem(previousStation, false)
+            recyclerView?.scrollToPosition(previousPosition)
+        }
+    }
 }

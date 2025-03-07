@@ -1,298 +1,279 @@
 package com.maestrovs.radiocar.service
 
-import android.app.Notification
+
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
-import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
-import android.net.NetworkRequest
-import android.net.Uri
+import android.graphics.drawable.Drawable
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import androidx.core.content.res.ResourcesCompat
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import com.google.android.exoplayer2.ui.PlayerNotificationManager.NotificationListener
-import com.google.android.exoplayer2.util.Log
-import com.maestrovs.radiocar.R
+import android.util.Log
+import androidx.media3.common.util.UnstableApi
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.maestrovs.radiocar.enums.radio.PlayAction
-import com.maestrovs.radiocar.events.PlayActionEvent
-import com.maestrovs.radiocar.events.PlayUrlEvent
-import com.maestrovs.radiocar.ui.main.MainActivity
+import com.maestrovs.radiocar.service.notifications.PlayerNotificationManagerHelper
+import com.maestrovs.radiocar.service.player.AudioPlayerListener
+import com.maestrovs.radiocar.service.player.ExoPlayerManager
+import com.maestrovs.radiocar.manager.radio.PlayerState
+import com.maestrovs.radiocar.manager.radio.PlayerStateManager
+import com.maestrovs.radiocar.manager.radio.PlaylistManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
-
-
-import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.PlaybackStateCompat
-
+import javax.inject.Inject
 
 const val NOTIFICATION_REQUEST_CODE = 56465
 
+@UnstableApi
 @AndroidEntryPoint
-class AudioPlayerService : Service(), Player.Listener {
+class AudioPlayerService : Service() {
+    private val TAG = "AudioPlayerService"
 
-    val TAG = "AudioPlayerService"
+    @Inject
+    lateinit var exoPlayerManager: ExoPlayerManager
 
+    @Inject
+    lateinit var playerNotificationManagerHelper: PlayerNotificationManagerHelper
 
+    @Inject
+    lateinit var serviceModel: PlayerServiceModel
+
+    private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val binder = LocalBinder()
-    private var exoPlayer: SimpleExoPlayer? = null
-
-    private lateinit var playerNotificationManager: PlayerNotificationManager
-
-    private lateinit var mediaSession: MediaSessionCompat //Class for controll bluetooth hardware buttons clicking
-
-
-    override fun onPlaybackStateChanged(playbackState: Int) {
-        super.onPlaybackStateChanged(playbackState)
-        // Handle playback state changes here
-        //  sendMessageToViewModel(PlayAction.Previous)
-    }
-
-    override fun onPositionDiscontinuity(
-        oldPosition: Player.PositionInfo,
-        newPosition: Player.PositionInfo,
-        reason: Int
-    ) {
-        super.onPositionDiscontinuity(oldPosition, newPosition, reason)
-        if (reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION) {
-            // The player has moved to the next item
-            // sendMessageToViewModel(PlayAction.Next)
-        }
-    }
-
+    private var isForegroundService = false
 
     override fun onCreate() {
         super.onCreate()
-        initializePlayer()
-        EventBus.getDefault().register(this)
+        createNotificationChannel()
 
+        observePlayerState()
+        //observeBufferingState()
+        observeSongMetadata()
+        observeVolume()
 
-        val channelId = 1231//"audio_player_channel"
-        val channelName = "RadioCarChannel"//"getString(R.string.audio_player_channel_name)"
-        val channelDescription =
-            "RadioCarChannelDescription"//"getString(R.string.audio_player_channel_description)"
+       // Log.d(TAG, "Service created, serviceModel = $serviceModel")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_LOW
-            val channel = NotificationChannel(channelId.toString(), channelName, importance).apply {
-                description = channelDescription
-            }
-            val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
+        exoPlayerManager.initializePlayer(object : AudioPlayerListener {
+            override fun onPlayEvent(playAction: PlayAction) {
 
-
-
-        playerNotificationManager = PlayerNotificationManager.Builder(
-
-
-            this,
-            channelId,
-            channelId.toString(),
-            object : PlayerNotificationManager.MediaDescriptionAdapter {
-                override fun getCurrentContentTitle(player: Player): CharSequence {
-
-                    var title = ""
-                    lastPlayUrlEvent?.let {
-                        title = it.name ?: ""
+                when (playAction) {
+                    is PlayAction.Buffering -> {
+                        PlayerStateManager.setBuffering(playAction.isBuffering)
                     }
 
-                    return getString(R.string.symbol_radio) + " $title"
-                }
+                    is PlayAction.Error -> {}
+                    PlayAction.Idle -> {}
+                    PlayAction.Next -> {
+                        PlaylistManager.next()}
+                    PlayAction.Pause -> PlayerStateManager.pause()//Receiver commands from Bluetooth
 
-
-                override fun createCurrentContentIntent(player: Player): PendingIntent? {
-                    val notificationIntent =
-                        Intent(this@AudioPlayerService, MainActivity::class.java)
-                    /*return PendingIntent.getActivity(
-                        this@AudioPlayerService,
-                        0,
-                        notificationIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                    )*/
-
-                    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        PendingIntent.getActivity(
-                            this@AudioPlayerService,
-                            0,
-                            notificationIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-                        )
-                    } else {
-                        PendingIntent.getActivity(
-                            this@AudioPlayerService,
-                            0,
-                            notificationIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                        )
-                    }
-                }
-
-                override fun getCurrentContentText(player: Player): CharSequence {
-
-                    return getString(R.string.notification_radio_description)
-                }
-
-                override fun getCurrentLargeIcon(
-                    player: Player,
-                    callback: PlayerNotificationManager.BitmapCallback
-                ): Bitmap? {
-                    return BitmapFactory.decodeResource(
-                        resources,
-                        R.drawable.ic_launcher_background
-                    )
+                    PlayAction.Previous -> {PlaylistManager.prev()}
+                    PlayAction.Resume -> PlayerStateManager.play()//Receiver commands from Bluetooth
                 }
             }
-        ).setNotificationListener(object : NotificationListener {
-            override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
-                stopSelf()
+
+            override fun onSetAudioPlayerSessionId(sessionId: Int) {
+                PlayerStateManager.setAudioSessionId(sessionId)
             }
 
-            override fun onNotificationPosted(
-                notificationId: Int,
-                notification: Notification,
-                ongoing: Boolean
-            ) {
-
-                if (ongoing) {
-                    startForeground(notificationId, notification)
-                } else {
-                    stopForeground(false)
-                }
+            override fun onSongMetadata(metadata: String) {
+                PlayerStateManager.setSongMetadata(metadata)
             }
-        }).build()
+        })
 
 
 
-
-        playerNotificationManager.setPlayer(exoPlayer)
-        // playerNotificationManager.setUsePlayPauseActions(true)
-        playerNotificationManager.setUseStopAction(true)
-
-        playerNotificationManager.setColor(
-            ResourcesCompat.getColor(
-                this.resources,
-                R.color.pink_gray,
-                null
-            )
-        )
-
-
-
-        playerNotificationManager.setUseNextAction(false)
-        playerNotificationManager.setUsePreviousAction(false)
-        exoPlayer?.addListener(this)
-
-
-        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkCallback = object : ConnectivityManager.NetworkCallback() {
-            override fun onLost(network: Network) {
-                super.onLost(network)
-                android.util.Log.e(TAG, "Lost network connection")
-            }
-
-            override fun onAvailable(network: Network) {
-                super.onAvailable(network)
-                android.util.Log.e(TAG, "Network connection available again")
-            }
-        }
-
-        val networkRequest = NetworkRequest.Builder()
-            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-            .build()
-
-        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
-
-
-        initializeMediaButtonsPlayStopSession()
-
-    }//onCreate
-
-
-    /**
-     * Callback for listening hardware bluetooth clicking buttons.
-     */
-    private fun initializeMediaButtonsPlayStopSession() {
-        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
-        mediaButtonIntent.setClass(this, AudioPlayerService::class.java)
-
-        val pendingIntent: PendingIntent =
-            PendingIntent.getService(
-                this,
-                0,
-                mediaButtonIntent,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            )
-
-        mediaSession = MediaSessionCompat(this, "AudioPlayerService").apply {
-
-            // Setup Callback
-            setCallback(object : MediaSessionCompat.Callback() {
-
-                override fun onPlay() {
-                    super.onPlay()
-                    // Play media
-                    android.util.Log.d("BluetoothDevice", "Bluetooth play")
-                    lastPlayUrlEvent?.url?.let {
-                        playUrl(it)
-                    }
-                    sendMessageToViewModel(PlayAction.Resume)
-                }
-
-                override fun onPause() {
-                    super.onPause()
-                    // Pause media
-                    android.util.Log.d("BluetoothDevice", "Bluetooth pause")
-                    pausePlayer()
-                    sendMessageToViewModel(PlayAction.Pause)
-                }
-
-
-                override fun onSkipToNext() {
-                    super.onSkipToNext()
-                    // Next media
-                    android.util.Log.d("BluetoothDevice", "Bluetooth next")
-                }
-
-                override fun onSkipToPrevious() {
-                    super.onSkipToPrevious()
-                    // Previous media
-                    android.util.Log.d("BluetoothDevice", "Bluetooth previous")
-                }
-            })
-
-            // Other media session configurations...
-        }
-
-
-        //mediaSession.setCallback(MediaSessionCallback())
-        mediaSession.setMediaButtonReceiver(pendingIntent)
-
-        val playbackState = PlaybackStateCompat.Builder()
-            .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE)
-            .build()
-        mediaSession.setPlaybackState(playbackState)
+        // Запускаємо Foreground Service одразу
+        startForegroundService()
     }
 
-    private fun sendMessageToViewModel(playAction: PlayAction) {
-        EventBus.getDefault().post(PlayActionEvent(playAction, lastPlayUrlEvent))
+   /* fun resumePlayback() {
+        if (!player.isPlaying) {
+            player.play()
+        }
+    }*/
+
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        //There are commands from Notification bar
+        when (intent?.action) {
+            ACTION_PLAY -> {
+                PlayerStateManager.play()
+            }
+
+            ACTION_PAUSE -> {
+                PlayerStateManager.pause()
+
+            }
+
+            ACTION_NEXT -> {
+                PlaylistManager.next()
+
+            }
+
+            ACTION_PREV -> {
+                PlaylistManager.prev()
+            }
+        }
+        return START_STICKY
+    }
+
+
+    private fun startForegroundService() {
+        val notification =
+            playerNotificationManagerHelper.showNotification(NotificationStatus.Pause, null, null)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+        } else {
+            startForeground(1, notification)
+        }
+        isForegroundService = true
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "audio_player_channel",
+                "Audio Playback",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = "Controls media playback"
+                setShowBadge(false)
+                enableLights(false)
+                enableVibration(false)
+            }
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+    }
+
+
+    private fun updateNotification(isPlaying: Boolean, stationName: String?, imageBitmap: Bitmap?, songMetadata: String? = null) {
+
+        val status = if (isPlaying) {
+            NotificationStatus.Play
+        } else {
+            NotificationStatus.Pause
+        }
+        val notification =
+            playerNotificationManagerHelper.showNotification(status, stationName, imageBitmap, songMetadata)
+
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.notify(1, notification) // ✅ Оновлення нотифікації без `startForeground()`
+
+    }
+
+    override fun onDestroy() {
+        EventBus.getDefault().unregister(this)
+        serviceModel.clear()
+        // mediaSessionHelper.release()
+        exoPlayerManager.releasePlayer()
+        stopForeground(true)
+        super.onDestroy()
+    }
+
+    private fun observeGroupBitmap() {
+
+        serviceScope.launch {
+            PlayerStateManager.bitmapFlow.collect { bitmap ->
+                val state = PlayerStateManager.playerState.value
+                updateNotification(state.isPlaying, state.currentGroup?.name, bitmap, state.songMetadata)
+            }
+        }
+    }
+
+    private fun observeSongMetadata() {
+
+        serviceScope.launch {
+            PlayerStateManager.songMetadataFlow.collect { metadata ->
+                val state = PlayerStateManager.playerState.value
+                updateNotification(state.isPlaying, state.currentGroup?.name, state.bitmap, state.songMetadata)
+            }
+        }
+    }
+
+    private fun observePlayerState() {
+        serviceScope.launch {
+            PlayerStateManager.isPlayingFlow.collect { isPlaying ->
+                if (isPlaying.first) {
+                    startPlaying(PlayerStateManager.playerState.value)
+                } else {
+                    stopPlaying(PlayerStateManager.playerState.value)
+                }
+            }
+        }
+    }
+
+
+    private fun observeVolume(){
+        serviceScope.launch {
+            PlayerStateManager.volumeFlow.collect { volume ->
+                withContext(Dispatchers.Main) {
+                    exoPlayerManager.setVolume(volume)
+                }
+            }
+        }
+    }
+
+    private fun startPlaying(state: PlayerState) {
+        val group = state.currentGroup ?: return
+     //   val stream = group.streams.getOrNull(state.currentStationIndex)
+
+        val preferredBitrate = state.preferredBitrateOption
+        var stream = state.currentGroup.streams.getOrNull(0)
+        state.currentGroup.streams.forEach {
+            if (it.bitrate == preferredBitrate) {
+                stream = it
+            }
+        }
+        stream?.let {
+
+            serviceScope.launch(Dispatchers.Main) {
+                //val problemUrl = "https://765211.live.tvstitch.com/stream.m3u8?&m=aHR0cHM6Ly9zdHJlYW12aWRlby5sdXhuZXQudWEvbHV4X2Fkdi9tYXN0ZXIubTN1OA==&u=&channel=luxfm"
+                exoPlayerManager.playUrl(it.url)
+            }
+            //val state = PlayerStateManager.playerState.value
+            updateNotification(state.isPlaying, state.currentGroup?.name, state.bitmap, state.songMetadata)
+
+
+            if (group.favicon != null) {
+                Glide.with(this)
+                    .asBitmap()
+                    .load(group.favicon)
+                    .into(object : CustomTarget<Bitmap>() {
+                        override fun onResourceReady(
+                            resource: Bitmap,
+                            transition: Transition<in Bitmap>?
+                        ) {
+                            PlayerStateManager.setBitmap(resource)
+                        }
+
+                        override fun onLoadCleared(placeholder: Drawable?) {}
+                    })
+            }
+
+
+        }
+    }
+
+
+    private fun stopPlaying(state: PlayerState) {
+        val group = state.currentGroup ?: return
+        serviceScope.launch(Dispatchers.Main) {
+            exoPlayerManager.stopPlayer()
+        }
+        updateNotification(state.isPlaying, state.currentGroup?.name, state.bitmap, state.songMetadata)
     }
 
 
@@ -300,124 +281,7 @@ class AudioPlayerService : Service(), Player.Listener {
         fun getService(): AudioPlayerService = this@AudioPlayerService
     }
 
-    override fun onBind(intent: Intent?): IBinder {
-        return binder
-    }
-
-    fun initializePlayer() {
-        if (exoPlayer == null) {
-            val trackSelector = DefaultTrackSelector(this)
-            exoPlayer = SimpleExoPlayer.Builder(this)
-                .setTrackSelector(trackSelector)
-                .build()
-        }
-    }
-
-
-    fun playUrl(url: String) {
-
-
-        Log.d("ASD", "Play exoPlayer = $exoPlayer")
-        val mediaItem = MediaItem.Builder()
-            .setUri(Uri.parse(url))
-            .build()
-
-
-        exoPlayer?.setMediaItem(mediaItem)
-        exoPlayer?.prepare()
-        exoPlayer?.play()
-
-
-    }
-
-
-    private fun pausePlayer() {
-        exoPlayer?.pause()
-    }
-
-    private fun stopPlayer() {
-        exoPlayer?.stop()
-    }
-
-
-    fun releasePlayer() {
-        exoPlayer?.release()
-        exoPlayer = null
-    }
-
-    override fun onDestroy() {
-        EventBus.getDefault().unregister(this)
-        super.onDestroy()
-        releasePlayer()
-        mediaSession.release()
-    }
-
-    var lastPlayUrlEvent: PlayUrlEvent? = null
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onPlayUrlEvent(event: PlayUrlEvent) {
-        event.url?.let { newUrl ->
-            val playAction = event.playAction
-            if (event.playAction != null) {
-                if (playAction is PlayAction.Resume) {
-                    playUrl(event.url)
-                } else pausePlayer()
-            } else {
-                if (newUrl == lastPlayUrlEvent?.url) {
-                    if (exoPlayer?.isPlaying == true) {
-                        pausePlayer()
-                    } else {
-                        playUrl(event.url)
-                    }
-                } else {
-                    playUrl(event.url)
-                }
-            }
-        } ?: kotlin.run {
-            stopPlayer()
-        }
-        lastPlayUrlEvent = event
-    }
-
-
-    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        if (playbackState == Player.STATE_READY && playWhenReady) {
-            Log.d(TAG, "Player is playing")
-            sendMessageToViewModel(PlayAction.Resume)
-        } else if (playbackState == Player.STATE_READY) {
-            Log.d(TAG, "Player is paused")
-            sendMessageToViewModel(PlayAction.Pause)
-        } else if (playbackState == Player.STATE_BUFFERING) {
-            Log.d(TAG, "Player is buffering")
-            sendMessageToViewModel(PlayAction.Buffering)
-        } else if (playbackState == Player.STATE_IDLE) {
-            Log.d(TAG, "Player is idle")
-            sendMessageToViewModel(PlayAction.Idle)
-        }
-    }
-
-    override fun onPlayerError(error: PlaybackException) {
-        sendMessageToViewModel(PlayAction.Error(null, error))
-        when (error.errorCode) {
-            ExoPlaybackException.TYPE_SOURCE -> {
-                Log.e(TAG, "Source error: ", error)
-            }
-
-            ExoPlaybackException.TYPE_RENDERER -> {
-                Log.e(TAG, "Renderer error: ", error)
-            }
-
-            ExoPlaybackException.TYPE_UNEXPECTED -> {
-                Log.e(TAG, "Unexpected error: ", error)
-            }
-
-            else -> {
-                Log.e(TAG, "Unknown error: ", error)
-            }
-        }
-    }
+    override fun onBind(intent: Intent?): IBinder = binder
 
 
 }
-
-

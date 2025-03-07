@@ -24,9 +24,9 @@
     <string name="disconnected">Disconnected</string>
 
 
-
     <string name="settings_display_on">Keep display active</string>
     <string name="settings_autoplay">Play automatically when a Bluetooth device is connected</string>
+    <string name="settings_show_station_in_back">Display popup station name in background</string>
     <string name="settings_display_speed_units">Display speed in units:</string>
     <string name="km_h">km/h</string>
     <string name="mph">MPH</string>
@@ -48,6 +48,7 @@
 
     <string name="privacy_policy">Privacy Policy</string>
     <string name="open_api">Open API</string>
+    <string name="open_play_market">Leave a review</string>
 
     <string name="contact_us">Contact Us</string>
 
@@ -55,7 +56,7 @@
 
     <string name="description"><b>Radio Car:</b> Your ideal travel companion on the road!</string>
 
-    <string name="created_by"><b>© 2023 Vasyl Horodetskyi</b></string>
+    <string name="created_by" translatable="false"><b>© 2025 Maestro Creations</b></string>
     <string name="app_version"><b>App version</b></string>
 
 
@@ -65,6 +66,63 @@
     <string name="close">Close</string>
     <string name="choose_country">Choose country</string>
 
+    <string name="remove">Remove</string>
+    <string name="cancel">Cancel</string>
+    <string name="remove_ask">Remove?</string>
 
+    <string name="done">Done</string>
+
+    <string name="mock_date">07 jul 2024 \n Friday</string>
+    <string name="title_activity_main_v2">MainActivityV2</string>
+
+    <string name="enter_custom_tag">Enter your custom tag (in English)</string>
+    <string name="enter_station_name">Enter station name</string>
+    <string name="select_country">Select country</string>
+    <string name="select_tag">Select tag</string>
+
+    <string name="delete_station_title">Delete station</string>
+    <string name="delete_station_message">Are you sure you want to delete the station %1$s?</string>
+    <string name="confirm">Delete</string>
+
+
+    <string-array name="tag_keys">
+            <item>ambient</item>
+            <item>bible</item>
+            <item>christ</item>
+            <item>classical</item>
+            <item>children</item>
+            <item>dance</item>
+            <item>electronic</item>
+            <item>hiphop</item>
+            <item>jazz</item>
+            <item>metal</item>
+            <item>music</item>
+            <item>news</item>
+            <item>pop</item>
+            <item>relax</item>
+            <item>rock</item>
+            <item>talk</item>
+        </string-array>
+
+        <string-array name="tag_values">
+            <item>Ambient</item>
+            <item>Bible</item>
+            <item>Christian</item>
+            <item>Classical</item>
+            <item>Children</item>
+            <item>Dance</item>
+            <item>Electronic</item>
+            <item>Hip-hop</item>
+            <item>Jazz</item>
+            <item>Metal</item>
+            <item>Music</item>
+            <item>News</item>
+            <item>Pop</item>
+            <item>Relax</item>
+            <item>Rock</item>
+            <item>Talk / Podcasts</item>
+        </string-array>
+
+    <string name="all_countries">All Countries</string>
 
 </resources>

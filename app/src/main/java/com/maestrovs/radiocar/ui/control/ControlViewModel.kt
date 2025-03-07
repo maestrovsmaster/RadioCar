@@ -6,15 +6,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.maestrovs.radiocar.common.CurrentCountryManager
+import com.maestrovs.radiocar.shared_managers.CurrentCountryManager
 import com.maestrovs.radiocar.data.entities.weather.WeatherResponse
-import com.maestrovs.radiocar.data.remote.weather.WeatherService
-import com.maestrovs.radiocar.data.repository.WeatherRepository
+import com.maestrovs.radiocar.data.repository.WeatherRepositoryIml
 import com.maestrovs.radiocar.utils.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ControlViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
-    private val weatherRepository: WeatherRepository,)
+@HiltViewModel
+class ControlViewModel @Inject constructor(
+    private val weatherRepository: WeatherRepositoryIml,)
 : ViewModel() {
 
 
@@ -58,7 +60,7 @@ class ControlViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
                 Log.d("Weather","fetchWeather $countryName")
                 weatherRepository.getWeatherDataByCity(countryName)
             }
-            when (response.status) {
+           /* when (response.status) {
                 Resource.Status.SUCCESS -> {
                     response.data.let { weatherResp ->
                         weatherResp?.let {
@@ -74,7 +76,7 @@ class ControlViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
                 Resource.Status.LOADING -> {
                     // binding.progressBar.visibility = View.VISIBLE
                 }
-            }
+            }*/
         }
    }
 

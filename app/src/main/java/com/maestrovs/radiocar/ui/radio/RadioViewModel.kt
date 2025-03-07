@@ -8,23 +8,26 @@ import androidx.lifecycle.switchMap
 import com.maestrovs.radiocar.data.entities.radio.Station
 import com.maestrovs.radiocar.data.repository.StationRepository
 import com.maestrovs.radiocar.utils.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RadioViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
+@HiltViewModel
+class RadioViewModel @Inject constructor(
     private val mainRepository: StationRepository,)
 : ViewModel() {
 
 
 
-    private val _fetchStationsTrigger = MutableLiveData<String>()
-    val stations: LiveData<Resource<List<Station>>> = _fetchStationsTrigger.switchMap {countryCode->
+    private val _fetchStationsTrigger = MutableLiveData<StationQuery>()
+    val stations: LiveData<Resource<List<Station>>> = _fetchStationsTrigger.switchMap {stationQuery->
 
-        if(countryCode == "RU"){
+        if(stationQuery.countryCode == "RU"){
             mainRepository.getStationsByName("байрактар")
         }else {
-            mainRepository.getStations(countryCode)
+            mainRepository.getStations(stationQuery.countryCode, stationQuery.offset, stationQuery.limit)
         }
     }
 
@@ -32,8 +35,8 @@ class RadioViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
        // fetchStations("sdf")
     }
 
-    fun fetchStations(countryCode: String) {
-        _fetchStationsTrigger.value = countryCode
+    fun fetchStations(stationQuery: StationQuery) {
+        _fetchStationsTrigger.value = stationQuery
     }
 
 
@@ -81,3 +84,5 @@ class RadioViewModel @androidx.hilt.lifecycle.ViewModelInject constructor(
     }
 
 }
+
+data class StationQuery(val countryCode: String, val offset: Int, val limit: Int)

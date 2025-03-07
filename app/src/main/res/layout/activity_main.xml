@@ -20,5 +20,11 @@
 
         app:navGraph="@navigation/main_navigation" />
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/pip_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

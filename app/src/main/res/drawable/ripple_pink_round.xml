@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/pink">
-    <item android:id="@android:id/mask">
-        <shape android:shape="rectangle">
-            <solid android:color="@color/pink" />
-            <corners android:radius="@dimen/ripple_radius" />
-        </shape>
-    </item>
+    android:color="@color/black">
+
 
     <item android:id="@android:id/background">
         <shape xmlns:android="http://schemas.android.com/apk/res/android"
             android:shape="rectangle">
-            <gradient android:type="radial" android:gradientRadius="70dp"
-                android:startColor="#33E91EB6" android:endColor="@color/pink" />
+            <gradient android:type="radial" android:gradientRadius="40dp"
+                android:startColor="@color/primary"
+                android:centerColor="@color/primary"
+                android:endColor="@color/primaryLight" />
 
         </shape>
     </item>
