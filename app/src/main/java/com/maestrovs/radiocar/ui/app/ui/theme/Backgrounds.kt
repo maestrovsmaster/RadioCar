@@ -9,7 +9,9 @@ import androidx.compose.ui.graphics.Color
 
 val backgroundBrush = Brush.verticalGradient(
     colors = listOf(
-        Color(0xFF3A4A57),
-        Color(0xFF1E2A34)
+        Color(0xFF000000),
+        Color(0xFF020000)
+     //   Color(0xFF3A4A57),
+      //  Color(0xFF1E2A34)
     ),
 )

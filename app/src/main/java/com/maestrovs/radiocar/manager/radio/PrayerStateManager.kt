@@ -62,6 +62,8 @@ object PlayerStateManager {
     fun updateStationGroup(stationGroup: StationGroup) {
         val state = _playerState.value
 
+        Log.d("PlayerStateManager", "updateStationGroup() called  station = $stationGroup")
+
         var isFavourite = false
 
         _playerState.value = state.copy(

@@ -2,9 +2,9 @@ package com.maestrovs.radiocar.common
 
 object Constants {
 
-    const val BASE_RADIO_URL = "http://de1.api.radio-browser.info"
+    const val BASE_RADIO_URL = "http://nl1.api.radio-browser.info"
 
-    const val ABOUT_RADIO_URL =  "http://de1.api.radio-browser.info/#General"
+    const val ABOUT_RADIO_URL =  "http://api.radio-browser.info/#General" //de1.
 
     const val PAGE_SIZE = 50
 
